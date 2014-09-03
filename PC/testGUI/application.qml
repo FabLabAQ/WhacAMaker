@@ -25,6 +25,10 @@ Rectangle {
 				target: game
 				visible: false
 			}
+			PropertyChanges {
+				target: testPanel
+				visible: false
+			}
 		},
 		State {
 			name: "settingsMenu"
@@ -42,6 +46,10 @@ Rectangle {
 			}
 			PropertyChanges {
 				target: game
+				visible: false
+			}
+			PropertyChanges {
+				target: testPanel
 				visible: false
 			}
 		},
@@ -63,35 +71,81 @@ Rectangle {
 				target: game
 				visible: true
 			}
+			PropertyChanges {
+				target: testPanel
+				visible: false
+			}
+		},
+		State {
+			name: "testPanel"
+			PropertyChanges {
+				target: mainMenu
+				visible: false
+			}
+			PropertyChanges {
+				target: levelMenu
+				visible: false
+			}
+			PropertyChanges {
+				target: settingsMenu
+				visible: false
+			}
+			PropertyChanges {
+				target: game
+				visible: false
+			}
+			PropertyChanges {
+				target: testPanel
+				visible: true
+			}
 		}
 	]
 
-	MainMenu {
+	ButtonPanel {
 		id: mainMenu
 		visible: true
+		buttonCaptions: ["Gioco", "Punteggi", "Impostazioni"]
+		backButtonCaption: "Uscita"
+		anchors.fill: parent
 
-		onStartGame: { application.state = "gameLevelMenu" }
-		onShowScore: { application.state = "" }
-		onShowSettings: { application.state = "settingsMenu" }
-		onExit: { Qt.quit() }
+		onGoBack: { Qt.quit() }
+		onButtonClicked: {
+			if (caption == "Gioco") {
+				application.state = "gameLevelMenu";
+			} else if (caption == "Punteggi") {
+				application.state = "testPanel";
+			} else if (caption == "Impostazioni") {
+				application.state = "settingsMenu";
+			}
+		}
 	}
 
-	LevelMenu {
+	ButtonPanel {
 		id: levelMenu
 		visible: false
+		buttonCaptions: ["Facile", "Medio", "Difficile"]
+		anchors.fill: parent
 
-		onEasySelected: { application.state = "game" }
-		onMediumSelected: { application.state = "game" }
-		onHardSelected: { application.state = "game" }
 		onGoBack: { application.state = "" }
+		onButtonClicked: {
+			if (caption == "Facile") {
+				application.state = "game";
+			} else if (caption == "Medio") {
+				application.state = "game";
+			} else if (caption == "Difficile") {
+				application.state = "game";
+			}
+		}
 	}
 
-	SettingsMenu {
+	ButtonPanel {
 		id: settingsMenu
 		visible: false
+		buttonCaptions: ["Facile"]
+		anchors.fill: parent
 
-		onConfigure: {}
 		onGoBack: { application.state = "" }
+		onButtonClicked: { console.log("Pressed button " + caption) }
 	}
 
 	Game {
@@ -99,5 +153,15 @@ Rectangle {
 		visible: false
 
 		onGoBack: { application.state = "" }
+	}
+
+	ButtonPanel {
+		id: testPanel
+		visible: false
+		buttonCaptions: ["Primo", "Secondo", "Contorno"]
+		anchors.fill: parent
+
+		onGoBack: { application.state = "" }
+		onButtonClicked: { console.log("Pressed button " + caption) }
 	}
 }

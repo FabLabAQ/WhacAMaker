@@ -1,9 +1,14 @@
+// A simple button used in the game
 import QtQuick 2.0
 
 Item {
 	id: container
+	// The caption of the button
 	property string caption
-	signal clicked()
+
+	// The signal emitted when the button is clicked. The parameter c is the
+	// caption of the button
+	signal clicked(string c)
 
 	Rectangle {
 		id: rectangle
@@ -21,6 +26,6 @@ Item {
 
 	MouseArea {
 		anchors.fill: parent
-		onClicked: container.clicked(container.cellColor)
+		onClicked: container.clicked(container.caption)
 	}
 }
