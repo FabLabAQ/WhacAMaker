@@ -87,7 +87,8 @@ Rectangle {
 		// Now we can set button position and sizes create buttons
 		for (var i = 0; i < container.buttons.length; i++) {
 			container.buttons[i].x = bx[i];
-			container.buttons[i].y = by[i];
+			container.buttons[i].y = -bh;
+			container.buttons[i].yWhenVisible = by[i];
 			container.buttons[i].width = bw;
 			container.buttons[i].height =  bh;
 		}
@@ -132,5 +133,6 @@ Rectangle {
 	}
 
 	Component.onCompleted: setButtonPositionAndSize()
+
 	onVisibleChanged: setButtonPositionAndSize()
 }

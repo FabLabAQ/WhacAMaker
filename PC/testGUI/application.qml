@@ -3,7 +3,7 @@ import QtQuick 2.0
 Rectangle {
 	id: application
 	color: "black"
-	width: 320
+	width: 640
 	height: 480
 
 	states: [
@@ -141,7 +141,7 @@ Rectangle {
 	ButtonPanel {
 		id: settingsMenu
 		visible: false
-		buttonCaptions: ["Facile"]
+		buttonCaptions: ["Calibrazione", "Configurazione"]
 		anchors.fill: parent
 
 		onGoBack: { application.state = "" }
