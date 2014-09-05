@@ -24,34 +24,52 @@ Rectangle {
 	property bool addBackButton: true
 	// The caption of the back button
 	property string backButtonCaption: "Indietro"
+	// If this is null when the back button is pressed the goBack signal is
+	// raised, if this is an item, when the back button is clicked this item
+	// is hidden and backItem is shown
+	property var backItem: null
 	// The list of buttons to add. Each element is a string with the button
 	// caption
 	property var buttonCaptions: []
+	// The list of menus for each button. This should contain items, None
+	// and can have less elements than buttonCaptions. When the i-th button
+	// is clicked this list is checked. If i is greater than the number of
+	// elements in this list or if buttonItems[i] is None the buttonClicked
+	// signal is raised. Otherwise this item is hidden and the item at
+	// buttonItems[i] is shown
+	property var buttonItems: []
 	// The list of button objects. This is created at startup depending on
 	// the list of button captions. This also contains the back button if
 	// it has to be created
 	property var buttons: []
 
+	// The signal emitted when a button is clicked. caption is the caption
+	// of the button. This is emitted even if a function is already
+	// connected to a button
+	signal buttonClicked(string caption)
+	// The signal emitted when the back button is clicked
+	signal goBack()
+
 	// The function to compute the width in pixels of buttons
 	function computeButtonWidth()
 	{
-		return container.width * container.buttonWidth;
+		return width * buttonWidth;
 	}
 
 	// The function to compute the height in pixels of buttons
 	function computeButtonHeight()
 	{
-		if (container.relativeHeight) {
-			return container.height * container.buttonHeight;
+		if (relativeHeight) {
+			return height * buttonHeight;
 		} else {
-			return container.buttonHeight;
+			return buttonHeight;
 		}
 	}
 
 	// The function to compute the spacing between buttons
 	function computeButtonSpacing()
 	{
-		return container.computeButtonHeight() * container.buttonSpacing;
+		return computeButtonHeight() * buttonSpacing;
 	}
 
 	// The function to set the buttons position and size
@@ -62,71 +80,87 @@ Rectangle {
 		}
 
 		// Computing dimensions of buttons
-		var bw = container.computeButtonWidth();
-		var bh = container.computeButtonHeight();
-		var bs = container.computeButtonSpacing();
+		var bw = computeButtonWidth();
+		var bh = computeButtonHeight();
+		var bs = computeButtonSpacing();
 
 		// Computing the total space taken by buttons
-		var totalButtonSpace = bh * container.buttons.length;
-		if (container.buttons.length != 1) {
-			totalButtonSpace += bs * (container.buttons.length - 1);
+		var totalButtonSpace = bh * buttons.length;
+		if (buttons.length != 1) {
+			totalButtonSpace += bs * (buttons.length - 1);
 		}
 
 		// Computing the x position of buttons (the same for all buttons) and the y position
 		// of the first button
-		var xPos = (container.width - bw) / 2;
-		var firstYPos = (container.height - totalButtonSpace) / 2;
+		var xPos = (width - bw) / 2;
+		var firstYPos = (height - totalButtonSpace) / 2;
 		var bx = [xPos];
 		var by = [firstYPos];
 
-		for (var i = 1; i < container.buttons.length; i++) {
+		for (var i = 1; i < buttons.length; i++) {
 			bx.push(xPos);
 			by.push(by[i - 1] + bh + bs);
 		}
 
 		// Now we can set button position and sizes create buttons
-		for (var i = 0; i < container.buttons.length; i++) {
-			container.buttons[i].x = bx[i];
-			container.buttons[i].y = -bh;
-			container.buttons[i].yWhenVisible = by[i];
-			container.buttons[i].width = bw;
-			container.buttons[i].height =  bh;
+		for (var i = 0; i < buttons.length; i++) {
+			buttons[i].x = bx[i];
+			buttons[i].y = -bh;
+			buttons[i].yWhenVisible = by[i];
+			buttons[i].width = bw;
+			buttons[i].height =  bh;
 		}
 	}
 
-	// The signal emitted when a button is clicked. caption is the caption
-	// of the buttton
-	signal buttonClicked(string caption)
-	// The signal emitted when the back button is clicked
-	signal goBack()
+	// An internal function called when the back button is clicked
+	function internalGoBack()
+	{
+		if (backItem == null) {
+			goBack();
+		} else {
+			visible = false;
+			backItem.visible = true;
+		}
+	}
+
+	// An internal function called when a button is clicked
+	function internalButtonClicked(buttonID)
+	{
+		if ((buttonID > buttonItems.length) || (buttonItems[buttonItems] == null)) {
+			buttonClicked(buttons[buttonID].caption);
+		} else {
+			visible = false;
+			buttonItems[buttonItems].visible = true;
+		}
+	}
 
 	onButtonCaptionsChanged: {
-		container.buttons = []
+		buttons = []
 
 		// Here we create all buttons but do not set their position
-		for (var i = 0; i < container.buttonCaptions.length; i++) {
+		for (var i = 0; i < buttonCaptions.length; i++) {
 			var component = Qt.createComponent("Button.qml");
-			var button = component.createObject(container, {"caption": container.buttonCaptions[i]});
+			var button = component.createObject(container, {"caption": buttonCaptions[i], "buttonID": i});
 
 			if (button == null) {
-				console.log("Error creating button " + container.buttonCaptions[i]);
+				console.log("Error creating button " + buttonCaptions[i]);
 			}
 
-			button.clicked.connect(container.buttonClicked);
-			container.buttons.push(button);
+			button.clicked.connect(internalButtonClicked);
+			buttons.push(button);
 		}
 
 		// Creating the back button if we have to
-		if (container.addBackButton) {
+		if (addBackButton) {
 			var component = Qt.createComponent("Button.qml");
-			var button = component.createObject(container, {"caption": container.backButtonCaption, "onClicked": container.goBack()});
+			var button = component.createObject(container, {"caption": backButtonCaption, "onClicked": goBack()});
 
 			if (button == null) {
-				console.log("Error creating button " + container.buttonCaptions[i]);
+				console.log("Error creating button " + buttonCaptions[i]);
 			}
 
-			button.clicked.connect(container.goBack);
-			container.buttons.push(button);
+			button.clicked.connect(internalGoBack);
+			buttons.push(button);
 		}
 
 // 		CERCARE ANCHE SE ESISTE UNA MAPPA IN CUI MEMORIZZARE LA RELAZIONE caption (string) -> Button object

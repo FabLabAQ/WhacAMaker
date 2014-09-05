@@ -7,10 +7,13 @@ Item {
 	property string caption
 	// The y position to reach when the button is visible (x stays the same)
 	property int yWhenVisible
+	// The id of the button. This value is the parameter used by the clicked
+	// signal
+	property int buttonID
 
-	// The signal emitted when the button is clicked. The parameter c is the
-	// caption of the button
-	signal clicked(string c)
+	// The signal emitted when the button is clicked. The parameter i is the
+	// buttonID
+	signal clicked(int i)
 
 	Rectangle {
 		id: rectangle
@@ -28,7 +31,7 @@ Item {
 
 	MouseArea {
 		anchors.fill: parent
-		onClicked: container.clicked(container.caption)
+		onClicked: container.clicked(container.buttonID)
 	}
 
 	states: State {
