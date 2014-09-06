@@ -131,7 +131,7 @@ Rectangle {
 			by.push(by[i - 1] + bh + bs);
 		}
 
-		// Now we can set button position and sizes create buttons
+		// Now we can set button position and sizes
 		for (var i = 0; i < buttons.length; i++) {
 			buttons[i].x = bx[i];
 			buttons[i].yWhenVisible = by[i];
