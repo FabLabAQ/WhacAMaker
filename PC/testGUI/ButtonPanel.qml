@@ -50,6 +50,16 @@ Rectangle {
 	// The signal emitted when the back button is clicked
 	signal goBack()
 
+	// An internal object needed to store the next item to show. This is
+	// needed because we have to wait for buttons to go outside the screen
+	// before showing the other panel
+	QtObject {
+		id: internalState
+
+		// The item to show
+		property var nextItem
+	}
+
 	// The function to compute the width in pixels of buttons
 	function computeButtonWidth()
 	{
@@ -70,6 +80,25 @@ Rectangle {
 	function computeButtonSpacing()
 	{
 		return computeButtonHeight() * buttonSpacing;
+	}
+
+	// Shows all button. This changes their state to "appearing" so that
+	// they are animated
+	function showAllButtons()
+	{
+		for (var i = 0; i < buttons.length; i++) {
+			buttons[i].state = "appearing";
+		}
+	}
+
+	// Hides all button. This changes their state to "disappearing" so that
+	// they are animated. Each button sends a disappeared signal when the
+	// animation is finished
+	function hideAllButtons()
+	{
+		for (var i = 0; i < buttons.length; i++) {
+			buttons[i].state = "disappearing";
+		}
 	}
 
 	// The function to set the buttons position and size
@@ -105,10 +134,12 @@ Rectangle {
 		// Now we can set button position and sizes create buttons
 		for (var i = 0; i < buttons.length; i++) {
 			buttons[i].x = bx[i];
-			buttons[i].y = -bh;
 			buttons[i].yWhenVisible = by[i];
+			buttons[i].yWhenInvisible = -bh;
 			buttons[i].width = bw;
 			buttons[i].height =  bh;
+
+			console.log("Setting positions of " + buttons[i].caption);
 		}
 	}
 
@@ -118,23 +149,47 @@ Rectangle {
 		if (backItem == null) {
 			goBack();
 		} else {
-			visible = false;
-			backItem.visible = true;
+			internalState.nextItem = backItem;
+			hideAllButtons();
 		}
 	}
 
 	// An internal function called when a button is clicked
 	function internalButtonClicked(buttonID)
 	{
-		if ((buttonID > buttonItems.length) || (buttonItems[buttonItems] == null)) {
+		if ((buttonID > buttonItems.length) || (buttonItems[buttonID] == null)) {
 			buttonClicked(buttons[buttonID].caption);
 		} else {
+			internalState.nextItem = buttonItems[buttonID]
+			hideAllButtons();
+		}
+	}
+
+	// The function called when a button has disappeared. If all buttons have disappeared
+	// this function hides this item
+	function internalButtonDisappeared(buttonID)
+	{
+		var allDisappeared = true;
+		for (var i = 0; i < buttons.length; i++) {
+			if (buttons[i].visible == true) {
+				allDisappeared = false;
+				break;
+			}
+		}
+
+		if (allDisappeared) {
 			visible = false;
-			buttonItems[buttonItems].visible = true;
+			if (internalState.nextItem != null) {
+				internalState.nextItem.visible = true;
+			}
 		}
 	}
 
 	onButtonCaptionsChanged: {
+		// Deleting old buttons
+		for (button in buttons) {
+			button.destroy()
+		}
 		buttons = []
 
 		// Here we create all buttons but do not set their position
@@ -147,26 +202,39 @@ Rectangle {
 			}
 
 			button.clicked.connect(internalButtonClicked);
+			button.disappeared.connect(internalButtonDisappeared);
 			buttons.push(button);
 		}
 
 		// Creating the back button if we have to
 		if (addBackButton) {
 			var component = Qt.createComponent("Button.qml");
-			var button = component.createObject(container, {"caption": backButtonCaption, "onClicked": goBack()});
+			var button = component.createObject(container, {"caption": backButtonCaption, "buttonID": buttons.length, "onClicked": goBack()});
 
 			if (button == null) {
 				console.log("Error creating button " + buttonCaptions[i]);
 			}
 
 			button.clicked.connect(internalGoBack);
+			button.disappeared.connect(internalButtonDisappeared);
 			buttons.push(button);
 		}
-
 // 		CERCARE ANCHE SE ESISTE UNA MAPPA IN CUI MEMORIZZARE LA RELAZIONE caption (string) -> Button object
 	}
 
-	Component.onCompleted: setButtonPositionAndSize()
+	Component.onCompleted: {
+		setButtonPositionAndSize();
+		if (visible) {
+			showAllButtons()
+		}
+	}
 
-	onVisibleChanged: setButtonPositionAndSize()
+	onWidthChanged: setButtonPositionAndSize()
+	onHeightChanged: setButtonPositionAndSize()
+
+	onVisibleChanged: {
+		if (visible) {
+			showAllButtons();
+		}
+	}
 }

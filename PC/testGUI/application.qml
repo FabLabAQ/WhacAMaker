@@ -6,101 +6,6 @@ Rectangle {
 	width: 640
 	height: 480
 
-	states: [
-		State {
-			name: "gameLevelMenu"
-			PropertyChanges {
-				target: mainMenu
-				visible: false
-			}
-			PropertyChanges {
-				target: levelMenu
-				visible: true
-			}
-			PropertyChanges {
-				target: settingsMenu
-				visible: false
-			}
-			PropertyChanges {
-				target: game
-				visible: false
-			}
-			PropertyChanges {
-				target: testPanel
-				visible: false
-			}
-		},
-		State {
-			name: "settingsMenu"
-			PropertyChanges {
-				target: mainMenu
-				visible: false
-			}
-			PropertyChanges {
-				target: levelMenu
-				visible: false
-			}
-			PropertyChanges {
-				target: settingsMenu
-				visible: true
-			}
-			PropertyChanges {
-				target: game
-				visible: false
-			}
-			PropertyChanges {
-				target: testPanel
-				visible: false
-			}
-		},
-		State {
-			name: "game"
-			PropertyChanges {
-				target: mainMenu
-				visible: false
-			}
-			PropertyChanges {
-				target: levelMenu
-				visible: false
-			}
-			PropertyChanges {
-				target: settingsMenu
-				visible: false
-			}
-			PropertyChanges {
-				target: game
-				visible: true
-			}
-			PropertyChanges {
-				target: testPanel
-				visible: false
-			}
-		},
-		State {
-			name: "testPanel"
-			PropertyChanges {
-				target: mainMenu
-				visible: false
-			}
-			PropertyChanges {
-				target: levelMenu
-				visible: false
-			}
-			PropertyChanges {
-				target: settingsMenu
-				visible: false
-			}
-			PropertyChanges {
-				target: game
-				visible: false
-			}
-			PropertyChanges {
-				target: testPanel
-				visible: true
-			}
-		}
-	]
-
 	ButtonPanel {
 		id: mainMenu
 		visible: true
@@ -109,42 +14,23 @@ Rectangle {
 		anchors.fill: parent
 
 		onGoBack: { Qt.quit() }
-		onButtonClicked: {
-			if (caption == "Gioco") {
-				application.state = "gameLevelMenu";
-			} else if (caption == "Punteggi") {
-				application.state = "testPanel";
-			} else if (caption == "Impostazioni") {
-				application.state = "settingsMenu";
-			}
-		}
 	}
 
 	ButtonPanel {
 		id: levelMenu
 		visible: false
+		backItem: mainMenu
 		buttonCaptions: ["Facile", "Medio", "Difficile"]
 		anchors.fill: parent
-
-		onGoBack: { application.state = "" }
-		onButtonClicked: {
-			if (caption == "Facile") {
-				application.state = "game";
-			} else if (caption == "Medio") {
-				application.state = "game";
-			} else if (caption == "Difficile") {
-				application.state = "game";
-			}
-		}
 	}
 
 	ButtonPanel {
 		id: settingsMenu
 		visible: false
+		backItem: mainMenu
 		buttonCaptions: ["Calibrazione", "Configurazione"]
 		anchors.fill: parent
 
-		onGoBack: { application.state = "" }
 		onButtonClicked: { console.log("Pressed button " + caption) }
 	}
 
@@ -152,16 +38,22 @@ Rectangle {
 		id: game
 		visible: false
 
-		onGoBack: { application.state = "" }
+		onGoBack: { visible = false; mainMenu.visible = true; }
 	}
 
 	ButtonPanel {
 		id: testPanel
 		visible: false
+		backItem: mainMenu
 		buttonCaptions: ["Primo", "Secondo", "Contorno"]
 		anchors.fill: parent
 
-		onGoBack: { application.state = "" }
 		onButtonClicked: { console.log("Pressed button " + caption) }
+	}
+
+	Component.onCompleted: {
+		// Here we associate menus with buttons
+		mainMenu.buttonItems = [levelMenu, testPanel, settingsMenu]
+		levelMenu.buttonItems = [game, game, game]
 	}
 }
