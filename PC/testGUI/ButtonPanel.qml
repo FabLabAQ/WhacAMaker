@@ -138,8 +138,6 @@ Rectangle {
 			buttons[i].yWhenInvisible = -bh;
 			buttons[i].width = bw;
 			buttons[i].height =  bh;
-
-			console.log("Setting positions of " + buttons[i].caption);
 		}
 	}
 
