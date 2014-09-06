@@ -2,13 +2,11 @@
 // button captions, their width relative to the panel, their height (either
 // relative or absolute) and the spacing between them. This class provdes a
 // signal that is thrown when a button is pressed, with the button text as
-// argument. The Rectangle being the main component is transparent, set the
-// background in application
+// argument.
 import QtQuick 2.0
 
-Rectangle {
+Item {
 	id: container
-	color: "#00000000"
 
 	// The width of buttons relative to the container width
 	property real buttonWidth: 0.6
