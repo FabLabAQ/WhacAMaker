@@ -2,7 +2,7 @@ import QtQuick 2.0
 
 Rectangle {
 	id: application
-	color: "black"
+	color: "lightgray"
 	width: 640
 	height: 480
 
