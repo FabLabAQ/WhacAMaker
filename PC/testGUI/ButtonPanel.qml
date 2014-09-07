@@ -216,7 +216,6 @@ Item {
 			button.disappeared.connect(internalButtonDisappeared);
 			buttons.push(button);
 		}
-// 		CERCARE ANCHE SE ESISTE UNA MAPPA IN CUI MEMORIZZARE LA RELAZIONE caption (string) -> Button object
 	}
 
 	Component.onCompleted: {

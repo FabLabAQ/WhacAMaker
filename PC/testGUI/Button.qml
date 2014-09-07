@@ -1,4 +1,5 @@
-// A simple button used in the game
+// A simple button used in the game. This also contains animations to make the
+// button appear/disappear
 import QtQuick 2.0
 
 Item {
@@ -11,15 +12,15 @@ Item {
 	// same)
 	property int yWhenInvisible
 	// The id of the button. This value is the parameter used by the clicked
-	// signal
-	property int buttonID
+	// and disappeared signals
+	property var buttonID
 
 	// The signal emitted when the button is clicked. The parameter i is the
 	// buttonID
-	signal clicked(int i)
+	signal clicked(var i)
 	// The signal emitted when the button has disappeared. The parameter i
 	// is the buttonID
-	signal disappeared(int i)
+	signal disappeared(var i)
 
 	Rectangle {
 		id: rectangle
@@ -29,9 +30,8 @@ Item {
 		Text {
 			id: buttonText
 			text: container.caption
-			anchors.horizontalCenter: rectangle.horizontalCenter
-			anchors.verticalCenter: rectangle.verticalCenter
-			font.pointSize: 24; font.bold: true
+			anchors { horizontalCenter: rectangle.horizontalCenter; verticalCenter: rectangle.verticalCenter }
+			font { pointSize: 24; bold: true }
 		}
 	}
 

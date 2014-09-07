@@ -34,13 +34,6 @@ Rectangle {
 		onButtonClicked: { console.log("Pressed button " + caption) }
 	}
 
-	Game {
-		id: game
-		visible: false
-
-		onGoBack: { visible = false; mainMenu.visible = true; }
-	}
-
 	ButtonPanel {
 		id: testPanel
 		visible: false
@@ -51,9 +44,25 @@ Rectangle {
 		onButtonClicked: { console.log("Pressed button " + caption) }
 	}
 
+	Game {
+		id: game
+		visible: false
+		anchors.fill: parent
+
+		onGoBack: { visible = false; mainMenu.visible = true; }
+	}
+
+	Configuration {
+		id: configurationMenu
+		visible: false
+		panelToShow: settingsMenu
+		anchors.fill: parent
+	}
+
 	Component.onCompleted: {
 		// Here we associate menus with buttons
 		mainMenu.buttonItems = [levelMenu, testPanel, settingsMenu]
 		levelMenu.buttonItems = [game, game, game]
+		settingsMenu.buttonItems = [null, configurationMenu]
 	}
 }

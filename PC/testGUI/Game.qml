@@ -3,7 +3,6 @@ import QtQuick 2.0
 Rectangle {
 	id: rectangle
 	border.color: "red"
-	anchors.fill: parent
 
 	signal goBack
 
