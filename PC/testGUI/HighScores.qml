@@ -7,7 +7,7 @@ AnimatedElementsPanel {
 	// goBack signal is raised
 	property var panelToShow: null
 
-	// AGGIUNGERE BACK ITEM, BACK LABEL E PULSANTE
+	// AGGIUNGERE BACK ITEM, BACK LABEL E PULSANTE. Inoltre mettere vettori di player e score e generare i SingleScore automaticamente
 
 	SingleScore {
 		id: prova
