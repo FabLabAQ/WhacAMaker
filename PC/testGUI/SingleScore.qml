@@ -10,45 +10,47 @@ AnimatedElement {
 	property string playerName
 	// The score
 	property real score
+	// The portion of the width to use for the rank
+	property real rankWidth: 0.1
+	// The portion of the width to use for the score
+	property real scoreWidth: 0.3
 
-// 	// The description of the input field
-// 	property alias label: textLabel.text
-// 	// The validator for entered text
-// 	property alias validator: textInput.validator
-// 	// The entered text
-// 	property alias text: textInput.text
-// 	// True if the entered text is valid
-// 	property alias acceptableInput: textInput.acceptableInput
-// 	// The proportion of the label with respect to the input field
-// 	property real labelInputProportion: 0.5
-// 	// The space between the text area and the label
-// 	property real spacing: 10
-//
-// 	Text {
-// 		id: textLabel
-// 		x: 0
-// 		y: 0
-// 		width: (container.width - container.spacing) * (container.labelInputProportion / (1 + container.labelInputProportion))
-// 		height: container.height
-// 		horizontalAlignment: Text.AlignRight
-// 		verticalAlignment: Text.AlignVCenter
-// 		font { pointSize: 24; bold: true }
-// 	}
-//
-// 	Rectangle {
-// 		id: textInputBackground
-// 		x: textLabel.width + container.spacing
-// 		y: 0
-// 		width: container.width - container.spacing - textLabel.width
-// 		height: container.height
-//
-// 		TextInput {
-// 			id: textInput
-// 			anchors.fill: parent
-// 			horizontalAlignment: Text.AlignLeft
-// 			verticalAlignment: Text.AlignVCenter
-// 			clip: true
-// 			font { pointSize: 24; bold: true }
-// 		}
-// 	}
+	Text {
+		id: rankLabel
+		x: 0
+		y: 0
+		width: container.width * container.rankWidth
+		height: container.height
+		horizontalAlignment: Text.AlignRight
+		verticalAlignment: Text.AlignVCenter
+		font { pointSize: 24; bold: true }
+		text: container.rank + "."
+		clip: true
+	}
+
+	Text {
+		id: playerNameLabel
+		x: rankLabel.x + rankLabel.width
+		y: 0
+		width: container.width * (1 - container.rankWidth - container.scoreWidth)
+		height: container.height
+		horizontalAlignment: Text.AlignLeft
+		verticalAlignment: Text.AlignVCenter
+		font { pointSize: 24; bold: true }
+		text: " " + container.playerName
+		clip: true
+	}
+
+	Text {
+		id: scoreLabel
+		x: playerNameLabel.x + playerNameLabel.width
+		y: 0
+		width: container.width * container.scoreWidth
+		height: container.height
+		horizontalAlignment: Text.AlignLeft
+		verticalAlignment: Text.AlignVCenter
+		font { pointSize: 24; bold: true }
+		text: container.score
+		clip: true
+	}
 }

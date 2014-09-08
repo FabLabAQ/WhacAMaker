@@ -73,7 +73,6 @@ AnimatedElementsPanel {
 		label: "Porta seriale Gioco:"
 		x: internalValues.inputFieldsX
 		yWhenVisible: internalValues.inputFieldFirstY
-		yWhenInvisible: -height
 		width: internalValues.inputFieldsWidth
 		height: internalValues.inputFieldsHeight
 		labelInputProportion: container.labelInputProportion
@@ -86,7 +85,6 @@ AnimatedElementsPanel {
 		label: "Distanza dallo schermo:"
 		x: internalValues.inputFieldsX
 		yWhenVisible: serialPort.yWhenVisible + serialPort.height + internalValues.inputFieldsSpacing
-		yWhenInvisible: -height
 		width: internalValues.inputFieldsWidth
 		height: internalValues.inputFieldsHeight
 		labelInputProportion: container.labelInputProportion
@@ -100,7 +98,6 @@ AnimatedElementsPanel {
 		label: "Distanza verticale dal centro dello schermo:"
 		x: internalValues.inputFieldsX
 		yWhenVisible: screenDistance.yWhenVisible + screenDistance.height + internalValues.inputFieldsSpacing
-		yWhenInvisible: -height
 		width: internalValues.inputFieldsWidth
 		height: internalValues.inputFieldsHeight
 		labelInputProportion: container.labelInputProportion
@@ -114,7 +111,6 @@ AnimatedElementsPanel {
 		label: "Distanza orizzontale dal centro dello schermo:"
 		x: internalValues.inputFieldsX
 		yWhenVisible: verticalScreenCenterDistance.yWhenVisible + verticalScreenCenterDistance.height + internalValues.inputFieldsSpacing
-		yWhenInvisible: -height
 		width: internalValues.inputFieldsWidth
 		height: internalValues.inputFieldsHeight
 		labelInputProportion: container.labelInputProportion
@@ -128,7 +124,6 @@ AnimatedElementsPanel {
 		caption: "Salva"
 		x: internalValues.buttonsFirstX
 		yWhenVisible: internalValues.buttonsY
-		yWhenInvisible: -height
 		width: internalValues.buttonsWidth
 		height: internalValues.buttonsHeight
 
@@ -146,7 +141,6 @@ AnimatedElementsPanel {
 		caption: "Indietro"
 		x: saveButton.x + saveButton.width + internalValues.buttonsSpacing
 		yWhenVisible: internalValues.buttonsY
-		yWhenInvisible: -height
 		width: internalValues.buttonsWidth
 		height: internalValues.buttonsHeight
 

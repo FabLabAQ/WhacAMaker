@@ -10,7 +10,7 @@ Item {
 	property int yWhenVisible
 	// The y position to reach when the button is invisible (x stays the
 	// same)
-	property int yWhenInvisible
+	property int yWhenInvisible: -height
 
 	// The signal emitted when the component has disappeared
 	signal disappeared()

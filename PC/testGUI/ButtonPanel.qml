@@ -137,7 +137,6 @@ AnimatedElementsPanel {
 		for (var i = 0; i < buttons.length; i++) {
 			buttons[i].x = bx[i];
 			buttons[i].yWhenVisible = by[i];
-			buttons[i].yWhenInvisible = -bh;
 			buttons[i].width = bw;
 			buttons[i].height =  bh;
 		}

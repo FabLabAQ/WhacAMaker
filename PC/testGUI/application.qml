@@ -44,6 +44,12 @@ Rectangle {
 		onButtonClicked: { console.log("Pressed button " + caption) }
 	}
 
+	HighScores {
+		id: easyHighScore
+		visible: false
+		anchors.fill: parent
+	}
+
 	Game {
 		id: game
 		visible: false
@@ -64,5 +70,6 @@ Rectangle {
 		mainMenu.buttonItems = [levelMenu, testPanel, settingsMenu]
 		levelMenu.buttonItems = [game, game, game]
 		settingsMenu.buttonItems = [null, configurationMenu]
+		testPanel.buttonItems = [easyHighScore]
 	}
 }
