@@ -26,6 +26,6 @@ AnimatedElement {
 
 	MouseArea {
 		anchors.fill: parent
-		onClicked: container.clicked(container.componentID)
+		onClicked: container.clicked(container.elementID)
 	}
 }

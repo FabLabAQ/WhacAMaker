@@ -13,11 +13,16 @@ Item {
 	property int yWhenInvisible
 	// The id of the component. This value is the parameter used by the
 	// disappeared signals
-	property var componentID
+	property var elementID
+
+	FORSE TOGLIERE elementID E NEI SEGNALI METTERE COME PARAMETRO container. IN QUESTO MODO ALTRE SOTTOCLASSI POTREBBERO DEFINIRE I PROPRI ID (COME BUTTONID PER I BOTTONI) E IN AnimatedElementsPanel SI POTREBBERO USARE COME ID GLI OGGETTI CHE SONO SICURAMENTE UNIVOCI
 
 	// The signal emitted when the component has disappeared. The parameter
-	// i is the componentID
+	// i is the elementID
 	signal disappeared(var i)
+	// The signal emitted when the component has appeared. The parameter i
+	// is the elementID
+	signal appeared(var i)
 
 	states: [
 		State {
@@ -51,6 +56,9 @@ Item {
 					duration: 500;
 					easing.type: Easing.InOutQuad
 				}
+				ScriptAction {
+					script: container.appeared(container.elementID)
+				}
 			}
 		},
 		Transition {
@@ -76,7 +84,7 @@ Item {
 					value: false
 				}
 				ScriptAction {
-					script: container.disappeared(container.componentID)
+					script: container.disappeared(container.elementID)
 				}
 			}
 		}

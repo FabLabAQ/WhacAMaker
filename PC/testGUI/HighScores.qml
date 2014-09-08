@@ -7,6 +7,7 @@ Item {
 	// goBack signal is raised
 	property var panelToShow: null
 
+	FARE COMPONENTE GENERICO CHE CONTIENE ANIMATEDELEMENTS
 // 	// The width of input fields relative to the container width
 // 	property real inputFieldsWidth: 0.9
 // 	// The height of input fields. If inputFieldsRelativeHeight is true this

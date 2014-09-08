@@ -176,9 +176,7 @@ Item {
 
 		if (anyVisible == false) {
 			visible = false;
-			if (panelToShow == null) {
-
-			} else {
+			if (panelToShow != null) {
 				panelToShow.visible = true;
 			}
 		}
