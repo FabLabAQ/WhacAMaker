@@ -5,7 +5,7 @@
 // argument.
 import QtQuick 2.0
 
-Item {
+AnimatedElementsPanel {
 	id: container
 
 	// The width of buttons relative to the container width
@@ -48,6 +48,9 @@ Item {
 	signal buttonClicked(string caption)
 	// The signal emitted when the back button is clicked
 	signal goBack()
+
+	// The animated elements correspond to buttons
+	animatedElements: buttons
 
 	// An internal object needed to store the next item to show. This is
 	// needed because we have to wait for buttons to go outside the screen
@@ -162,23 +165,11 @@ Item {
 		}
 	}
 
-	// The function called when a button has disappeared. If all buttons have disappeared
-	// this function hides this item
-	function internalButtonDisappeared(buttonID)
-	{
-		var allDisappeared = true;
-		for (var i = 0; i < buttons.length; i++) {
-			if (buttons[i].visible == true) {
-				allDisappeared = false;
-				break;
-			}
-		}
-
-		if (allDisappeared) {
-			visible = false;
-			if (internalState.nextItem != null) {
-				internalState.nextItem.visible = true;
-			}
+	// Called when all buttons have disappeared
+	onAllDisappeared: {
+		visible = false;
+		if (internalState.nextItem != null) {
+			internalState.nextItem.visible = true;
 		}
 	}
 
@@ -199,7 +190,6 @@ Item {
 			}
 
 			button.clicked.connect(internalButtonClicked);
-			button.disappeared.connect(internalButtonDisappeared);
 			buttons.push(button);
 		}
 
@@ -213,13 +203,14 @@ Item {
 			}
 
 			button.clicked.connect(internalGoBack);
-			button.disappeared.connect(internalButtonDisappeared);
 			buttons.push(button);
 		}
 	}
 
 	Component.onCompleted: {
 		setButtonPositionAndSize();
+		// This would be called automatically if we didn't override Component.onCompleted that is implented in
+		// parent component, so we have to call it here explicitly
 		if (visible) {
 			showAllButtons()
 		}

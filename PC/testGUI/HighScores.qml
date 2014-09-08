@@ -1,13 +1,12 @@
 // The panel showing high scores
 import QtQuick 2.0
 
-Item {
+AnimatedElementsPanel {
 	id: container
 	// The panel to show when back is clicked. If this is null only the
 	// goBack signal is raised
 	property var panelToShow: null
 
-	FARE COMPONENTE GENERICO CHE CONTIENE ANIMATEDELEMENTS
 // 	// The width of input fields relative to the container width
 // 	property real inputFieldsWidth: 0.9
 // 	// The height of input fields. If inputFieldsRelativeHeight is true this
