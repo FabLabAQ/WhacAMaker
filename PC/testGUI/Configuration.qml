@@ -1,7 +1,7 @@
 // The panel with configuration options
 import QtQuick 2.0
 
-Item {
+AnimatedElementsPanel {
 	id: container
 	// The panel to show when back or save are clicked. If this is null only
 	// the save or goBack signals are raised
@@ -78,8 +78,6 @@ Item {
 		height: internalValues.inputFieldsHeight
 		labelInputProportion: container.labelInputProportion
 		spacing: container.labelInputSpacing
-
-		onDisappeared: internalDisappeared()
 	}
 
 	// ... distance from screen...
@@ -94,8 +92,6 @@ Item {
 		labelInputProportion: container.labelInputProportion
 		spacing: container.labelInputSpacing
 		validator: DoubleValidator { bottom: 0 }
-
-		onDisappeared: internalDisappeared()
 	}
 
 	// ... vertical distance from screen center...
@@ -110,8 +106,6 @@ Item {
 		labelInputProportion: container.labelInputProportion
 		spacing: container.labelInputSpacing
 		validator: DoubleValidator {}
-
-		onDisappeared: internalDisappeared()
 	}
 
 	// ... and horizontal distance from screen center.
@@ -126,8 +120,6 @@ Item {
 		labelInputProportion: container.labelInputProportion
 		spacing: container.labelInputSpacing
 		validator: DoubleValidator {}
-
-		onDisappeared: internalDisappeared()
 	}
 
 	// Now adding the buttons to save...
@@ -140,7 +132,6 @@ Item {
 		width: internalValues.buttonsWidth
 		height: internalValues.buttonsHeight
 
-		onDisappeared: internalDisappeared()
 		onClicked: {
 			save();
 			if (panelToShow != null) {
@@ -159,7 +150,6 @@ Item {
 		width: internalValues.buttonsWidth
 		height: internalValues.buttonsHeight
 
-		onDisappeared: internalDisappeared()
 		onClicked: {
 			goBack();
 			if (panelToShow != null) {
@@ -168,51 +158,14 @@ Item {
 		}
 	}
 
-	// An internal function called when controls disappear that hides this
-	// panel and shows panelToShow if all controls have disappeared
-	function internalDisappeared()
-	{
-		var anyVisible = serialPort.visible || screenDistance.visible || verticalScreenCenterDistance.visible || horizontalScreenCenterDistance.visible || saveButton.visible || backButton.visible;
+	// The list of elements to animate
+	animatedElements: [serialPort, screenDistance, verticalScreenCenterDistance, horizontalScreenCenterDistance, saveButton, backButton]
 
-		if (anyVisible == false) {
-			visible = false;
-			if (panelToShow != null) {
-				panelToShow.visible = true;
-			}
-		}
-	}
-
-	// A function to show all controls
-	function showAll()
-	{
-		serialPort.state = "appearing";
-		screenDistance.state = "appearing";
-		verticalScreenCenterDistance.state = "appearing";
-		horizontalScreenCenterDistance.state = "appearing";
-		saveButton.state = "appearing";
-		backButton.state = "appearing";
-	}
-
-	// A function to hide all controls
-	function hideAll()
-	{
-		serialPort.state = "disappearing";
-		screenDistance.state = "disappearing";
-		verticalScreenCenterDistance.state = "disappearing";
-		horizontalScreenCenterDistance.state = "disappearing";
-		saveButton.state = "disappearing";
-		backButton.state = "disappearing";
-	}
-
-	Component.onCompleted: {
-		if (visible) {
-			showAll()
-		}
-	}
-
-	onVisibleChanged: {
-		if (visible) {
-			showAll();
+	// The function called when all elements have disappeared
+	onAllDisappeared: {
+		visible = false;
+		if (panelToShow != null) {
+			panelToShow.visible = true;
 		}
 	}
 }

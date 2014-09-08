@@ -20,17 +20,20 @@ Item {
 		id: internalState
 
 		// The list of objects that have appeared/disappeared
-		property var elementsEndedAnimation: []
+		property int elementsEndedAnimation: 0
+		// The list of objects previously connected, to remove
+		// connections before connecting the new ones
+		property var oldAnimatedElements: []
 	}
 
 	// An internal function called when controls appear. If all elements
 	// have appeared, emits the allAppeared() signal
-	function internalAppeared(obj)
+	function internalAppeared()
 	{
-		internalState.elementsEndedAnimation[obj] = true;
+		internalState.elementsEndedAnimation++;
 
-		if (internalState.elementsEndedAnimation.length == animatedElements.length) {
-			internalState.elementsEndedAnimation = [];
+		if (internalState.elementsEndedAnimation == animatedElements.length) {
+			internalState.elementsEndedAnimation = 0;
 
 			// All elements have appeared, we can emit the allAppeared() signal
 			allAppeared();
@@ -39,12 +42,12 @@ Item {
 
 	// An internal function called when controls disappear. If all elements
 	// have appeared, emits the allAppeared() signal
-	function internalDisappeared(obj)
+	function internalDisappeared()
 	{
-		internalState.elementsEndedAnimation[obj] = true;
+		internalState.elementsEndedAnimation++;
 
-		if (internalState.elementsEndedAnimation.length == animatedElements.length) {
-			internalState.elementsEndedAnimation = [];
+		if (internalState.elementsEndedAnimation == animatedElements.length) {
+			internalState.elementsEndedAnimation = 0;
 
 			// All elements have appeared, we can emit the allDisappeared() signal
 			allDisappeared();
@@ -67,9 +70,33 @@ Item {
 		}
 	}
 
+	// A function to connect signals from animated elements
+	function internalConnectAnimatedElementsSignals()
+	{
+		// Removing old connections
+		for (var i = 0; i < internalState.oldAnimatedElements.length; i++) {
+			internalState.oldAnimatedElements[i].disappeared.disconnect(internalDisappeared);
+			internalState.oldAnimatedElements[i].appeared.disconnect(internalAppeared);
+		}
+
+		internalState.oldAnimatedElements = [];
+
+		// Creating new connections
+		for (var i = 0; i < animatedElements.length; i++) {
+			animatedElements[i].disappeared.connect(internalDisappeared);
+			animatedElements[i].appeared.connect(internalAppeared);
+			// We do it here to do a deep copy
+			internalState.oldAnimatedElements.push(animatedElements[i]);
+		}
+	}
+
+	onAnimatedElementsChanged: {
+		internalConnectAnimatedElementsSignals();
+	}
+
 	Component.onCompleted: {
 		if (visible) {
-			showAll()
+			showAll();
 		}
 	}
 

@@ -6,6 +6,8 @@ AnimatedElement {
 	id: container
 	// The caption of the button
 	property string caption: "Button"
+	// The ID of the button
+	property var buttonID
 
 	// The signal emitted when the button is clicked. The parameter i is the
 	// componentID
@@ -26,6 +28,6 @@ AnimatedElement {
 
 	MouseArea {
 		anchors.fill: parent
-		onClicked: container.clicked(container.elementID)
+		onClicked: container.clicked(container.buttonID)
 	}
 }
