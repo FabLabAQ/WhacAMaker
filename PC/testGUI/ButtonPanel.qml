@@ -192,7 +192,7 @@ Item {
 		// Here we create all buttons but do not set their position
 		for (var i = 0; i < buttonCaptions.length; i++) {
 			var component = Qt.createComponent("Button.qml");
-			var button = component.createObject(container, {"caption": buttonCaptions[i], "buttonID": i});
+			var button = component.createObject(container, {"caption": buttonCaptions[i], "componentID": i});
 
 			if (button == null) {
 				console.log("Error creating button " + buttonCaptions[i]);
@@ -206,7 +206,7 @@ Item {
 		// Creating the back button if we have to
 		if (addBackButton) {
 			var component = Qt.createComponent("Button.qml");
-			var button = component.createObject(container, {"caption": backButtonCaption, "buttonID": buttons.length, "onClicked": goBack()});
+			var button = component.createObject(container, {"caption": backButtonCaption, "componentID": buttons.length, "onClicked": goBack()});
 
 			if (button == null) {
 				console.log("Error creating button " + buttonCaptions[i]);

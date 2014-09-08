@@ -4,7 +4,7 @@ import QtQuick 2.0
 Item {
 	id: container
 	// The panel to show when back or save are clicked. If this is null only
-	// the save or back signals are raised
+	// the save or goBack signals are raised
 	property var panelToShow: null
 
 	// The width of input fields relative to the container width
