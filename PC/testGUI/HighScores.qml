@@ -4,19 +4,28 @@ import QtQuick 2.0
 AnimatedElementsPanel {
 	id: container
 	// The panel to show when back is clicked. If this is null only the
-	// goBack signal is raised
+	// goBack signal is emitted
 	property var backItem: null
+	// The list of players. Each element is a string with the name of the
+	// player
+	property var playersNames: []
+	// The list of scores for players in the playersNames list. Each element
+	// is a real value. If this list has less elements than playersNames the
+	// score for players from playersScores.length on are set to 0
+	property var playersScores: []
+	// The list of SingleScore objects. This is created at startup depending
+	// on the list of players names
+	property var singleScores: []
 
 	// The signal emitted when the back button is clicked
 	signal goBack()
 
-	// AGGIUNGERE BACK ITEM, BACK LABEL E PULSANTE. Inoltre mettere vettori di player e score e generare i SingleScore automaticamente
+	// Generare i SingleScore automaticamente!!!
 
 	SingleScore {
 		id: prova
 		x: 10
 		yWhenVisible: 10
-		yWhenInvisible: -height
 		width: 400
 		height: 40
 		rank: 3
