@@ -43,7 +43,21 @@ Rectangle {
 	}
 
 	HighScores {
-		id: highScores
+		id: easyHighScores
+		visible: false
+		backItem: scoreLevelMenu
+		anchors.fill: parent
+	}
+
+	HighScores {
+		id: mediumHighScores
+		visible: false
+		backItem: scoreLevelMenu
+		anchors.fill: parent
+	}
+
+	HighScores {
+		id: hardHighScores
 		visible: false
 		backItem: scoreLevelMenu
 		anchors.fill: parent
@@ -68,7 +82,7 @@ Rectangle {
 		// Here we associate menus with buttons
 		mainMenu.buttonItems = [gameLevelMenu, scoreLevelMenu, settingsMenu]
 		gameLevelMenu.buttonItems = [game, game, game]
-		scoreLevelMenu.buttonItems = [highScores, highScores, highScores]
+		scoreLevelMenu.buttonItems = [easyHighScores, mediumHighScores, hardHighScores]
 		settingsMenu.buttonItems = [null, configurationMenu]
 	}
 }
