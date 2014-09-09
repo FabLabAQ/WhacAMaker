@@ -17,7 +17,15 @@ Rectangle {
 	}
 
 	ButtonPanel {
-		id: levelMenu
+		id: gameLevelMenu
+		visible: false
+		backItem: mainMenu
+		buttonCaptions: ["Facile", "Medio", "Difficile"]
+		anchors.fill: parent
+	}
+
+	ButtonPanel {
+		id: scoreLevelMenu
 		visible: false
 		backItem: mainMenu
 		buttonCaptions: ["Facile", "Medio", "Difficile"]
@@ -34,19 +42,10 @@ Rectangle {
 		onButtonClicked: { console.log("Pressed button " + caption) }
 	}
 
-	ButtonPanel {
-		id: testPanel
-		visible: false
-		backItem: mainMenu
-		buttonCaptions: ["Primo", "Secondo", "Contorno"]
-		anchors.fill: parent
-
-		onButtonClicked: { console.log("Pressed button " + caption) }
-	}
-
 	HighScores {
-		id: easyHighScore
+		id: highScores
 		visible: false
+		backItem: scoreLevelMenu
 		anchors.fill: parent
 	}
 
@@ -67,9 +66,9 @@ Rectangle {
 
 	Component.onCompleted: {
 		// Here we associate menus with buttons
-		mainMenu.buttonItems = [levelMenu, testPanel, settingsMenu]
-		levelMenu.buttonItems = [game, game, game]
+		mainMenu.buttonItems = [gameLevelMenu, scoreLevelMenu, settingsMenu]
+		gameLevelMenu.buttonItems = [game, game, game]
+		scoreLevelMenu.buttonItems = [highScores, highScores, highScores]
 		settingsMenu.buttonItems = [null, configurationMenu]
-		testPanel.buttonItems = [easyHighScore]
 	}
 }

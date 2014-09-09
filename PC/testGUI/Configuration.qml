@@ -36,9 +36,9 @@ AnimatedElementsPanel {
 	// The spacing between buttons. This is relative to the button width
 	property real buttonsSpacing: 0.3
 
-	// The signal raised when the save button is clicked
+	// The signal emitted when the save button is clicked
 	signal save()
-	// The signal raised when the back button is clicked
+	// The signal emitted when the back button is clicked
 	signal goBack()
 
 	// Here we have all values computed automatically from properties above
