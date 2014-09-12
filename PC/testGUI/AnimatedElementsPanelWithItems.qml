@@ -99,5 +99,12 @@ AnimatedElementsPanel {
 		}
 	}
 
-	Component.onCompleted: placeElements()
+	Component.onCompleted: {
+		placeElements();
+		// This would be called automatically if we didn't override Component.onCompleted that is implented in
+		// parent component, so we have to call it here explicitly
+		if (visible) {
+			showAll()
+		}
+	}
 }
