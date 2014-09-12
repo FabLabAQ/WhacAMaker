@@ -5,6 +5,7 @@
 // argument.
 import QtQuick 2.0
 
+CAMBIARE PER USARE AnimatedElementsPanelWithItems
 AnimatedElementsPanel {
 	id: container
 

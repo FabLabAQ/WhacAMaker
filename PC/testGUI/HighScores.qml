@@ -1,6 +1,7 @@
 // The panel showing high scores
 import QtQuick 2.0
 
+CAMBIARE PER USARE AnimatedElementsPanelWithItems
 AnimatedElementsPanel {
 	id: container
 	// The panel to show when back is clicked. If this is null only the
