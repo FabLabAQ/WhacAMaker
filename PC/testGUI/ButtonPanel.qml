@@ -84,25 +84,6 @@ AnimatedElementsPanel {
 		return computeButtonHeight() * buttonSpacing;
 	}
 
-	// Shows all button. This changes their state to "appearing" so that
-	// they are animated
-	function showAllButtons()
-	{
-		for (var i = 0; i < buttons.length; i++) {
-			buttons[i].state = "appearing";
-		}
-	}
-
-	// Hides all button. This changes their state to "disappearing" so that
-	// they are animated. Each button sends a disappeared signal when the
-	// animation is finished
-	function hideAllButtons()
-	{
-		for (var i = 0; i < buttons.length; i++) {
-			buttons[i].state = "disappearing";
-		}
-	}
-
 	// The function to set the buttons position and size
 	function setButtonPositionAndSize()
 	{
@@ -149,7 +130,7 @@ AnimatedElementsPanel {
 			goBack();
 		} else {
 			internalState.nextItem = backItem;
-			hideAllButtons();
+			hideAll();
 		}
 	}
 
@@ -160,7 +141,7 @@ AnimatedElementsPanel {
 			buttonClicked(buttons[buttonID].caption);
 		} else {
 			internalState.nextItem = buttonItems[buttonID]
-			hideAllButtons();
+			hideAll();
 		}
 	}
 
@@ -182,7 +163,7 @@ AnimatedElementsPanel {
 		// Here we create all buttons but do not set their position
 		for (var i = 0; i < buttonCaptions.length; i++) {
 			var component = Qt.createComponent("Button.qml");
-			var button = component.createObject(container, {"caption": buttonCaptions[i], "buttonID": i});
+			var button = component.createObject(container, {"caption": buttonCaptions[i], "name": i});
 
 			if (button == null) {
 				console.log("Error creating button " + buttonCaptions[i]);
@@ -195,7 +176,7 @@ AnimatedElementsPanel {
 		// Creating the back button if we have to
 		if (addBackButton) {
 			var component = Qt.createComponent("Button.qml");
-			var button = component.createObject(container, {"caption": backButtonCaption, "buttonID": buttons.length, "onClicked": goBack()});
+			var button = component.createObject(container, {"caption": backButtonCaption, "name": buttons.length, "onClicked": goBack()});
 
 			if (button == null) {
 				console.log("Error creating button " + buttonCaptions[i]);
@@ -211,7 +192,7 @@ AnimatedElementsPanel {
 		// This would be called automatically if we didn't override Component.onCompleted that is implented in
 		// parent component, so we have to call it here explicitly
 		if (visible) {
-			showAllButtons()
+			showAll()
 		}
 	}
 
@@ -220,7 +201,7 @@ AnimatedElementsPanel {
 
 	onVisibleChanged: {
 		if (visible) {
-			showAllButtons();
+			showAll();
 		}
 	}
 }

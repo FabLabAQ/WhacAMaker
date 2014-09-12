@@ -1,7 +1,7 @@
 // A simple component used in the game. This contains code for animations and
 // two sates which can be used to trigger animations, "appearing" and
 // "disappearing". This also has a signal that is emitted when the disappearing
-// animation is finished
+// animation is finished.
 import QtQuick 2.0
 
 Item {
@@ -11,6 +11,8 @@ Item {
 	// The y position to reach when the button is invisible (x stays the
 	// same)
 	property int yWhenInvisible: -height
+	// The name of this elements (can be used to identify this item)
+	property var name
 
 	// The signal emitted when the component has disappeared
 	signal disappeared()
