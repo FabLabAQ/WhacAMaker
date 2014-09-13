@@ -2,7 +2,6 @@
 #include <QPen>
 #include <QPainter>
 #include <QMouseEvent>
-#include <iostream>
 
 GameItem::GameItem(QQuickItem *parent) :
 	QQuickPaintedItem(parent)

@@ -7,6 +7,12 @@ Rectangle {
 	width: 640
 	height: 480
 
+	// The signal emitted when configuration parameters are saved. Obj is
+	// the object that contains the parameters
+	signal configurationParametersSaved(var obj)
+	// The signal emitted when a name is entered (to record an highscore)
+	signal playerNameEntered(string playerName)
+
 	ButtonPanel {
 		id: mainMenu
 		visible: true
@@ -91,6 +97,8 @@ Rectangle {
 		visible: false
 		panelToShow: settingsMenu
 		anchors.fill: parent
+
+		onSave: configurationParametersSaved(configurationMenu)
 	}
 
 	NameSelection {
@@ -98,6 +106,8 @@ Rectangle {
 		visible: false
 		backItem: mainMenu
 		anchors.fill: parent
+
+		onEnterPressed: playerNameEntered(t)
 	}
 
 	Component.onCompleted: {
