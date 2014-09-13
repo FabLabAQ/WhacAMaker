@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import TiroAlMostro 1.0
 
 Rectangle {
 	id: application
@@ -69,18 +70,33 @@ Rectangle {
 		anchors.fill: parent
 	}
 
-	Game {
+	GameItem {
 		id: game
 		visible: false
 		anchors.fill: parent
 
-		onGoBack: { visible = false; mainMenu.visible = true; }
+		onGameFinished: {
+			visible = false;
+
+			if (newHighScore) {
+				nameSelection.visible = true;
+			} else {
+				mainMenu.visible = true;
+			}
+		}
 	}
 
 	Configuration {
 		id: configurationMenu
 		visible: false
 		panelToShow: settingsMenu
+		anchors.fill: parent
+	}
+
+	NameSelection {
+		id: nameSelection
+		visible: false
+		backItem: mainMenu
 		anchors.fill: parent
 	}
 

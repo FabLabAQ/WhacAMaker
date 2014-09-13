@@ -84,9 +84,9 @@ AnimatedElementsPanelWithItems {
 	onButtonCaptionsChanged: {
 		// Deleting old buttons
 		for (button in items) {
-			button.destroy()
+			button.destroy();
 		}
-		items = []
+		items = [];
 
 		// Here we create all buttons but do not set their position
 		for (var i = 0; i < buttonCaptions.length; i++) {

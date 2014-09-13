@@ -8,7 +8,7 @@ AnimatedElement {
 	property string caption: "Button"
 
 	// The signal emitted when the button is clicked. The parameter i is the
-	// componentID
+	// name
 	signal clicked(var i)
 
 	Rectangle {

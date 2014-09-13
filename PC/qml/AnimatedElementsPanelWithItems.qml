@@ -68,6 +68,11 @@ AnimatedElementsPanel {
 			}
 			items[i].width = aItemWidth;
 			items[i].height = aItemHeight;
+
+			// If the item is visible, we also change y
+			if (items[i].visible) {
+				items[i].y = items[i].yWhenVisible
+			}
 		}
 
 		// Now computing the position of all buttons
@@ -81,6 +86,11 @@ AnimatedElementsPanel {
 			}
 			buttons[i].width = aButtonWidth;
 			buttons[i].height = aButtonHeight;
+
+			// If the item is visible, we also change y
+			if (buttons[i].visible) {
+				buttons[i].y = buttons[i].yWhenVisible
+			}
 		}
 	}
 
