@@ -46,6 +46,8 @@ Rectangle {
 		id: easyHighScores
 		visible: false
 		backItem: scoreLevelMenu
+		playersNames: ["Pippo", "Pluto", "Paperino"]
+		playersScores: [50, 40, 10]
 		anchors.fill: parent
 	}
 
@@ -53,6 +55,8 @@ Rectangle {
 		id: mediumHighScores
 		visible: false
 		backItem: scoreLevelMenu
+		playersNames: ["Paperino", "Pluto", "Pippo"]
+		playersScores: [40, 20, 5]
 		anchors.fill: parent
 	}
 
@@ -60,6 +64,8 @@ Rectangle {
 		id: hardHighScores
 		visible: false
 		backItem: scoreLevelMenu
+		playersNames: ["Pluto", "Paperino", "Pippo"]
+		playersScores: [19, 12, 2]
 		anchors.fill: parent
 	}
 

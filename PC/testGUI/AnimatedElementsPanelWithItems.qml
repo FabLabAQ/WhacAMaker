@@ -46,8 +46,10 @@ AnimatedElementsPanel {
 		var itemsTotalOccupiedHeight = (items.length == 0) ? 0 : (items.length * aItemHeight + (items.length - 1) * aItemSpacing);
 		// The total height occupied by buttons
 		var buttonsTotalOccupiedHeight = (buttons.length == 0) ? 0 : aButtonHeight;
+		// The actual spacing. This is zero if there are no items or no buttons
+		var realSpacing = ((items.length == 0) || (buttons.length == 0)) ? 0 : aItemButtonsSpacing;
 		// The total height occupied by all buttons and items
-		var totalOccupiedHeight = itemsTotalOccupiedHeight + aItemButtonsSpacing + buttonsTotalOccupiedHeight;
+		var totalOccupiedHeight = itemsTotalOccupiedHeight + realSpacing + buttonsTotalOccupiedHeight;
 		// The total width occupied by buttons
 		var buttonsTotalOccupiedWidth = (buttons.length == 0) ? 0 : (buttons.length * aButtonWidth + (buttons.length - 1) * aButtonSpacing);
 		// The y position of the first item
@@ -87,17 +89,25 @@ AnimatedElementsPanel {
 	animatedElements: items.concat(buttons)
 
 	// When the list of items or buttons change, the positions are computed
-	// again
+	// again. We need to check whether the buttons is an array because when
+	// the application starts, we could have items initialized and buttons
+	// still undefined (or viceversa) and we would get warnings. This way
+	// we are sure that both have been initialized
 	onItemsChanged: {
-		if (Component.status == Component.Ready) {
+		if (Array.isArray(buttons)) {
 			placeElements();
 		}
 	}
 	onButtonsChanged: {
-		if (Component.status == Component.Ready) {
+		if (Array.isArray(items)) {
 			placeElements();
 		}
 	}
+
+	// When the size of the container changes, we have to recompute the
+	// positions of items and buttons
+	onWidthChanged: placeElements()
+	onHeightChanged: placeElements()
 
 	Component.onCompleted: {
 		placeElements();

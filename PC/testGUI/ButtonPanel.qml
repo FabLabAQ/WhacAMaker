@@ -1,25 +1,16 @@
-// This component allows creating a panel with buttons. You can specify the
-// button captions, their width relative to the panel, their height (either
-// relative or absolute) and the spacing between them. This class provdes a
-// signal that is thrown when a button is pressed, with the button text as
-// argument.
+// This component allows creating a panel with buttons. All buttons are placed
+// as items in an AnimatedElementsPanelWithItems and you must use the
+// item-realated properties of AnimatedElementsPanelWithItems to set dimensions.
+// This class provides a signal that is thrown when a button is pressed, with
+// the button text as argument.
 import QtQuick 2.0
 
-CAMBIARE PER USARE AnimatedElementsPanelWithItems
-AnimatedElementsPanel {
+AnimatedElementsPanelWithItems {
 	id: container
 
-	// The width of buttons relative to the container width
-	property real buttonWidth: 0.6
-	// The height of buttons. If relativeHeight is true this is relative to
-	// the component height, otherwise this is the actual height of buttons
-	property real buttonHeight: 0.1
-	// If true buttonHeight is relative to the component height, otherwise
-	// buttonHeight is the actual height of buttons
-	property bool relativeHeight: true
-	// The spacing between buttons. This is relative to the button height
-	property real buttonSpacing: 0.3
-	// IF true adds a back button. When the back button is clicked the
+	// Use itemHeight, itemWidth and itemSpacing to set dimensions.
+
+	// If true adds a back button. When the back button is clicked the
 	// goBack() signal is emitted. The back button is always the last button
 	property bool addBackButton: true
 	// The caption of the back button
@@ -38,10 +29,6 @@ AnimatedElementsPanel {
 	// signal is raised. Otherwise this item is hidden and the item at
 	// buttonItems[i] is shown
 	property var buttonItems: []
-	// The list of button objects. This is created at startup depending on
-	// the list of button captions. This also contains the back button if
-	// it has to be created
-	property var buttons: []
 
 	// The signal emitted when a button is clicked. caption is the caption
 	// of the button. This is emitted even if a function is already
@@ -50,8 +37,9 @@ AnimatedElementsPanel {
 	// The signal emitted when the back button is clicked
 	signal goBack()
 
-	// The animated elements correspond to buttons
-	animatedElements: buttons
+	// The items vector is filled by the onButtonCaptionsChanged slot, the
+	// buttons vector is empty
+	buttons: []
 
 	// An internal object needed to store the next item to show. This is
 	// needed because we have to wait for buttons to go outside the screen
@@ -61,67 +49,6 @@ AnimatedElementsPanel {
 
 		// The item to show
 		property var nextItem
-	}
-
-	// The function to compute the width in pixels of buttons
-	function computeButtonWidth()
-	{
-		return width * buttonWidth;
-	}
-
-	// The function to compute the height in pixels of buttons
-	function computeButtonHeight()
-	{
-		if (relativeHeight) {
-			return height * buttonHeight;
-		} else {
-			return buttonHeight;
-		}
-	}
-
-	// The function to compute the spacing between buttons
-	function computeButtonSpacing()
-	{
-		return computeButtonHeight() * buttonSpacing;
-	}
-
-	// The function to set the buttons position and size
-	function setButtonPositionAndSize()
-	{
-		if (buttons.length == 0) {
-			return;
-		}
-
-		// Computing dimensions of buttons
-		var bw = computeButtonWidth();
-		var bh = computeButtonHeight();
-		var bs = computeButtonSpacing();
-
-		// Computing the total space taken by buttons
-		var totalButtonSpace = bh * buttons.length;
-		if (buttons.length != 1) {
-			totalButtonSpace += bs * (buttons.length - 1);
-		}
-
-		// Computing the x position of buttons (the same for all buttons) and the y position
-		// of the first button
-		var xPos = (width - bw) / 2;
-		var firstYPos = (height - totalButtonSpace) / 2;
-		var bx = [xPos];
-		var by = [firstYPos];
-
-		for (var i = 1; i < buttons.length; i++) {
-			bx.push(xPos);
-			by.push(by[i - 1] + bh + bs);
-		}
-
-		// Now we can set button position and sizes
-		for (var i = 0; i < buttons.length; i++) {
-			buttons[i].x = bx[i];
-			buttons[i].yWhenVisible = by[i];
-			buttons[i].width = bw;
-			buttons[i].height =  bh;
-		}
 	}
 
 	// An internal function called when the back button is clicked
@@ -139,7 +66,7 @@ AnimatedElementsPanel {
 	function internalButtonClicked(buttonID)
 	{
 		if ((buttonID > buttonItems.length) || (buttonItems[buttonID] == null)) {
-			buttonClicked(buttons[buttonID].caption);
+			buttonClicked(items[buttonID].caption);
 		} else {
 			internalState.nextItem = buttonItems[buttonID]
 			hideAll();
@@ -156,10 +83,10 @@ AnimatedElementsPanel {
 
 	onButtonCaptionsChanged: {
 		// Deleting old buttons
-		for (button in buttons) {
+		for (button in items) {
 			button.destroy()
 		}
-		buttons = []
+		items = []
 
 		// Here we create all buttons but do not set their position
 		for (var i = 0; i < buttonCaptions.length; i++) {
@@ -171,38 +98,20 @@ AnimatedElementsPanel {
 			}
 
 			button.clicked.connect(internalButtonClicked);
-			buttons.push(button);
+			items.push(button);
 		}
 
 		// Creating the back button if we have to
 		if (addBackButton) {
 			var component = Qt.createComponent("Button.qml");
-			var button = component.createObject(container, {"caption": backButtonCaption, "name": buttons.length, "onClicked": goBack()});
+			var button = component.createObject(container, {"caption": backButtonCaption, "name": items.length, "onClicked": goBack()});
 
 			if (button == null) {
 				console.log("Error creating button " + buttonCaptions[i]);
 			}
 
 			button.clicked.connect(internalGoBack);
-			buttons.push(button);
-		}
-	}
-
-	Component.onCompleted: {
-		setButtonPositionAndSize();
-		// This would be called automatically if we didn't override Component.onCompleted that is implented in
-		// parent component, so we have to call it here explicitly
-		if (visible) {
-			showAll()
-		}
-	}
-
-	onWidthChanged: setButtonPositionAndSize()
-	onHeightChanged: setButtonPositionAndSize()
-
-	onVisibleChanged: {
-		if (visible) {
-			showAll();
+			items.push(button);
 		}
 	}
 }
