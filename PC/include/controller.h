@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QQuickView>
 #include <QSettings>
+#include <QList>
+#include <QVariant>
 #include "gameItem.h"
 
 /**
@@ -65,6 +67,13 @@ protected:
 	void restoreParameters();
 
 	/**
+	 * \brief Restores the highscores in the panel for the given level
+	 *
+	 * \param level the difficulty level whose highscores to restore
+	 */
+	void restoreHighScores(GameItem::DifficultyLevel level);
+
+	/**
 	 * \brief Returns a pointer to the QML object with configuration
 	 *        parameters
 	 *
@@ -99,6 +108,17 @@ protected:
 	 *                 setting is "configuration/\<propName\>"
 	 */
 	void copyPropertyToSettings(QObject* item, QString propName);
+
+	/**
+	 * \brief Returns the highscores and players for the given level loading
+	 *        them from m_setting
+	 *
+	 * \param level the level whose highscores and players to get
+	 * \param highscores the vector to fill with highscores
+	 * \param players the vector to fill with players
+	 * \param levelName the vector with a string representation of level
+	 */
+	void getHighScoresFromSettings(GameItem::DifficultyLevel level, QList<QVariant>& highscores, QList<QVariant>& players, QString& levelName);
 
 	/**
 	 * \brief The object with settings for the application

@@ -26,7 +26,8 @@ AnimatedElementsPanelWithItems {
 	{
 		// Deleting old scores
 		for (singleScore in items) {
-			singleScore.destroy()
+			DA UN PROBLEMA QUI, MA FORSE C'È QUALCOSA DI PIÙ GRANDE
+			singleScore.destroy();
 		}
 		items = []
 
