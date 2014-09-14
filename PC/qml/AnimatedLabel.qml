@@ -6,10 +6,12 @@ AnimatedElement {
 
 	// The text to show
 	property alias text: buttonText.text
+	// The background color
+	property alias backgroundColor: rectangle.color
 
 	Rectangle {
 		id: rectangle
-		border.color: "white"
+		color: "white"
 		anchors.fill: parent
 
 		Text {

@@ -65,9 +65,8 @@ AnimatedElementsPanelWithItems {
 	// An internal function called when a button is clicked
 	function internalButtonClicked(buttonID)
 	{
-		if ((buttonID > buttonItems.length) || (buttonItems[buttonID] == null)) {
-			buttonClicked(items[buttonID].caption);
-		} else {
+		buttonClicked(items[buttonID].caption);
+		if ((buttonID < buttonItems.length) && (buttonItems[buttonID] != null)) {
 			internalState.nextItem = buttonItems[buttonID]
 			hideAll();
 		}

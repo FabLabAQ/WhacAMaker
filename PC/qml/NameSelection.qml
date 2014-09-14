@@ -9,18 +9,30 @@ AnimatedElementsPanel {
 	property var backItem: null
 	// The maximum allowed number of characters
 	property int maxCharacters: 10
+	// The text for the label on top of the item
+	property alias labelText: titleLabel.text
 
 	// The signal emitted when the enter keyboard is pressed. t is the text
 	// that has been entered
 	signal enterPressed(string t)
 
+	// The label
+	AnimatedLabel {
+		id: titleLabel
+		x: 0
+		yWhenVisible: 0
+		width: container.width
+		height: container.height / 5
+		backgroundColor: "#00000000"
+	}
+
 	// The label with text
 	AnimatedLabel {
 		id: label
 		x: (container.width - width) / 2
-		yWhenVisible: (container.height - keyboard.height) / 3
+		yWhenVisible: titleLabel.height + (container.height - keyboard.height - titleLabel.height) / 3
 		width: container.width / 2
-		height: (container.height - keyboard.height) / 3
+		height: (container.height - keyboard.height - titleLabel.height) / 3
 		clip: true
 	}
 
@@ -52,7 +64,7 @@ AnimatedElementsPanel {
 	}
 
 	// The animated elements
-	animatedElements: [label, keyboard]
+	animatedElements: [titleLabel, label, keyboard]
 
 	// Called when all buttons have disappeared
 	onAllDisappeared: {

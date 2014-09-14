@@ -3,9 +3,9 @@ cmake_minimum_required(VERSION 2.8.11)
 project(TiroAlMostro)
 
 # Find the QtQml library
-find_package(Qt5Qml REQUIRED)
-find_package(Qt5Quick REQUIRED)
-find_package(Qt5Gui REQUIRED)
+find_package(Qt5Qml 5.3 REQUIRED)
+find_package(Qt5Quick 5.3 REQUIRED)
+find_package(Qt5Gui 5.3 REQUIRED)
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)

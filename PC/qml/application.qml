@@ -7,11 +7,22 @@ Rectangle {
 	width: 640
 	height: 480
 
-	// The signal emitted when configuration parameters are saved. Obj is
-	// the object that contains the parameters
-	signal configurationParametersSaved(var obj)
+	// The signal emitted when configuration parameters are saved
+	signal configurationParametersSaved()
 	// The signal emitted when a name is entered (to record an highscore)
 	signal playerNameEntered(string playerName)
+
+	// The function returning the object that contains parameters (to be
+	// restored by C++ code)
+	function configurationParametersObject()
+	{
+		return configurationMenu;
+	}
+	// The function returning the game object
+	function gameObject()
+	{
+		return game;
+	}
 
 	ButtonPanel {
 		id: mainMenu
@@ -29,6 +40,16 @@ Rectangle {
 		backItem: mainMenu
 		buttonCaptions: ["Facile", "Medio", "Difficile"]
 		anchors.fill: parent
+
+		onButtonClicked: {
+			if (caption == "Facile") {
+				game.difficultyLevel = GameItem.Easy;
+			} else if (caption == "Medio") {
+				game.difficultyLevel = GameItem.Medium;
+			} else if (caption == "Difficile") {
+				game.difficultyLevel = GameItem.Hard;
+			}
+		}
 	}
 
 	ButtonPanel {
@@ -103,6 +124,7 @@ Rectangle {
 
 	NameSelection {
 		id: nameSelection
+		labelText: "Ottimo punteggio!"
 		visible: false
 		backItem: mainMenu
 		anchors.fill: parent

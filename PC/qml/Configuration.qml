@@ -19,6 +19,22 @@ AnimatedElementsPanelWithItems {
 	// The space between the text area and the label
 	property real labelInputSpacing: 10
 
+	// The aliases to properties with values for the fields and whether they
+	// are acceptable or not
+	// Serial port
+	property alias serialPortValue: serialPort.text
+	property alias serialPortAcceptable: serialPort.acceptableInput
+	// Distance from monitor
+	property alias screenDistanceValue: screenDistance.text
+	property alias screenDistanceAcceptable: screenDistance.acceptableInput
+	// Vertical distance from screen center
+	property alias verticalScreenCenterDistanceValue: verticalScreenCenterDistance.text
+	property alias verticalScreenCenterDistanceAcceptable: verticalScreenCenterDistance.acceptableInput
+	// Horizontal distance from screen center
+	property alias horizontalScreenCenterDistanceValue: horizontalScreenCenterDistance.text
+	property alias horizontalScreenCenterDistanceAcceptable: horizontalScreenCenterDistance.acceptableInput
+
+
 	// The signal emitted when the save button is clicked
 	signal save()
 	// The signal emitted when the back button is clicked
