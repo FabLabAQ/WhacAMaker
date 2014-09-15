@@ -21,6 +21,17 @@ class Controller : public QObject
 
 public:
 	/**
+	 * \brief The calibration status
+	 */
+	enum CalibrationStatus {
+		Up,
+		Down,
+		Left,
+		Right
+	};
+
+public:
+	/**
 	 * \brief Constructor
 	 *
 	 * \param view the object displaying the QML scene and starting the QML
@@ -60,6 +71,21 @@ protected slots:
 	 */
 	void savePlayerName(const QString& name);
 
+	/**
+	 * \brief The slot called when calibration starts
+	 */
+	void calibrationStarted();
+
+	/**
+	 * \brief The slot called when calibration is interrupted by the user
+	 */
+	void calibrationInterrupted();
+
+	/**
+	 * \brief The slot called to set the current calibration status
+	 */
+	void setCalibrationStatus(CalibrationStatus status);
+
 protected:
 	/**
 	 * \brief Restores parameters in the configuration parameters QML object
@@ -87,6 +113,13 @@ protected:
 	 * \return a pointer to the game object
 	 */
 	GameItem* qmlGameObject();
+
+	/**
+	 * \brief Returns a pointer to the QML object to perform calibration
+	 *
+	 * \return a pointer to the QML object to perform calibration
+	 */
+	QObject* qmlCalibrationObject();
 
 	/**
 	 * \brief Copies a value from settings to an QML item
@@ -140,6 +173,13 @@ protected:
 	 * \brief The score of the next highscore
 	 */
 	double m_nextScore;
+
+	/**
+	 * \brief The calibration object
+	 *
+	 * This is guaranteed to be valid only during the calibration procedure
+	 */
+	QObject* m_calibration;
 };
 
 #endif

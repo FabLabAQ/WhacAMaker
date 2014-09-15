@@ -14,7 +14,8 @@ Controller::Controller(QQuickView& view, QObject* parent) :
 	m_settings(),
 	m_view(view),
 	m_nextScoreLevel(GameItem::Easy),
-	m_nextScore(0.0)
+	m_nextScore(0.0),
+	m_calibration(NULL)
 {
 	// Setting ourself as the controller in the game object
 	qmlGameObject()->setController(this);
@@ -30,6 +31,8 @@ Controller::Controller(QQuickView& view, QObject* parent) :
 	// Connecting signals from m_view to our slots
 	connect(m_view.rootObject(), SIGNAL(configurationParametersSaved()), this, SLOT(saveConfigurationParameters()));
 	connect(m_view.rootObject(), SIGNAL(playerNameEntered(QString)), this, SLOT(savePlayerName(QString)));
+	connect(m_view.rootObject(), SIGNAL(calibrationStarted()), this, SLOT(calibrationStarted()));
+	connect(m_view.rootObject(), SIGNAL(calibrationInterrupted()), this, SLOT(calibrationInterrupted()));
 }
 
 Controller::~Controller()
@@ -121,6 +124,38 @@ void Controller::savePlayerName(const QString& name)
 	restoreHighScores(m_nextScoreLevel);
 }
 
+void Controller::calibrationStarted()
+{
+	m_calibration = qmlCalibrationObject();
+}
+
+void Controller::calibrationInterrupted()
+{
+	m_calibration = NULL;
+}
+
+void Controller::setCalibrationStatus(CalibrationStatus status)
+{
+	QString statusString;
+	switch (status) {
+		case Up:
+			statusString = "up";
+			break;
+		case Down:
+			statusString = "down";
+			break;
+		case Left:
+			statusString = "left";
+			break;
+		case Right:
+			statusString = "right";
+			break;
+	}
+
+	// Setting the status in the calibration item
+	QQmlProperty::write(m_calibration, "state", statusString);
+}
+
 void Controller::restoreParameters()
 {
 	// Getting a reference to the QML object string the parameters
@@ -182,6 +217,20 @@ GameItem* Controller::qmlGameObject()
 	}
 
 	return gameItem;
+}
+
+QObject* Controller::qmlCalibrationObject()
+{
+	// Getting a reference to the QML object string the parameters
+	QVariant returnedObject;
+	QMetaObject::invokeMethod(m_view.rootObject(), "calibrationObject", Q_RETURN_ARG(QVariant, returnedObject));
+	QObject* const calibrationItem = qvariant_cast<QObject *>(returnedObject);
+
+	if (calibrationItem == NULL) {
+		throwMyRuntimeException("Cannot access the calibration object");
+	}
+
+	return calibrationItem;
 }
 
 void Controller::copyPropertyToItem(QObject* item, QString propName)

@@ -11,6 +11,10 @@ Rectangle {
 	signal configurationParametersSaved()
 	// The signal emitted when a name is entered (to record an highscore)
 	signal playerNameEntered(string playerName)
+	// The signal emitted when calibration starts
+	signal calibrationStarted()
+	// The signal emitted when calibration is cancelled by the user
+	signal calibrationInterrupted()
 
 	// The function returning the object that contains parameters (to be
 	// restored by C++ code)
@@ -42,6 +46,11 @@ Rectangle {
 	function calibrationObject()
 	{
 		return calibration;
+	}
+	// The function to end the calibration procedure
+	function endCalibration()
+	{
+		calibration.endCalibration();
 	}
 
 	ButtonPanel {
@@ -131,7 +140,7 @@ Rectangle {
 		panelToShow: settingsMenu
 		anchors.fill: parent
 
-		onSave: configurationParametersSaved(configuration)
+		onSave: application.configurationParametersSaved()
 	}
 
 	Calibration {
@@ -139,6 +148,9 @@ Rectangle {
 		visible: false
 		backItem: settingsMenu
 		anchors.fill: parent
+
+		onCalibrationStarted: application.calibrationStarted()
+		onGoBack: application.calibrationInterrupted()
 	}
 
 	NameSelection {
@@ -148,7 +160,7 @@ Rectangle {
 		backItem: mainMenu
 		anchors.fill: parent
 
-		onEnterPressed: playerNameEntered(t)
+		onEnterPressed: application.playerNameEntered(t)
 	}
 
 	Component.onCompleted: {
