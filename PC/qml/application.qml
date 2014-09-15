@@ -16,7 +16,7 @@ Rectangle {
 	// restored by C++ code)
 	function configurationParametersObject()
 	{
-		return configurationMenu;
+		return configuration;
 	}
 	// The function returning the game object
 	function gameObject()
@@ -37,6 +37,11 @@ Rectangle {
 	function hardScoreObject()
 	{
 		return hardHighScores;
+	}
+	// The function returning the calibration object
+	function calibrationObject()
+	{
+		return calibration;
 	}
 
 	ButtonPanel {
@@ -121,12 +126,19 @@ Rectangle {
 	}
 
 	Configuration {
-		id: configurationMenu
+		id: configuration
 		visible: false
 		panelToShow: settingsMenu
 		anchors.fill: parent
 
-		onSave: configurationParametersSaved(configurationMenu)
+		onSave: configurationParametersSaved(configuration)
+	}
+
+	Calibration {
+		id: calibration
+		visible: false
+		backItem: settingsMenu
+		anchors.fill: parent
 	}
 
 	NameSelection {
@@ -144,6 +156,6 @@ Rectangle {
 		mainMenu.buttonItems = [gameLevelMenu, scoreLevelMenu, settingsMenu]
 		gameLevelMenu.buttonItems = [game, game, game]
 		scoreLevelMenu.buttonItems = [easyHighScores, mediumHighScores, hardHighScores]
-		settingsMenu.buttonItems = [null, configurationMenu]
+		settingsMenu.buttonItems = [calibration, configuration]
 	}
 }

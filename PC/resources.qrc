@@ -8,6 +8,8 @@
 	<file>qml/application.qml</file>
 	<file>qml/ButtonPanel.qml</file>
 	<file>qml/Button.qml</file>
+	<file>qml/Calibration.qml</file>
+	<file>qml/CalibrationTarget.qml</file>
 	<file>qml/Configuration.qml</file>
 	<file>qml/HighScores.qml</file>
 	<file>qml/InputField.qml</file>

@@ -14,6 +14,7 @@ AnimatedElement {
 	Rectangle {
 		id: rectangle
 		border.color: "white"
+		color: "white"
 		anchors.fill: parent
 
 		Text {
