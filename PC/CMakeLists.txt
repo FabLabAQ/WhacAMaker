@@ -6,6 +6,7 @@ project(TiroAlMostro)
 find_package(Qt5Qml 5.3 REQUIRED)
 find_package(Qt5Quick 5.3 REQUIRED)
 find_package(Qt5Gui 5.3 REQUIRED)
+find_package(Qt5SerialPort 5.3 REQUIRED)
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -26,4 +27,4 @@ qt5_add_resources(SRCS resources.qrc)
 add_executable(TiroAlMostro ${SRCS} ${HDRS})
 
 # Use the Widgets module from Qt 5.
-target_link_libraries(TiroAlMostro Qt5::Qml Qt5::Gui Qt5::Quick)
+target_link_libraries(TiroAlMostro Qt5::Qml Qt5::Gui Qt5::Quick Qt5::SerialPort)
