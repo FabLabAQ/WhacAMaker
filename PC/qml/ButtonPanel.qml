@@ -85,7 +85,10 @@ AnimatedElementsPanelWithItems {
 		for (button in items) {
 			button.destroy();
 		}
-		items = [];
+
+		// We use this temporary variable because we have to assign a new value to items to trigger
+		// the changed event
+		var tmpItems = [];
 
 		// Here we create all buttons but do not set their position
 		for (var i = 0; i < buttonCaptions.length; i++) {
@@ -97,20 +100,22 @@ AnimatedElementsPanelWithItems {
 			}
 
 			button.clicked.connect(internalButtonClicked);
-			items.push(button);
+			tmpItems.push(button);
 		}
 
 		// Creating the back button if we have to
 		if (addBackButton) {
 			var component = Qt.createComponent("Button.qml");
-			var button = component.createObject(container, {"caption": backButtonCaption, "name": items.length, "onClicked": goBack()});
+			var button = component.createObject(container, {"caption": backButtonCaption, "name": tmpItems.length, "onClicked": goBack()});
 
 			if (button == null) {
 				console.log("Error creating button " + buttonCaptions[i]);
 			}
 
 			button.clicked.connect(internalGoBack);
-			items.push(button);
+			tmpItems.push(button);
 		}
+
+		items = tmpItems;
 	}
 }

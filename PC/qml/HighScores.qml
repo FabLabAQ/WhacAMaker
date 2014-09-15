@@ -25,11 +25,16 @@ AnimatedElementsPanelWithItems {
 	function createHighScoreItems()
 	{
 		// Deleting old scores
-		for (singleScore in items) {
-			DA UN PROBLEMA QUI, MA FORSE C'È QUALCOSA DI PIÙ GRANDE
-			singleScore.destroy();
+		if (Array.isArray(items)) {
+			for (var i = 0; i < items.length; i++) {
+				items[i].destroy();
+			}
 		}
 		items = []
+
+		// We use this temporary variable because we have to assign a new value to items to trigger
+		// the changed event
+		var tmpItems = [];
 
 		// Here we create all single scores
 		for (var i = 0; i < playersNames.length; i++) {
@@ -46,8 +51,10 @@ AnimatedElementsPanelWithItems {
 			}
 
 			// Adding to to the list of items
-			items.push(singleScore);
+			tmpItems.push(singleScore);
 		}
+
+		items = tmpItems;
 	}
 
 	// Finally adding the back button

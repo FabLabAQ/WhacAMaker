@@ -90,7 +90,7 @@ void Controller::savePlayerName(const QString& name)
 
 	// Now checking where the new highscore goes
 	int scoreAdded = false;
-	for (int i = 0; i < highscores.size(); i++) {
+	for (int i = 0; (i < highscores.size()) && (!scoreAdded); i++) {
 		if (m_nextScore > highscores[i].toDouble()) {
 			highscores.insert(i, m_nextScore);
 			players.insert(i, name);
