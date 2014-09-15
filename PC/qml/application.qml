@@ -81,8 +81,6 @@ Rectangle {
 		backItem: mainMenu
 		buttonCaptions: ["Calibrazione", "Configurazione"]
 		anchors.fill: parent
-
-		onButtonClicked: { console.log("Pressed button " + caption) }
 	}
 
 	HighScores {
