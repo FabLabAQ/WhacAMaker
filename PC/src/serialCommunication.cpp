@@ -22,6 +22,7 @@ void SerialCommunication::setSerialPort(QString port)
 	m_serialPort.close();
 
 	// Setting the name of the port
+	m_serialPort.setBaudRate(115200);
 	m_serialPort.setPortName(port);
 
 	// Trying to open the port
@@ -41,7 +42,9 @@ void SerialCommunication::handleBytesWritten(qint64 bytes)
 
 void SerialCommunication::handleReadyRead()
 {
-// 	dsfsadfdsadf
+	QByteArray data = m_serialPort.readAll();
+
+	std::cerr << "Data arrived: " << data.data() << std::endl;
 }
 
 void SerialCommunication::handleError(QSerialPort::SerialPortError error)
