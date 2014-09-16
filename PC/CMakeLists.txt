@@ -14,8 +14,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
 # The list of source and header files
-set(HDRS include/gameItem.h include/controller.h)
-set(SRCS src/main.cpp src/gameItem.cpp src/controller.cpp)
+file(GLOB_RECURSE SRCS ./src/*.cpp)
+file(GLOB_RECURSE HDRS ./include/*.h)
 
 # Setting the directory with headers
 include_directories(include)

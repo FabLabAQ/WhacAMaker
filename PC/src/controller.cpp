@@ -13,6 +13,7 @@ Controller::Controller(QQuickView& view, QObject* parent) :
 	QObject(parent),
 	m_settings(),
 	m_view(view),
+	m_serialCom(),
 	m_nextScoreLevel(GameItem::Easy),
 	m_nextScore(0.0),
 	m_calibration(NULL)
@@ -22,6 +23,9 @@ Controller::Controller(QQuickView& view, QObject* parent) :
 
 	// Restores settings in the configuration parameters QML object
 	restoreParameters();
+
+	// Sets the port in the serial comunication
+	setSerialPort();
 
 	// Restoring all highscores
 	restoreHighScores(GameItem::Easy);
@@ -70,7 +74,10 @@ void Controller::saveConfigurationParameters()
 	QObject* const configurationItem = qmlConfigurationParametersObject();
 
 	// Saving to the configuration object
-	copyPropertyToSettings(configurationItem, "serialPort");
+	if (copyPropertyToSettings(configurationItem, "serialPort")) {
+		// Also setting the serial port in the serial communication object
+		setSerialPort();
+	}
 	copyPropertyToSettings(configurationItem, "screenDistance");
 	copyPropertyToSettings(configurationItem, "verticalScreenCenterDistance");
 	copyPropertyToSettings(configurationItem, "horizontalScreenCenterDistance");
@@ -238,12 +245,16 @@ void Controller::copyPropertyToItem(QObject* item, QString propName)
 	QQmlProperty::write(item, propName + "Value", m_settings.value("configuration/" + propName));
 }
 
-void Controller::copyPropertyToSettings(QObject* item, QString propName)
+bool Controller::copyPropertyToSettings(QObject* item, QString propName)
 {
 	if (QQmlProperty::read(item, propName + "Acceptable").toBool()) {
 		m_settings.setValue("configuration/" + propName, QQmlProperty::read(item, propName + "Value"));
+
+		return true;
 	} else {
 		copyPropertyToItem(item, propName);
+
+		return false;
 	}
 }
 
@@ -258,4 +269,9 @@ void Controller::getHighScoresFromSettings(GameItem::DifficultyLevel level, QLis
 	}
 	highscores = m_settings.value("highscores/" + levelName + "Scores").toList();
 	players = m_settings.value("highscores/" + levelName + "Players").toList();
+}
+
+void Controller::setSerialPort()
+{
+	m_serialCom.setSerialPort(m_settings.value("configuration/serialPort").toString());
 }

@@ -7,6 +7,7 @@
 #include <QList>
 #include <QVariant>
 #include "gameItem.h"
+#include "serialCommunication.h"
 
 /**
  * \brief The main controller of the game
@@ -139,8 +140,9 @@ protected:
 	 * \param propName the name of the property to read. The name of the
 	 *                 property is "\<propName\>Value" and the name of the
 	 *                 setting is "configuration/\<propName\>"
+	 * \return true if the user value was valid, false otherwise
 	 */
-	void copyPropertyToSettings(QObject* item, QString propName);
+	bool copyPropertyToSettings(QObject* item, QString propName);
 
 	/**
 	 * \brief Returns the highscores and players for the given level loading
@@ -154,6 +156,12 @@ protected:
 	void getHighScoresFromSettings(GameItem::DifficultyLevel level, QList<QVariant>& highscores, QList<QVariant>& players, QString& levelName);
 
 	/**
+	 * \brief Sets the serial port in the serial communication object
+	 *        reading it from settings
+	 */
+	void setSerialPort();
+
+	/**
 	 * \brief The object with settings for the application
 	 */
 	QSettings m_settings;
@@ -163,6 +171,11 @@ protected:
 	 *        engine
 	 */
 	QQuickView& m_view;
+
+	/**
+	 * \brief The object taking care of the communication with Arduino
+	 */
+	SerialCommunication m_serialCom;
 
 	/**
 	 * \brief The level of the next highscore
