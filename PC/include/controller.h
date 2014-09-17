@@ -56,6 +56,13 @@ public:
 	 */
 	bool newHighScore(GameItem::DifficultyLevel level, double score);
 
+	/**
+	 * \brief The function called when a new command is received
+	 *
+	 * \param command the command that has just been received
+	 */
+	void commandReceived(QString command);
+
 protected slots:
 	/**
 	 * \brief This is the slot called when configuration parameters are

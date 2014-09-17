@@ -13,7 +13,7 @@ Controller::Controller(QQuickView& view, QObject* parent) :
 	QObject(parent),
 	m_settings(),
 	m_view(view),
-	m_serialCom(),
+	m_serialCom(this),
 	m_nextScoreLevel(GameItem::Easy),
 	m_nextScore(0.0),
 	m_calibration(NULL)
@@ -66,6 +66,14 @@ bool Controller::newHighScore(GameItem::DifficultyLevel level, double score)
 	}
 
 	return false;
+}
+
+#warning REMOVE THIS
+#include <iostream>
+
+void Controller::commandReceived(QString command)
+{
+	std::cerr << "New command received: " << command.toLatin1().data() << std::endl;
 }
 
 void Controller::saveConfigurationParameters()

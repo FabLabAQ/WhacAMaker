@@ -1,16 +1,24 @@
-// Pin numbers: Joystick
-const int joystickP1 = 7;
-const int joystickP2 = 8;
-const int joystickX = A0;
-const int joystickY = A1;
+#include "serialCommunication.h"
 
-const int tmpLed = 11;
+// The baud rate to use for communication with computer
+const long baudRate = 115200;
+
+// Pin numbers: Joystick
+const int joystickP1 = 52;
+const int joystickP2 = 53;
+const int joystickX = A14;
+const int joystickY = A15;
+
+const int tmpLed = 22;
 const int tmpLedPWMX = 3;
 const int tmpLedPWMY = 5;
 
+// The object taking care of serial communication
+SerialCommunication serialCommunication;
+
 void setup() {
-	// Initialize serial
-	Serial.begin(115200);
+	// Initializing serial communication
+	serialCommunication.begin(baudRate);
 
 	// Initialize pins
 	pinMode(joystickP1, INPUT_PULLUP);
@@ -22,6 +30,17 @@ void setup() {
 }
 
 void loop() {
+	if (serialCommunication.commandReceived()) {
+		// Print back command
+		Serial.print("Command received:");
+		for (int i = 0; i < serialCommunication.receivedCommandNumParts(); i++) {
+			Serial.print(" '");
+			Serial.print(serialCommunication.receivedCommandPart(i));
+			Serial.print("'");
+		}
+		Serial.println();
+	}
+
 	// put your main code here, to run repeatedly:
 	int pwmValueX = analogRead(joystickX);
 	int pwmValueY = analogRead(joystickY);
@@ -36,5 +55,5 @@ void loop() {
 
 	Serial.print(pwmValueX);
 	Serial.print(" ");
-	Serial.println(pwmValueY);
+	Serial.print(pwmValueY);
 }

@@ -2,11 +2,18 @@
 #define __SERIAL_COMMUNICATION_H__
 
 #include <QSerialPort>
+#include <QByteArray>
 #include <QObject>
+#include <QTimer>
+
+class Controller;
 
 /**
  * \brief The class handling the communication with Arduino through the serial
  *        port
+ *
+ * This class doesn't throw in case of errors, it simply prints messages to
+ * stderr
  */
 class SerialCommunication : public QObject
 {
@@ -16,9 +23,10 @@ public:
 	/**
 	 * \brief Constructor
 	 *
+	 * \param controller the controller object of the game
 	 * \param parent the parent object
 	 */
-	SerialCommunication(QObject* parent = NULL);
+	SerialCommunication(Controller* controller, QObject* parent = NULL);
 
 	/**
 	 * \brief Destructor
@@ -32,16 +40,20 @@ public:
 	 */
 	void setSerialPort(QString port);
 
+	/**
+	 * \brief Sends a command through the serial port
+	 *
+	 * This function automatically adds a newline to terminate the command
+	 * if not present
+	 * \param command the commad to send
+	 */
+	void sendCommand(QString command);
+
 private slots:
 	/**
-	 * \brief The slot called when data has been written
-	 *
-	 * \param bytes the bytes that have actually been written
-	 */
-	void handleBytesWritten(qint64 bytes);
-
-	/**
 	 * \brief The slot called when there is data ready to be read
+	 *
+	 * This calls the commandReceived function of controller
 	 */
 	void handleReadyRead();
 
@@ -55,9 +67,19 @@ private slots:
 
 private:
 	/**
+	 * \brief The controller object of the game
+	 */
+	Controller* const m_controller;
+
+	/**
 	 * \brief The serial communication port
 	 */
 	QSerialPort m_serialPort;
+
+	/**
+	 * \brief The buffer of data from the serial port
+	 */
+	QByteArray m_incomingData;
 };
 
 #endif

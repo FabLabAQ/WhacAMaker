@@ -1,10 +1,15 @@
 #include "serialCommunication.h"
 #include "myRuntimeException.h"
+#include "controller.h"
 #include <iostream>
 
-SerialCommunication::SerialCommunication(QObject* parent) :
+#warning DECIDERE SE METTERE IL CHECK ALLA FINE DEL COMANDO O NO
+
+SerialCommunication::SerialCommunication(Controller* controller, QObject* parent) :
 	QObject(parent),
-	m_serialPort()
+	m_controller(controller),
+	m_serialPort(),
+	m_incomingData()
 {
 	// Connecting signals from the serial port
 	connect(&m_serialPort, SIGNAL(bytesWritten(qint64)), this, SLOT(handleBytesWritten(qint64)));
@@ -35,19 +40,41 @@ void SerialCommunication::setSerialPort(QString port)
 	}
 }
 
-void SerialCommunication::handleBytesWritten(qint64 bytes)
+void SerialCommunication::sendCommand(QString command)
 {
-// 	sadfdsafdsaf
+	QByteArray dataToSend = command.toLatin1();
+	if (dataToSend.at(dataToSend.size() - 1) != '\n') {
+		dataToSend.append('\n');
+	}
+	qint64 bytesWritten = m_serialPort.write(dataToSend);
+
+	if (bytesWritten == -1) {
+		std::cerr  << "Error writing data, error: " << m_serialPort.errorString().toLatin1().data() << std::endl;
+	} else if (bytesWritten != dataToSend.size()) {
+		std::cerr  << "Cannot write all data, error: " << m_serialPort.errorString().toLatin1().data() << std::endl;
+	}
 }
 
 void SerialCommunication::handleReadyRead()
 {
-	QByteArray data = m_serialPort.readAll();
+	// Adding data to the buffer
+	m_incomingData.append(m_serialPort.readAll());
 
-	std::cerr << "Data arrived: " << data.data() << std::endl;
+	int newlinePos = m_incomingData.indexOf('\n');
+	if (newlinePos != -1) {
+		// Taking the command. HEre we also remove the newline from it
+		QString command = m_incomingData.left(newlinePos);
+
+		// Removing the command we just received from the buffer
+		m_incomingData = m_incomingData.mid(newlinePos + 1);
+
+		// Sending command to controller
+		m_controller->commandReceived(command);
+	}
 }
 
 void SerialCommunication::handleError(QSerialPort::SerialPortError error)
 {
-// 	dsfgdfsgdfsg
+	std::cerr << "Serial Communication error, code: " << error << std::endl;
 }
+
