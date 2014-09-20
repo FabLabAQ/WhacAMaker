@@ -37,6 +37,12 @@ Controller::Controller(QQuickView& view, QObject* parent) :
 	connect(m_view.rootObject(), SIGNAL(playerNameEntered(QString)), this, SLOT(savePlayerName(QString)));
 	connect(m_view.rootObject(), SIGNAL(calibrationStarted()), this, SLOT(calibrationStarted()));
 	connect(m_view.rootObject(), SIGNAL(calibrationInterrupted()), this, SLOT(calibrationInterrupted()));
+
+#warning REMOVE THIS!!!
+	m_serialCom.newCommandToSend();
+	m_serialCom.appendCommandPart("PING");
+	m_serialCom.appendCommandPart(0);
+	m_serialCom.sendCommand();
 }
 
 Controller::~Controller()
@@ -68,12 +74,28 @@ bool Controller::newHighScore(GameItem::DifficultyLevel level, double score)
 	return false;
 }
 
-#warning REMOVE THIS
+#warning REMOVE THIS!!!
 #include <iostream>
 
-void Controller::commandReceived(QString command)
+void Controller::commandReceived()
 {
-	std::cerr << "New command received: " << command.toLatin1().data() << std::endl;
+	if (!m_serialCom.extractReceivedCommand()) {
+		throwMyRuntimeException("Internal error: command received but m_serialCom.extractReceivedCommand() returned false");
+	}
+
+	std::cerr << "New command received:";
+	for (int i = 0; i < m_serialCom.receivedCommandNumParts(); i++) {
+		std::cerr << " (" << m_serialCom.receivedCommandPart(i).toLatin1().data() << ")";
+	}
+	std::cerr << std::endl;
+
+	// Responding if we have to
+	if ((m_serialCom.receivedCommandPart(0) == "PONG") && (m_serialCom.receivedCommandNumParts() >= 2)) {
+		m_serialCom.newCommandToSend();
+		m_serialCom.appendCommandPart("PING");
+		m_serialCom.appendCommandPart(m_serialCom.receivedCommandPartAsInt(1) + 1);
+		m_serialCom.sendCommand();
+	}
 }
 
 void Controller::saveConfigurationParameters()

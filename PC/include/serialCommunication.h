@@ -4,7 +4,7 @@
 #include <QSerialPort>
 #include <QByteArray>
 #include <QObject>
-#include <QTimer>
+#include <QStringList>
 
 class Controller;
 
@@ -41,13 +41,90 @@ public:
 	void setSerialPort(QString port);
 
 	/**
-	 * \brief Sends a command through the serial port
+	 * \brief Returns true if a command has been received and extracts the
+	 *        command from the queue
 	 *
-	 * This function automatically adds a newline to terminate the command
-	 * if not present
-	 * \param command the commad to send
+	 * Ater a call to this function returns true, you can get command parts
+	 * with receivedCommandParts*() functions
+	 * \return true if a command has been received
 	 */
-	void sendCommand(QString command);
+	bool extractReceivedCommand();
+
+	/**
+	 * \brief The number of parts in the received command
+	 *
+	 * This is only valid after extractReceivedCommand returns true
+	 * \return the number of parts in the the received command
+	 */
+	int receivedCommandNumParts() const;
+
+	/**
+	 * \brief The i-th part of the received command as a string
+	 *
+	 * This is only valid after extractReceivedCommand returns true
+	 * \param i the part to return
+	 * \return the i-th part of the received command as a string
+	 */
+	QString receivedCommandPart(int i) const;
+
+	/**
+	 * \brief The i-th part of the received command as an int
+	 *
+	 * This is only valid after extractReceivedCommand returns true
+	 * \param i the part to return
+	 * \return the i-th part of the received command as an int
+	 */
+	int receivedCommandPartAsInt(int i) const;
+
+	/**
+	 * \brief The i-th part of the received command as a float
+	 *
+	 * This is only valid after extractReceivedCommand returns true
+	 * \param i the part to return
+	 * \return the i-th part of the received command as a float
+	 */
+	float receivedCommandPartAsFloat(int i) const;
+
+	/**
+	 * \brief Creates a new command to send
+	 *
+	 * After calling this function you can start appending command parts
+	 * with the appendCommandPart() function, which adds parts separated by
+	 * a whitespace
+	 */
+	void newCommandToSend();
+
+	/**
+	 * \brief Adds a part to the command to send
+	 *
+	 * Use this for strings
+	 * \param part the part to add
+	 */
+	void appendCommandPart(QString part);
+
+	/**
+	 * \brief Adds a part to the command to send
+	 *
+	 * Use this for integers
+	 * \param part the part to add
+	 */
+	void appendCommandPart(int part);
+
+	/**
+	 * \brief Adds a part to the command to send
+	 *
+	 * Use this for floats
+	 * \param part the part to add
+	 */
+	void appendCommandPart(float part);
+
+	/**
+	 * \brief Sends the last command
+	 *
+	 * If called multiple times without calling newCommandToSend() first,
+	 * sends the same command over and over again
+	 */
+	void sendCommand();
 
 private slots:
 	/**
@@ -80,6 +157,22 @@ private:
 	 * \brief The buffer of data from the serial port
 	 */
 	QByteArray m_incomingData;
+
+	/**
+	 * \brief When different from -1, a command has been received and is in
+	 *        m_incomingData from position 0 to this position
+	 */
+	int m_endCommandPosition;
+
+	/**
+	 * \brief The list of received command parts
+	 */
+	QStringList m_receivedCommandParts;
+
+	/**
+	 * \brief The buffer with parts of the command to send
+	 */
+	QByteArray m_commandPartsToSend;
 };
 
 #endif

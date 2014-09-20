@@ -4,6 +4,7 @@
 #include <QQuickPaintedItem>
 
 class Controller;
+class SerialCommunication;
 
 /**
  * \brief The QML item with the game screen
@@ -28,7 +29,7 @@ public:
 	/**
 	 * \brief Constructor
 	 *
-	 * \parent the parent item
+	 * \param parent the parent item
 	 */
 	GameItem(QQuickItem *parent = NULL);
 

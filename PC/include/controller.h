@@ -59,9 +59,10 @@ public:
 	/**
 	 * \brief The function called when a new command is received
 	 *
-	 * \param command the command that has just been received
+	 * Here we call methods of the SerialCommunication object to obtain the
+	 * command that has been received
 	 */
-	void commandReceived(QString command);
+	void commandReceived();
 
 protected slots:
 	/**

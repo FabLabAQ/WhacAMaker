@@ -9,10 +9,12 @@ SerialCommunication::SerialCommunication(Controller* controller, QObject* parent
 	QObject(parent),
 	m_controller(controller),
 	m_serialPort(),
-	m_incomingData()
+	m_incomingData(),
+	m_endCommandPosition(-1),
+	m_receivedCommandParts(),
+	m_commandPartsToSend()
 {
 	// Connecting signals from the serial port
-	connect(&m_serialPort, SIGNAL(bytesWritten(qint64)), this, SLOT(handleBytesWritten(qint64)));
 	connect(&m_serialPort, SIGNAL(readyRead()), this, SLOT(handleReadyRead()));
 	connect(&m_serialPort, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(handleError(QSerialPort::SerialPortError)));
 }
@@ -40,36 +42,124 @@ void SerialCommunication::setSerialPort(QString port)
 	}
 }
 
-void SerialCommunication::sendCommand(QString command)
+bool SerialCommunication::extractReceivedCommand()
 {
-	QByteArray dataToSend = command.toLatin1();
-	if (dataToSend.at(dataToSend.size() - 1) != '\n') {
-		dataToSend.append('\n');
+	if (m_endCommandPosition == -1) {
+		return false;
 	}
-	qint64 bytesWritten = m_serialPort.write(dataToSend);
+
+	// Taking the command. Here we don't take the closing newline. Wehn we split we keep empty parts to have
+	// a behavior compliant with the one on Arduino
+	QString command = m_incomingData.left(m_endCommandPosition);
+	m_receivedCommandParts = command.split(' ', QString::KeepEmptyParts);
+
+	// Removing data for the extracted command from the queue
+	m_incomingData = m_incomingData.mid(m_endCommandPosition + 1);
+
+	// Now fixing m_endCommandPosition
+	m_endCommandPosition = m_incomingData.indexOf('\n');
+
+// std::cerr << "===extractReceivedCommand=== command: \"" << command.toLatin1().data() << "\", m_endCommandPosition: " << m_endCommandPosition << ", all data: \"" << m_incomingData.data() << "\"" << std::endl;
+
+	return true;
+}
+
+int SerialCommunication::receivedCommandNumParts() const
+{
+	return m_receivedCommandParts.size();
+}
+
+QString SerialCommunication::receivedCommandPart(int i) const
+{
+	return m_receivedCommandParts[i];
+}
+
+int SerialCommunication::receivedCommandPartAsInt(int i) const
+{
+	return m_receivedCommandParts[i].toInt();
+}
+
+float SerialCommunication::receivedCommandPartAsFloat(int i) const
+{
+	return m_receivedCommandParts[i].toFloat();
+}
+
+void SerialCommunication::newCommandToSend()
+{
+	m_commandPartsToSend.clear();
+}
+
+void SerialCommunication::appendCommandPart(QString part)
+{
+	if (m_commandPartsToSend.size() != 0) {
+		m_commandPartsToSend.append(' ');
+	}
+
+	m_commandPartsToSend.append(part.toLatin1());
+}
+
+void SerialCommunication::appendCommandPart(int part)
+{
+	appendCommandPart(QString::number(part));
+}
+
+void SerialCommunication::appendCommandPart(float part)
+{
+	appendCommandPart(QString::number(part));
+}
+
+void SerialCommunication::sendCommand()
+{
+	// Adding the final endline
+	m_commandPartsToSend.append('\n');
+
+	// Writing data
+	qint64 bytesWritten = m_serialPort.write(m_commandPartsToSend);
 
 	if (bytesWritten == -1) {
 		std::cerr  << "Error writing data, error: " << m_serialPort.errorString().toLatin1().data() << std::endl;
-	} else if (bytesWritten != dataToSend.size()) {
+	} else if (bytesWritten != m_commandPartsToSend.size()) {
 		std::cerr  << "Cannot write all data, error: " << m_serialPort.errorString().toLatin1().data() << std::endl;
 	}
 }
 
 void SerialCommunication::handleReadyRead()
 {
-	// Adding data to the buffer
-	m_incomingData.append(m_serialPort.readAll());
+	// Getting data
+	QByteArray newData = m_serialPort.readAll();
 
-	int newlinePos = m_incomingData.indexOf('\n');
-	if (newlinePos != -1) {
-		// Taking the command. HEre we also remove the newline from it
-		QString command = m_incomingData.left(newlinePos);
+	// Adding data to the buffer. We have to save the previous size of m_incomingData to
+	// have the correct m_endCommandPosition
+	const int oldSize = m_incomingData.size();
+	m_incomingData.append(newData);
 
-		// Removing the command we just received from the buffer
-		m_incomingData = m_incomingData.mid(newlinePos + 1);
+	// Now looking in new data for the first '\n' and the number of them
+	int firstNewlinePos = -1;
+	int numNewlines = 0;
+	for (int i = 0; i < newData.size(); i++) {
+		if (newData[i] == '\n') {
+			if (firstNewlinePos == -1) {
+				firstNewlinePos = i + oldSize;
+			}
+			++numNewlines;
+		}
+	}
 
-		// Sending command to controller
-		m_controller->commandReceived(command);
+// std::cerr << "===handleReadyRead=== new data: \"" << newData.data() << "\", oldSize: " << oldSize << ", firstNewlinePos: " << firstNewlinePos << ", numNewlines: " << numNewlines << ", m_endCommandPosition: " << m_endCommandPosition << ", all data: \"" << m_incomingData.data() << "\"" << std::endl;
+
+	// If there was at least one '\n' in the new data, checking what to do
+	if (numNewlines != 0) {
+		// If there was no command in the queue, saving the position of the '\n' of the first
+		// command (which is the first one)
+		if (m_endCommandPosition == -1) {
+			m_endCommandPosition = firstNewlinePos;
+		}
+
+		// Now telling the controller we have received commands. We call commandReceived() once for each
+		// received command
+		for (int i = 0; i < numNewlines; i++) {
+			m_controller->commandReceived();
+		}
 	}
 }
 

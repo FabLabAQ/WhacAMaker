@@ -43,13 +43,15 @@ public:
 	 *
 	 * This checks if a command is available and parses it. After calling
 	 * this function the previously received command is removed (even if we
-	 * haven't received a new command yet)
+	 * haven't received a new command yet). Even when this returns false,
+	 * data can still be read via the serial line (e.g. if a command hasn't
+	 * fully arrived yet)
 	 * \return true if a command has been received
 	 */
 	bool commandReceived();
 
 	/**
-	 * \brief The number of parts in the command
+	 * \brief The number of parts in the received command
 	 *
 	 * This is only valid after commandReceived returns true
 	 * \return the number of parts in the command
@@ -57,35 +59,94 @@ public:
 	int receivedCommandNumParts() const;
 
 	/**
-	 * \brief The i-th part of the command as a string
+	 * \brief The i-th part of the received command as a string
 	 *
 	 * This is only valid after commandReceived returns true
 	 * \param i the part to return
-	 * \return the i-th part of the command as a string
+	 * \return the i-th part of the received command as a string
 	 */
 	const char* receivedCommandPart(int i) const;
+
+	/**
+	 * \brief The i-th part of the received command as an int
+	 *
+	 * This is only valid after commandReceived returns true
+	 * \param i the part to return
+	 * \return the i-th part of the received command as an int
+	 */
+	int receivedCommandPartAsInt(int i) const;
+
+	/**
+	 * \brief The i-th part of the received command as a float
+	 *
+	 * This is only valid after commandReceived returns true
+	 * \param i the part to return
+	 * \return the i-th part of the received command as a float
+	 */
+	float receivedCommandPartAsFloat(int i) const;
+
+	/**
+	 * \brief Creates a new command to send
+	 *
+	 * After calling this function you can start appending command parts
+	 * with the appendCommandPart() function, which adds parts separated by
+	 * a whitespace
+	 */
+	void newCommandToSend();
+
+	/**
+	 * \brief Adds a part to the command to send
+	 *
+	 * Use this for strings
+	 * \param part the part to add
+	 */
+	void appendCommandPart(const char* part);
+
+	/**
+	 * \brief Adds a part to the command to send
+	 *
+	 * Use this for integers
+	 * \param part the part to add
+	 */
+	void appendCommandPart(int part);
+
+	/**
+	 * \brief Adds a part to the command to send
+	 *
+	 * Use this for floats
+	 * \param part the part to add
+	 */
+	void appendCommandPart(float part);
+
+	/**
+	 * \brief Sends the last command
+	 *
+	 * If called multiple times without calling newCommandToSend() first,
+	 * sends the same command over and over again
+	 */
+	void sendCommand();
 
 private:
 	/**
 	 * \brief The received command
 	 *
 	 * In this buffer, parts are separated by '\0' (they replace
-	 * whitespaces)
+	 * whitespaces). The +1 is to contain the final '\0'
 	 */
 	char m_receivedCommand[maxCommandLength + 1];
 
 	/**
-	 * \brief The actual length of the command
+	 * \brief The actual length of the received command
 	 */
-	int m_commandLength;
+	int m_receivedCommandLength;
 
 	/**
-	 * \brief The index at which command parts start.
+	 * \brief The index at which received command parts start.
 	 */
 	int m_startingPartIndex[maxCommandParts];
 
 	/**
-	 * \brief The number of parts of the command
+	 * \brief The number of parts of the received command
 	 */
 	int m_numParts;
 
@@ -93,6 +154,19 @@ private:
 	 * \brief True if we have received a complete command
 	 */
 	bool m_commandReceived;
+
+	/**
+	 * \brief The command to send
+	 *
+	 * Here the command is where the command is built. the +2 is for the
+	 * final "\n\0"
+	 */
+	char m_commandToSend[maxCommandLength + 2];
+
+	/**
+	 * \brief The actual length of the command to send
+	 */
+	int m_commandToSendLength;
 };
 
 #endif

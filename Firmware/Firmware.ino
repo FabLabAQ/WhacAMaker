@@ -31,29 +31,46 @@ void setup() {
 
 void loop() {
 	if (serialCommunication.commandReceived()) {
-		// Print back command
-		Serial.print("Command received:");
+		// Sending back the command as is for debugging
+		serialCommunication.newCommandToSend();
+		serialCommunication.appendCommandPart("DEBUG");
 		for (int i = 0; i < serialCommunication.receivedCommandNumParts(); i++) {
-			Serial.print(" '");
-			Serial.print(serialCommunication.receivedCommandPart(i));
-			Serial.print("'");
+			serialCommunication.appendCommandPart(serialCommunication.receivedCommandPart(i));
 		}
-		Serial.println();
+		serialCommunication.sendCommand();
+
+		// Getting the command. We are interested in the second value, an int, which we return inceremented by 1
+		if (serialCommunication.receivedCommandNumParts() >= 2) {
+			int i = serialCommunication.receivedCommandPartAsInt(1);
+
+			// Send reply
+			serialCommunication.newCommandToSend();
+			serialCommunication.appendCommandPart("PONG");
+			serialCommunication.appendCommandPart(i + 1);
+			serialCommunication.sendCommand();
+		} else {
+			// Send error
+			serialCommunication.newCommandToSend();
+			serialCommunication.appendCommandPart("ERROR");
+			serialCommunication.sendCommand();
+		}
 	}
+
+// 	delay(100);
 
 	// put your main code here, to run repeatedly:
-	int pwmValueX = analogRead(joystickX);
-	int pwmValueY = analogRead(joystickY);
-	analogWrite(tmpLedPWMX, pwmValueX >> 2);
-	analogWrite(tmpLedPWMY, pwmValueY >> 2);
-
-	if ((digitalRead(joystickP1) == LOW) || (digitalRead(joystickP2) == LOW)) {
-		digitalWrite(tmpLed, HIGH);
-	} else {
-		digitalWrite(tmpLed, LOW);
-	}
-
-	Serial.print(pwmValueX);
-	Serial.print(" ");
-	Serial.print(pwmValueY);
+// 	int pwmValueX = analogRead(joystickX);
+// 	int pwmValueY = analogRead(joystickY);
+// 	analogWrite(tmpLedPWMX, pwmValueX >> 2);
+// 	analogWrite(tmpLedPWMY, pwmValueY >> 2);
+//
+// 	if ((digitalRead(joystickP1) == LOW) || (digitalRead(joystickP2) == LOW)) {
+// 		digitalWrite(tmpLed, HIGH);
+// 	} else {
+// 		digitalWrite(tmpLed, LOW);
+// 	}
+//
+// 	Serial.print(pwmValueX);
+// 	Serial.print(" ");
+// 	Serial.print(pwmValueY);
 }
