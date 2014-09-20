@@ -22,13 +22,21 @@ class Controller : public QObject
 
 public:
 	/**
-	 * \brief The calibration status
+	 * \brief The joystick calibration status
 	 */
-	enum CalibrationStatus {
+	enum JoystickCalibrationStatus {
+		Start,
+		Center,
 		Up,
 		Down,
 		Left,
 		Right
+	};
+
+	/**
+	 * \brief The current application status
+	 */
+	enum Status {
 	};
 
 public:
@@ -81,19 +89,20 @@ protected slots:
 	void savePlayerName(const QString& name);
 
 	/**
-	 * \brief The slot called when calibration starts
+	 * \brief The slot called when joystick calibration starts
 	 */
-	void calibrationStarted();
+	void joystickCalibrationStarted();
 
 	/**
-	 * \brief The slot called when calibration is interrupted by the user
+	 * \brief The slot called when joystick calibration is interrupted by
+	 *        the user
 	 */
-	void calibrationInterrupted();
+	void joystickCalibrationInterrupted();
 
 	/**
-	 * \brief The slot called to set the current calibration status
+	 * \brief The slot called to set the current joystick calibration status
 	 */
-	void setCalibrationStatus(CalibrationStatus status);
+	void setJoystickCalibrationStatus(JoystickCalibrationStatus status);
 
 protected:
 	/**
@@ -124,11 +133,12 @@ protected:
 	GameItem* qmlGameObject();
 
 	/**
-	 * \brief Returns a pointer to the QML object to perform calibration
+	 * \brief Returns a pointer to the QML object to perform joystick
+	 *        calibration
 	 *
-	 * \return a pointer to the QML object to perform calibration
+	 * \return a pointer to the QML object to perform joystick calibration
 	 */
-	QObject* qmlCalibrationObject();
+	QObject* qmlJoystickCalibrationObject();
 
 	/**
 	 * \brief Copies a value from settings to an QML item
@@ -196,11 +206,12 @@ protected:
 	double m_nextScore;
 
 	/**
-	 * \brief The calibration object
+	 * \brief The joystick calibration object
 	 *
-	 * This is guaranteed to be valid only during the calibration procedure
+	 * This is guaranteed to be valid only during the joystick calibration
+	 * procedure
 	 */
-	QObject* m_calibration;
+	QObject* m_joystickCalibration;
 };
 
 #endif

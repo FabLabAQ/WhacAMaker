@@ -1,10 +1,17 @@
-// The panel for calibration. It as a back button in the central part. To
-// activate a target set the status to either "up", "down", "left" or "right"
+// The panel for joystick calibration. It as a back button and instructions in
+// the central part. To activate a target set the status to either "center",
+// "up", "down",, "left" or "right"
 import QtQuick 2.0
 
 AnimatedElementsPanel {
 	id: container
 
+	// The width of the label with instructions as a portion of the item
+	// width
+	property real labelWidth: 0.9
+	// The height of the label with instructions as a portion of the item
+	// height
+	property real labelHeight: 0.2
 	// The width of the back button as a portion of the item width
 	property real backButtonWidth: 0.5
 	// The height of the back button as a portion of the item height
@@ -39,12 +46,23 @@ AnimatedElementsPanel {
 		}
 	}
 
+	// The label describing what to do
+	AnimatedLabel {
+		id: label
+		text: "Calibrazione del joystick. Premi un pulsante per iniziare"
+		backgroundColor: "white"
+		x: (container.width - width) / 2.0
+		yWhenVisible: (container.height - height) / 4.0
+		width: container.width * container.labelWidth
+		height: container.height * container.labelHeight
+	}
+
 	// The back button
 	Button {
 		id: backButton
 		caption: container.backButtonCaption
 		x: (container.width - width) / 2.0
-		yWhenVisible: (container.height - height) / 2.0
+		yWhenVisible: 3.0 * (container.height - height) / 4.0
 		width: container.width * container.backButtonWidth
 		height: container.height * container.backButtonHeight
 
@@ -55,6 +73,16 @@ AnimatedElementsPanel {
 				container.hideAll();
 			}
 		}
+	}
+
+	// The central target
+	CalibrationTarget {
+		id: centralTarget
+		x: (container.width - width) / 2.0
+		yWhenVisible: (container. height - height) / 2.0
+		width: container.width * container.targetSide
+		height: width
+		color: container.targetOffColor
 	}
 
 	// The up target
@@ -98,7 +126,7 @@ AnimatedElementsPanel {
 	}
 
 	// The animated elements
-	animatedElements: [backButton, upTarget, downTarget, leftTarget, rightTarget]
+	animatedElements: [label, backButton, centralTarget, upTarget, downTarget, leftTarget, rightTarget]
 
 	// Called when all buttons have disappeared
 	onAllDisappeared: {
@@ -119,8 +147,20 @@ AnimatedElementsPanel {
 
 	states: [
 		State {
+			name: "center"
+
+			PropertyChanges { target: label; text: "Centra il joystick e premi il pulsante"}
+			PropertyChanges { target: centralTarget; color: container.targetOnColor}
+			PropertyChanges { target: upTarget; color: container.targetOffColor}
+			PropertyChanges { target: downTarget; color: container.targetOffColor}
+			PropertyChanges { target: leftTarget; color: container.targetOffColor}
+			PropertyChanges { target: rightTarget; color: container.targetOffColor}
+		},
+		State {
 			name: "up"
 
+			PropertyChanges { target: label; text: "Muovi il joystick su e premi il pulsante"}
+			PropertyChanges { target: centralTarget; color: container.targetOffColor}
 			PropertyChanges { target: upTarget; color: container.targetOnColor}
 			PropertyChanges { target: downTarget; color: container.targetOffColor}
 			PropertyChanges { target: leftTarget; color: container.targetOffColor}
@@ -129,6 +169,8 @@ AnimatedElementsPanel {
 		State {
 			name: "down"
 
+			PropertyChanges { target: label; text: "Muovi il joystick giù e premi il pulsante"}
+			PropertyChanges { target: centralTarget; color: container.targetOffColor}
 			PropertyChanges { target: upTarget; color: container.targetOffColor}
 			PropertyChanges { target: downTarget; color: container.targetOnColor}
 			PropertyChanges { target: leftTarget; color: container.targetOffColor}
@@ -137,6 +179,8 @@ AnimatedElementsPanel {
 		State {
 			name: "left"
 
+			PropertyChanges { target: label; text: "Muovi il joystick a sinistra e premi il pulsante"}
+			PropertyChanges { target: centralTarget; color: container.targetOffColor}
 			PropertyChanges { target: upTarget; color: container.targetOffColor}
 			PropertyChanges { target: downTarget; color: container.targetOffColor}
 			PropertyChanges { target: leftTarget; color: container.targetOnColor}
@@ -145,6 +189,8 @@ AnimatedElementsPanel {
 		State {
 			name: "right"
 
+			PropertyChanges { target: label; text: "Muovi il joystick a destra e premi il pulsante"}
+			PropertyChanges { target: centralTarget; color: container.targetOffColor}
 			PropertyChanges { target: upTarget; color: container.targetOffColor}
 			PropertyChanges { target: downTarget; color: container.targetOffColor}
 			PropertyChanges { target: leftTarget; color: container.targetOffColor}
@@ -157,10 +203,15 @@ AnimatedElementsPanel {
 		to: "*"
 
 		ParallelAnimation {
+			ColorAnimation { target: centralTarget; duration: 250}
 			ColorAnimation { target: upTarget; duration: 250}
 			ColorAnimation { target: downTarget; duration: 250}
 			ColorAnimation { target: leftTarget; duration: 250}
 			ColorAnimation { target: rightTarget; duration: 250}
+			SequentialAnimation {
+				NumberAnimation { target: label; property: "opacity"; from: 1; to: 0; duration: 125 }
+				NumberAnimation { target: label; property: "opacity"; from: 0; to: 1; duration: 125 }
+			}
 		}
 	}
 }

@@ -11,10 +11,10 @@ Rectangle {
 	signal configurationParametersSaved()
 	// The signal emitted when a name is entered (to record an highscore)
 	signal playerNameEntered(string playerName)
-	// The signal emitted when calibration starts
-	signal calibrationStarted()
-	// The signal emitted when calibration is cancelled by the user
-	signal calibrationInterrupted()
+	// The signal emitted when joystick calibration starts
+	signal joystickCalibrationStarted()
+	// The signal emitted when joystick calibration is cancelled by the user
+	signal joystickCalibrationInterrupted()
 
 	// The function returning the object that contains parameters (to be
 	// restored by C++ code)
@@ -42,15 +42,15 @@ Rectangle {
 	{
 		return hardHighScores;
 	}
-	// The function returning the calibration object
-	function calibrationObject()
+	// The function returning the joystick calibration object
+	function joystickCalibrationObject()
 	{
-		return calibration;
+		return joystickCalibration;
 	}
-	// The function to end the calibration procedure
-	function endCalibration()
+	// The function to end the joystick calibration procedure
+	function endJoystickCalibration()
 	{
-		calibration.endCalibration();
+		joystickCalibration.endCalibration();
 	}
 
 	ButtonPanel {
@@ -143,14 +143,14 @@ Rectangle {
 		onSave: application.configurationParametersSaved()
 	}
 
-	Calibration {
-		id: calibration
+	JoystickCalibration {
+		id: joystickCalibration
 		visible: false
 		backItem: settingsMenu
 		anchors.fill: parent
 
-		onCalibrationStarted: application.calibrationStarted()
-		onGoBack: application.calibrationInterrupted()
+		onCalibrationStarted: application.joystickCalibrationStarted()
+		onGoBack: application.joystickCalibrationInterrupted()
 	}
 
 	NameSelection {
@@ -168,6 +168,6 @@ Rectangle {
 		mainMenu.buttonItems = [gameLevelMenu, scoreLevelMenu, settingsMenu]
 		gameLevelMenu.buttonItems = [game, game, game]
 		scoreLevelMenu.buttonItems = [easyHighScores, mediumHighScores, hardHighScores]
-		settingsMenu.buttonItems = [calibration, configuration]
+		settingsMenu.buttonItems = [joystickCalibration, configuration]
 	}
 }

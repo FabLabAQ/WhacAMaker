@@ -105,4 +105,13 @@ Item {
 			showAll();
 		}
 	}
+
+	// This is to update positions when the item is resized
+	onHeightChanged: {
+		if (visible) {
+			for (var i = 0; i < animatedElements.length; i++) {
+				animatedElements[i].y = animatedElements[i].yWhenVisible;
+			}
+		}
+	}
 }

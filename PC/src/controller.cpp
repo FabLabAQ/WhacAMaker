@@ -16,7 +16,7 @@ Controller::Controller(QQuickView& view, QObject* parent) :
 	m_serialCom(this),
 	m_nextScoreLevel(GameItem::Easy),
 	m_nextScore(0.0),
-	m_calibration(NULL)
+	m_joystickCalibration(NULL)
 {
 	// Setting ourself as the controller in the game object
 	qmlGameObject()->setController(this);
@@ -35,14 +35,8 @@ Controller::Controller(QQuickView& view, QObject* parent) :
 	// Connecting signals from m_view to our slots
 	connect(m_view.rootObject(), SIGNAL(configurationParametersSaved()), this, SLOT(saveConfigurationParameters()));
 	connect(m_view.rootObject(), SIGNAL(playerNameEntered(QString)), this, SLOT(savePlayerName(QString)));
-	connect(m_view.rootObject(), SIGNAL(calibrationStarted()), this, SLOT(calibrationStarted()));
-	connect(m_view.rootObject(), SIGNAL(calibrationInterrupted()), this, SLOT(calibrationInterrupted()));
-
-#warning REMOVE THIS!!!
-	m_serialCom.newCommandToSend();
-	m_serialCom.appendCommandPart("PING");
-	m_serialCom.appendCommandPart(0);
-	m_serialCom.sendCommand();
+	connect(m_view.rootObject(), SIGNAL(joystickCalibrationStarted()), this, SLOT(joystickCalibrationStarted()));
+	connect(m_view.rootObject(), SIGNAL(joystickCalibrationInterrupted()), this, SLOT(joystickCalibrationInterrupted()));
 }
 
 Controller::~Controller()
@@ -74,28 +68,13 @@ bool Controller::newHighScore(GameItem::DifficultyLevel level, double score)
 	return false;
 }
 
-#warning REMOVE THIS!!!
-#include <iostream>
-
 void Controller::commandReceived()
 {
 	if (!m_serialCom.extractReceivedCommand()) {
 		throwMyRuntimeException("Internal error: command received but m_serialCom.extractReceivedCommand() returned false");
 	}
 
-	std::cerr << "New command received:";
-	for (int i = 0; i < m_serialCom.receivedCommandNumParts(); i++) {
-		std::cerr << " (" << m_serialCom.receivedCommandPart(i).toLatin1().data() << ")";
-	}
-	std::cerr << std::endl;
-
-	// Responding if we have to
-	if ((m_serialCom.receivedCommandPart(0) == "PONG") && (m_serialCom.receivedCommandNumParts() >= 2)) {
-		m_serialCom.newCommandToSend();
-		m_serialCom.appendCommandPart("PING");
-		m_serialCom.appendCommandPart(m_serialCom.receivedCommandPartAsInt(1) + 1);
-		m_serialCom.sendCommand();
-	}
+#warning TODO
 }
 
 void Controller::saveConfigurationParameters()
@@ -161,20 +140,26 @@ void Controller::savePlayerName(const QString& name)
 	restoreHighScores(m_nextScoreLevel);
 }
 
-void Controller::calibrationStarted()
+void Controller::joystickCalibrationStarted()
 {
-	m_calibration = qmlCalibrationObject();
+	m_joystickCalibration = qmlJoystickCalibrationObject();
 }
 
-void Controller::calibrationInterrupted()
+void Controller::joystickCalibrationInterrupted()
 {
-	m_calibration = NULL;
+	m_joystickCalibration = NULL;
 }
 
-void Controller::setCalibrationStatus(CalibrationStatus status)
+void Controller::setJoystickCalibrationStatus(JoystickCalibrationStatus status)
 {
 	QString statusString;
 	switch (status) {
+		case Start:
+			statusString = "";
+			break;
+		case Center:
+			statusString = "center";
+			break;
 		case Up:
 			statusString = "up";
 			break;
@@ -189,8 +174,8 @@ void Controller::setCalibrationStatus(CalibrationStatus status)
 			break;
 	}
 
-	// Setting the status in the calibration item
-	QQmlProperty::write(m_calibration, "state", statusString);
+	// Setting the status in the joystick calibration item
+	QQmlProperty::write(m_joystickCalibration, "state", statusString);
 }
 
 void Controller::restoreParameters()
@@ -256,18 +241,18 @@ GameItem* Controller::qmlGameObject()
 	return gameItem;
 }
 
-QObject* Controller::qmlCalibrationObject()
+QObject* Controller::qmlJoystickCalibrationObject()
 {
 	// Getting a reference to the QML object string the parameters
 	QVariant returnedObject;
-	QMetaObject::invokeMethod(m_view.rootObject(), "calibrationObject", Q_RETURN_ARG(QVariant, returnedObject));
-	QObject* const calibrationItem = qvariant_cast<QObject *>(returnedObject);
+	QMetaObject::invokeMethod(m_view.rootObject(), "joystickCalibrationObject", Q_RETURN_ARG(QVariant, returnedObject));
+	QObject* const joystickCalibrationItem = qvariant_cast<QObject *>(returnedObject);
 
-	if (calibrationItem == NULL) {
-		throwMyRuntimeException("Cannot access the calibration object");
+	if (joystickCalibrationItem == NULL) {
+		throwMyRuntimeException("Cannot access the joystick calibration object");
 	}
 
-	return calibrationItem;
+	return joystickCalibrationItem;
 }
 
 void Controller::copyPropertyToItem(QObject* item, QString propName)
