@@ -1,7 +1,5 @@
 #include "serialCommunication.h"
 #include "Arduino.h"
-#include <stdlib.h>
-#include <string.h>
 
 SerialCommunication::SerialCommunication() :
 	m_receivedCommandLength(0),
@@ -62,26 +60,6 @@ bool SerialCommunication::commandReceived()
 	}
 
 	return m_commandReceived;
-}
-
-int SerialCommunication::receivedCommandNumParts() const
-{
-	return m_numParts;
-}
-
-const char* SerialCommunication::receivedCommandPart(int i) const
-{
-	return &(m_receivedCommand[m_startingPartIndex[i]]);
-}
-
-int SerialCommunication::receivedCommandPartAsInt(int i) const
-{
-	return atoi(receivedCommandPart(i));
-}
-
-float SerialCommunication::receivedCommandPartAsFloat(int i) const
-{
-	return atof(receivedCommandPart(i));
 }
 
 void SerialCommunication::newCommandToSend()

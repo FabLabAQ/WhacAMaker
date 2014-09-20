@@ -1,6 +1,8 @@
 #ifndef __SERIAL_COMMUNICATION_H__
 #define __SERIAL_COMMUNICATION_H__
 
+#include <stdlib.h>
+
 /**
  * \brief A simple class which takes care of serial communication
  *
@@ -56,7 +58,10 @@ public:
 	 * This is only valid after commandReceived returns true
 	 * \return the number of parts in the command
 	 */
-	int receivedCommandNumParts() const;
+	int receivedCommandNumParts() const
+	{
+		return m_numParts;
+	}
 
 	/**
 	 * \brief The i-th part of the received command as a string
@@ -65,7 +70,10 @@ public:
 	 * \param i the part to return
 	 * \return the i-th part of the received command as a string
 	 */
-	const char* receivedCommandPart(int i) const;
+	const char* receivedCommandPart(int i) const
+	{
+		return &(m_receivedCommand[m_startingPartIndex[i]]);
+	}
 
 	/**
 	 * \brief The i-th part of the received command as an int
@@ -74,7 +82,10 @@ public:
 	 * \param i the part to return
 	 * \return the i-th part of the received command as an int
 	 */
-	int receivedCommandPartAsInt(int i) const;
+	int receivedCommandPartAsInt(int i) const
+	{
+		return atoi(receivedCommandPart(i));
+	}
 
 	/**
 	 * \brief The i-th part of the received command as a float
@@ -83,7 +94,10 @@ public:
 	 * \param i the part to return
 	 * \return the i-th part of the received command as a float
 	 */
-	float receivedCommandPartAsFloat(int i) const;
+	float receivedCommandPartAsFloat(int i) const
+	{
+		return atof(receivedCommandPart(i));
+	}
 
 	/**
 	 * \brief Creates a new command to send
