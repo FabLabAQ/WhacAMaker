@@ -5,14 +5,14 @@
 
 #warning DECIDERE SE METTERE IL CHECK ALLA FINE DEL COMANDO O NO
 
-SerialCommunication::SerialCommunication(Controller* controller, QObject* parent) :
-	QObject(parent),
-	m_controller(controller),
-	m_serialPort(),
-	m_incomingData(),
-	m_endCommandPosition(-1),
-	m_receivedCommandParts(),
-	m_commandPartsToSend()
+SerialCommunication::SerialCommunication(Controller* controller, QObject* parent)
+	: QObject(parent)
+	, m_controller(controller)
+	, m_serialPort()
+	, m_incomingData()
+	, m_endCommandPosition(-1)
+	, m_receivedCommandParts()
+	, m_commandPartsToSend()
 {
 	// Connecting signals from the serial port
 	connect(&m_serialPort, SIGNAL(readyRead()), this, SLOT(handleReadyRead()));

@@ -1,6 +1,5 @@
 // The panel for joystick calibration. It as a back button and instructions in
-// the central part. To activate a target set the status to either "center",
-// "up", "down",, "left" or "right"
+// the central part. To activate the target set the status to "center"
 import QtQuick 2.0
 
 AnimatedElementsPanel {
@@ -85,48 +84,8 @@ AnimatedElementsPanel {
 		color: container.targetOffColor
 	}
 
-	// The up target
-	CalibrationTarget {
-		id: upTarget
-		x: (container.width - width) / 2.0
-		yWhenVisible: 0
-		width: container.width * container.targetSide
-		height: width
-		color: container.targetOffColor
-	}
-
-	// The down target
-	CalibrationTarget {
-		id: downTarget
-		x: (container.width - width) / 2.0
-		yWhenVisible: container.height - height
-		width: container.width * container.targetSide
-		height: width
-		color: container.targetOffColor
-	}
-
-	// The left target
-	CalibrationTarget {
-		id: leftTarget
-		x: 0
-		yWhenVisible: (container. height - height) / 2.0
-		width: container.width * container.targetSide
-		height: width
-		color: container.targetOffColor
-	}
-
-	// The right target
-	CalibrationTarget {
-		id: rightTarget
-		x: container.width - width
-		yWhenVisible: (container. height - height) / 2.0
-		width: container.width * container.targetSide
-		height: width
-		color: container.targetOffColor
-	}
-
 	// The animated elements
-	animatedElements: [label, backButton, centralTarget, upTarget, downTarget, leftTarget, rightTarget]
+	animatedElements: [label, backButton, centralTarget]
 
 	// Called when all buttons have disappeared
 	onAllDisappeared: {
@@ -151,50 +110,6 @@ AnimatedElementsPanel {
 
 			PropertyChanges { target: label; text: "Centra il joystick e premi il pulsante"}
 			PropertyChanges { target: centralTarget; color: container.targetOnColor}
-			PropertyChanges { target: upTarget; color: container.targetOffColor}
-			PropertyChanges { target: downTarget; color: container.targetOffColor}
-			PropertyChanges { target: leftTarget; color: container.targetOffColor}
-			PropertyChanges { target: rightTarget; color: container.targetOffColor}
-		},
-		State {
-			name: "up"
-
-			PropertyChanges { target: label; text: "Muovi il joystick su e premi il pulsante"}
-			PropertyChanges { target: centralTarget; color: container.targetOffColor}
-			PropertyChanges { target: upTarget; color: container.targetOnColor}
-			PropertyChanges { target: downTarget; color: container.targetOffColor}
-			PropertyChanges { target: leftTarget; color: container.targetOffColor}
-			PropertyChanges { target: rightTarget; color: container.targetOffColor}
-		},
-		State {
-			name: "down"
-
-			PropertyChanges { target: label; text: "Muovi il joystick giù e premi il pulsante"}
-			PropertyChanges { target: centralTarget; color: container.targetOffColor}
-			PropertyChanges { target: upTarget; color: container.targetOffColor}
-			PropertyChanges { target: downTarget; color: container.targetOnColor}
-			PropertyChanges { target: leftTarget; color: container.targetOffColor}
-			PropertyChanges { target: rightTarget; color: container.targetOffColor}
-		},
-		State {
-			name: "left"
-
-			PropertyChanges { target: label; text: "Muovi il joystick a sinistra e premi il pulsante"}
-			PropertyChanges { target: centralTarget; color: container.targetOffColor}
-			PropertyChanges { target: upTarget; color: container.targetOffColor}
-			PropertyChanges { target: downTarget; color: container.targetOffColor}
-			PropertyChanges { target: leftTarget; color: container.targetOnColor}
-			PropertyChanges { target: rightTarget; color: container.targetOffColor}
-		},
-		State {
-			name: "right"
-
-			PropertyChanges { target: label; text: "Muovi il joystick a destra e premi il pulsante"}
-			PropertyChanges { target: centralTarget; color: container.targetOffColor}
-			PropertyChanges { target: upTarget; color: container.targetOffColor}
-			PropertyChanges { target: downTarget; color: container.targetOffColor}
-			PropertyChanges { target: leftTarget; color: container.targetOffColor}
-			PropertyChanges { target: rightTarget; color: container.targetOnColor}
 		}
 	]
 
@@ -204,10 +119,6 @@ AnimatedElementsPanel {
 
 		ParallelAnimation {
 			ColorAnimation { target: centralTarget; duration: 250}
-			ColorAnimation { target: upTarget; duration: 250}
-			ColorAnimation { target: downTarget; duration: 250}
-			ColorAnimation { target: leftTarget; duration: 250}
-			ColorAnimation { target: rightTarget; duration: 250}
 			SequentialAnimation {
 				NumberAnimation { target: label; property: "opacity"; from: 1; to: 0; duration: 125 }
 				NumberAnimation { target: label; property: "opacity"; from: 0; to: 1; duration: 125 }

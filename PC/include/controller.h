@@ -8,6 +8,8 @@
 #include <QVariant>
 #include "gameItem.h"
 #include "serialCommunication.h"
+#include "joystickCalibrationProcedure.h"
+#include "joystickPointer.h"
 
 /**
  * \brief The main controller of the game
@@ -20,23 +22,12 @@ class Controller : public QObject
 {
 	Q_OBJECT
 
-public:
-	/**
-	 * \brief The joystick calibration status
-	 */
-	enum JoystickCalibrationStatus {
-		Start,
-		Center,
-		Up,
-		Down,
-		Left,
-		Right
-	};
-
 	/**
 	 * \brief The current application status
 	 */
 	enum Status {
+		Menu,
+		JoystickCalibration
 	};
 
 public:
@@ -53,6 +44,26 @@ public:
 	 * \brief Destructor
 	 */
 	virtual ~Controller();
+
+	/**
+	 * \brief Returns a const reference to the QML view
+	 *
+	 * \return a const reference to the QML view
+	 */
+	const QQuickView& getView() const
+	{
+		return m_view;
+	}
+
+	/**
+	 * \brief Returns a reference to the QML view
+	 *
+	 * \return a reference to the QML view
+	 */
+	QQuickView& view()
+	{
+		return m_view;
+	}
 
 	/**
 	 * \brief If score is going to be a highscore for the given level,
@@ -72,7 +83,13 @@ public:
 	 */
 	void commandReceived();
 
-protected slots:
+	/**
+	 * \brief The function to tell the controller that the joystick
+	 *        calibration process has ended
+	 */
+	void joystickCalibrationProcedureEnded();
+
+private slots:
 	/**
 	 * \brief This is the slot called when configuration parameters are
 	 *        saved
@@ -99,12 +116,7 @@ protected slots:
 	 */
 	void joystickCalibrationInterrupted();
 
-	/**
-	 * \brief The slot called to set the current joystick calibration status
-	 */
-	void setJoystickCalibrationStatus(JoystickCalibrationStatus status);
-
-protected:
+private:
 	/**
 	 * \brief Restores parameters in the configuration parameters QML object
 	 */
@@ -118,27 +130,11 @@ protected:
 	void restoreHighScores(GameItem::DifficultyLevel level);
 
 	/**
-	 * \brief Returns a pointer to the QML object with configuration
-	 *        parameters
-	 *
-	 * \return a pointer to the QML object with configuration parameters
-	 */
-	QObject* qmlConfigurationParametersObject();
-
-	/**
 	 * \brief Returns a pointer to the game object
 	 *
 	 * \return a pointer to the game object
 	 */
 	GameItem* qmlGameObject();
-
-	/**
-	 * \brief Returns a pointer to the QML object to perform joystick
-	 *        calibration
-	 *
-	 * \return a pointer to the QML object to perform joystick calibration
-	 */
-	QObject* qmlJoystickCalibrationObject();
 
 	/**
 	 * \brief Copies a value from settings to an QML item
@@ -180,6 +176,11 @@ protected:
 	void setSerialPort();
 
 	/**
+	 * \brief The current status
+	 */
+	Status m_status;
+
+	/**
 	 * \brief The object with settings for the application
 	 */
 	QSettings m_settings;
@@ -196,6 +197,16 @@ protected:
 	SerialCommunication m_serialCom;
 
 	/**
+	 * \brief The object managing the joystick pointer
+	 */
+	JoystickPointer m_joystickPointer;
+
+	/**
+	 * \brief The object taking care of the joystick calibration procedure
+	 */
+	JoystickCalibrationProcedure m_joystickCalibration;
+
+	/**
 	 * \brief The level of the next highscore
 	 */
 	GameItem::DifficultyLevel m_nextScoreLevel;
@@ -204,14 +215,6 @@ protected:
 	 * \brief The score of the next highscore
 	 */
 	double m_nextScore;
-
-	/**
-	 * \brief The joystick calibration object
-	 *
-	 * This is guaranteed to be valid only during the joystick calibration
-	 * procedure
-	 */
-	QObject* m_joystickCalibration;
 };
 
 #endif

@@ -52,6 +52,11 @@ Rectangle {
 	{
 		joystickCalibration.endCalibration();
 	}
+	// The function returning the joystick joystick pointer
+	function joystickPointerObject()
+	{
+		return joystickPointer;
+	}
 
 	ButtonPanel {
 		id: mainMenu
@@ -93,7 +98,7 @@ Rectangle {
 		id: settingsMenu
 		visible: false
 		backItem: mainMenu
-		buttonCaptions: ["Calibrazione", "Configurazione"]
+		buttonCaptions: ["Calibrazione Joystick", "Configurazione"]
 		anchors.fill: parent
 	}
 
@@ -161,6 +166,10 @@ Rectangle {
 		anchors.fill: parent
 
 		onEnterPressed: application.playerNameEntered(t)
+	}
+
+	JoystickPointer {
+		id: joystickPointer
 	}
 
 	Component.onCompleted: {

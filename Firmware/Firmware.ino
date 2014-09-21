@@ -16,6 +16,9 @@ SerialCommunication serialCommunication;
 // The object taking care of reading joystick status
 Joystick joystick;
 
+// Whether to send joystick positions or not
+bool sendJoystick = false;
+
 void setup() {
 	// Initializing serial communication
 	serialCommunication.begin(baudRate);
@@ -25,14 +28,26 @@ void setup() {
 }
 
 void loop() {
-	// Reading joystick and sending activations
-	joystick.readStatus();
+	// Reading from the serial line
+	if (serialCommunication.commandReceived() && (serialCommunication.receivedCommandNumParts() != 0)) {
+		if (serialCommunication.receivedCommandPart(0)[0] == 'S') {
+			sendJoystick = true;
+		}
+	}
 
-	serialCommunication.newCommandToSend();
-	serialCommunication.appendCommandPart("J");
-	serialCommunication.appendCommandPart(joystick.xPosition());
-	serialCommunication.appendCommandPart(joystick.yPosition());
-	serialCommunication.appendCommandPart(joystick.button1Pressed());
-	serialCommunication.appendCommandPart(joystick.button2Pressed());
-	serialCommunication.sendCommand();
+	if (sendJoystick) {
+		// Reading joystick and sending activations
+		joystick.readStatus();
+
+		serialCommunication.newCommandToSend();
+		serialCommunication.appendCommandPart("J");
+		serialCommunication.appendCommandPart(joystick.xPosition());
+		serialCommunication.appendCommandPart(joystick.yPosition());
+		serialCommunication.appendCommandPart(joystick.button1Pressed());
+		serialCommunication.appendCommandPart(joystick.button2Pressed());
+		serialCommunication.sendCommand();
+
+		// This is just to avoid flooding the PC
+		delay(50);
+	}
 }

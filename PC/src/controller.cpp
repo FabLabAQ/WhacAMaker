@@ -3,20 +3,24 @@
 #include <QMetaObject>
 #include <QQmlProperty>
 #include "myRuntimeException.h"
+#include "helpers.h"
+#include <iostream>
 
 namespace {
 	// Some constants
 	const int numHighscores = 7;
 }
 
-Controller::Controller(QQuickView& view, QObject* parent) :
-	QObject(parent),
-	m_settings(),
-	m_view(view),
-	m_serialCom(this),
-	m_nextScoreLevel(GameItem::Easy),
-	m_nextScore(0.0),
-	m_joystickCalibration(NULL)
+Controller::Controller(QQuickView& view, QObject* parent)
+	: QObject(parent)
+	, m_status(Menu)
+	, m_settings()
+	, m_view(view)
+	, m_serialCom(this)
+	, m_joystickPointer(this, view)
+	, m_joystickCalibration(this)
+	, m_nextScoreLevel(GameItem::Easy)
+	, m_nextScore(0.0)
 {
 	// Setting ourself as the controller in the game object
 	qmlGameObject()->setController(this);
@@ -37,6 +41,15 @@ Controller::Controller(QQuickView& view, QObject* parent) :
 	connect(m_view.rootObject(), SIGNAL(playerNameEntered(QString)), this, SLOT(savePlayerName(QString)));
 	connect(m_view.rootObject(), SIGNAL(joystickCalibrationStarted()), this, SLOT(joystickCalibrationStarted()));
 	connect(m_view.rootObject(), SIGNAL(joystickCalibrationInterrupted()), this, SLOT(joystickCalibrationInterrupted()));
+
+	// Telling the controller to start sending joystick data. We send two times because the first one there could
+	// be garbage
+	m_serialCom.newCommandToSend();
+	m_serialCom.appendCommandPart("S");
+	m_serialCom.sendCommand();
+	m_serialCom.newCommandToSend();
+	m_serialCom.appendCommandPart("S");
+	m_serialCom.sendCommand();
 }
 
 Controller::~Controller()
@@ -70,17 +83,39 @@ bool Controller::newHighScore(GameItem::DifficultyLevel level, double score)
 
 void Controller::commandReceived()
 {
-	if (!m_serialCom.extractReceivedCommand()) {
+	if ((!m_serialCom.extractReceivedCommand()) || (m_serialCom.receivedCommandNumParts() == 0)) {
 		throwMyRuntimeException("Internal error: command received but m_serialCom.extractReceivedCommand() returned false");
 	}
 
+	if (m_serialCom.receivedCommandPart(0) == "J") {
+		if (m_serialCom.receivedCommandNumParts() != 5) {
+			QString command = m_serialCom.receivedCommandPart(0);
+			for (int i = 1; i < m_serialCom.receivedCommandNumParts(); ++i) {
+				command += " " + m_serialCom.receivedCommandPart(i);
+			}
+
+			// Ignoring command, but not throwing an exception
+			std::cerr << "Invalid Joystick command (" << command.toLatin1().data() << ")!!!" << std::endl;
+		}
+
+		m_joystickPointer.joystickCommands(m_serialCom.receivedCommandPartAsInt(1), m_serialCom.receivedCommandPartAsInt(2), m_serialCom.receivedCommandPartAsInt(3), m_serialCom.receivedCommandPartAsInt(4));
+	}
+}
+
+void Controller::joystickCalibrationProcedureEnded()
+{
 #warning TODO
+// 	???
+//
+// 	salvare parametri del joystick, se serve (probabilmente no)
+//
+// 	m_status = Menu;
 }
 
 void Controller::saveConfigurationParameters()
 {
 	// Getting a reference to the QML object string the parameters
-	QObject* const configurationItem = qmlConfigurationParametersObject();
+	QObject* const configurationItem = getQmlObject(m_view, "configurationParametersObject");
 
 	// Saving to the configuration object
 	if (copyPropertyToSettings(configurationItem, "serialPort")) {
@@ -142,46 +177,28 @@ void Controller::savePlayerName(const QString& name)
 
 void Controller::joystickCalibrationStarted()
 {
-	m_joystickCalibration = qmlJoystickCalibrationObject();
+#warning TODO!!!
+// 	???
+//
+// 	qui dire a m_joystickCalibration di iniziare la procedura di calibrazione
+//
+// 	m_status = JoystickCalibration;
 }
 
 void Controller::joystickCalibrationInterrupted()
 {
-	m_joystickCalibration = NULL;
-}
-
-void Controller::setJoystickCalibrationStatus(JoystickCalibrationStatus status)
-{
-	QString statusString;
-	switch (status) {
-		case Start:
-			statusString = "";
-			break;
-		case Center:
-			statusString = "center";
-			break;
-		case Up:
-			statusString = "up";
-			break;
-		case Down:
-			statusString = "down";
-			break;
-		case Left:
-			statusString = "left";
-			break;
-		case Right:
-			statusString = "right";
-			break;
-	}
-
-	// Setting the status in the joystick calibration item
-	QQmlProperty::write(m_joystickCalibration, "state", statusString);
+#warning TODO!!!
+// 	???
+//
+// 	qui dire a m_joystickCalibration che la procedura di calibrazione è stata interrotta
+//
+// 	m_status = Menu;
 }
 
 void Controller::restoreParameters()
 {
 	// Getting a reference to the QML object string the parameters
-	QObject* const configurationItem = qmlConfigurationParametersObject();
+	QObject* const configurationItem = getQmlObject(m_view, "configurationParametersObject");
 
 	// Storing settings inside the configurationItem
 	copyPropertyToItem(configurationItem, "serialPort");
@@ -213,46 +230,15 @@ void Controller::restoreHighScores(GameItem::DifficultyLevel level)
 	QQmlProperty::write(scoreItem, "playersScores", highscores);
 }
 
-QObject* Controller::qmlConfigurationParametersObject()
-{
-	// Getting a reference to the QML object string the parameters
-	QVariant returnedObject;
-	QMetaObject::invokeMethod(m_view.rootObject(), "configurationParametersObject", Q_RETURN_ARG(QVariant, returnedObject));
-	QObject* const configurationItem = qvariant_cast<QObject *>(returnedObject);
-
-	if (configurationItem == NULL) {
-		throwMyRuntimeException("Cannot access the configuration parameters object");
-	}
-
-	return configurationItem;
-}
-
 GameItem* Controller::qmlGameObject()
 {
-	// Getting a reference to the QML object string the parameters
-	QVariant returnedObject;
-	QMetaObject::invokeMethod(m_view.rootObject(), "gameObject", Q_RETURN_ARG(QVariant, returnedObject));
-	GameItem* const gameItem = qvariant_cast<GameItem *>(returnedObject);
+	GameItem* const gameItem = dynamic_cast<GameItem *>(getQmlObject(m_view, "gameObject"));
 
 	if (gameItem == NULL) {
-		throwMyRuntimeException("Cannot access the game object");
+		throwMyRuntimeException("Wrong type for the game object");
 	}
 
 	return gameItem;
-}
-
-QObject* Controller::qmlJoystickCalibrationObject()
-{
-	// Getting a reference to the QML object string the parameters
-	QVariant returnedObject;
-	QMetaObject::invokeMethod(m_view.rootObject(), "joystickCalibrationObject", Q_RETURN_ARG(QVariant, returnedObject));
-	QObject* const joystickCalibrationItem = qvariant_cast<QObject *>(returnedObject);
-
-	if (joystickCalibrationItem == NULL) {
-		throwMyRuntimeException("Cannot access the joystick calibration object");
-	}
-
-	return joystickCalibrationItem;
 }
 
 void Controller::copyPropertyToItem(QObject* item, QString propName)

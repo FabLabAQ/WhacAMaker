@@ -13,6 +13,7 @@
 	<file>qml/HighScores.qml</file>
 	<file>qml/InputField.qml</file>
 	<file>qml/JoystickCalibration.qml</file>
+	<file>qml/JoystickPointer.qml</file>
 	<file>qml/Keyboard.qml</file>
 	<file>qml/NameSelection.qml</file>
 	<file>qml/SingleScore.qml</file>

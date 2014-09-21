@@ -5,10 +5,10 @@
 #include "myRuntimeException.h"
 #include "controller.h"
 
-GameItem::GameItem(QQuickItem *parent) :
-	QQuickPaintedItem(parent),
-	m_controller(NULL),
-	m_level(Easy)
+GameItem::GameItem(QQuickItem *parent)
+	: QQuickPaintedItem(parent)
+	, m_controller(NULL)
+	, m_level(Easy)
 {
 	setAcceptedMouseButtons(Qt::AllButtons);
 }
