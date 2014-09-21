@@ -96,9 +96,9 @@ void Controller::commandReceived()
 
 			// Ignoring command, but not throwing an exception
 			std::cerr << "Invalid Joystick command (" << command.toLatin1().data() << ")!!!" << std::endl;
+		} else {
+			m_joystickPointer.joystickCommands(m_serialCom.receivedCommandPartAsInt(1), m_serialCom.receivedCommandPartAsInt(2), m_serialCom.receivedCommandPartAsInt(3), m_serialCom.receivedCommandPartAsInt(4));
 		}
-
-		m_joystickPointer.joystickCommands(m_serialCom.receivedCommandPartAsInt(1), m_serialCom.receivedCommandPartAsInt(2), m_serialCom.receivedCommandPartAsInt(3), m_serialCom.receivedCommandPartAsInt(4));
 	}
 }
 

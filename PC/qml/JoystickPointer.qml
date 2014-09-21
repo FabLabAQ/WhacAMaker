@@ -19,15 +19,27 @@ Item {
 // 	funzioni eseguite quando l utente preme un pulsante del joystick (animazioni)
 
 	// The pointer in "" status
-	Rectangle {
+// 	Rectangle {
+// 		id: pointerNormal
+// 		x: -width / 2.0;
+// 		y: -height / 2.0;
+// 		width: 10
+// 		height: 10
+// 		opacity: 0.5
+// 		color: "green"
+// 		visible: true
+// 	}
+	AnimatedImage {
 		id: pointerNormal
 		x: -width / 2.0;
 		y: -height / 2.0;
-		width: 10
-		height: 10
+		width: 50
+		height: 50
 		opacity: 0.5
-		color: "green"
 		visible: true
+		playing: true
+// 		source: "qrc:///soccer_ball_animated.svg"
+		source: "qrc:///Rotating_earth.gif"
 	}
 
 	// The pointer in "game" status

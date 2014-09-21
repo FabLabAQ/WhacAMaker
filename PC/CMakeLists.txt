@@ -7,6 +7,7 @@ find_package(Qt5Qml 5.3 REQUIRED)
 find_package(Qt5Quick 5.3 REQUIRED)
 find_package(Qt5Gui 5.3 REQUIRED)
 find_package(Qt5SerialPort 5.3 REQUIRED)
+find_package(Qt5Svg 5.3 REQUIRED)
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)

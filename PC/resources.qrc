@@ -18,5 +18,7 @@
 	<file>qml/NameSelection.qml</file>
 	<file>qml/SingleScore.qml</file>
 	<file>qml/test.qml</file>
+	<file>soccer_ball_animated.svg</file>
+	<file>Rotating_earth.gif</file>
 </qresource>
 </RCC>
