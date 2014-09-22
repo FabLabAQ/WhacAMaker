@@ -33,25 +33,15 @@ Item {
 		id: pointerNormal
 		x: -width / 2.0;
 		y: -height / 2.0;
-		width: 50
-		height: 50
-		opacity: 0.5
+		width: 100
+		height: 100
+		opacity: 0.8
 		visible: true
 		playing: true
+		source: "qrc:///worm.gif"
+// 		source: "qrc:///bball.png"
 // 		source: "qrc:///soccer_ball_animated.svg"
-		source: "qrc:///Rotating_earth.gif"
-	}
-
-	// The pointer in "game" status
-	Rectangle {
-		id: pointerGame
-		x: -width / 2.0;
-		y: -height / 2.0;
-		width: 10
-		height: 10
-		opacity: 0.5
-		color: "red"
-		visible: false
+// 		source: "qrc:///Rotating_earth.gif"
 	}
 
 	// The pointer in "calibration" status
@@ -71,7 +61,6 @@ Item {
 			name: "game"
 
 			PropertyChanges { target: pointerNormal; visible: false }
-			PropertyChanges { target: pointerGame; visible: true }
 			PropertyChanges { target: pointerCalibration; visible: false }
 			PropertyChanges { target: container; width: pointerGame.width; height: pointerGame.height }
 		},
@@ -79,7 +68,6 @@ Item {
 			name: "calibration"
 
 			PropertyChanges { target: pointerNormal; visible: false }
-			PropertyChanges { target: pointerGame; visible: false }
 			PropertyChanges { target: pointerCalibration; visible: true }
 			PropertyChanges { target: container; width: pointerCalibration.width; height: pointerCalibration.height }
 		}

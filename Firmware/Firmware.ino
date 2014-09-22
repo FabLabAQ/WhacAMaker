@@ -25,6 +25,8 @@ void setup() {
 
 	// Initializing joystick
 	joystick.begin(joystickP1, joystickP2, joystickX, joystickY);
+
+	pinMode(13, OUTPUT);
 }
 
 void loop() {
@@ -33,6 +35,8 @@ void loop() {
 		if (serialCommunication.receivedCommandPart(0)[0] == 'S') {
 			sendJoystick = true;
 		}
+
+		digitalWrite(13, HIGH);
 	}
 
 	if (sendJoystick) {

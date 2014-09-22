@@ -3,6 +3,7 @@
 #include "controller.h"
 #include <iostream>
 
+#include <unistd.h>
 #warning DECIDERE SE METTERE IL CHECK ALLA FINE DEL COMANDO O NO
 
 SerialCommunication::SerialCommunication(Controller* controller, QObject* parent)
@@ -26,7 +27,10 @@ SerialCommunication::~SerialCommunication()
 void SerialCommunication::setSerialPort(QString port)
 {
 	// Closing the old port
-	m_serialPort.close();
+	if (m_serialPort.isOpen()) {
+		m_serialPort.close();
+		m_serialPort.clearError();
+	}
 
 	// Setting the name of the port
 	m_serialPort.setBaudRate(115200);
@@ -34,12 +38,15 @@ void SerialCommunication::setSerialPort(QString port)
 
 	// Trying to open the port
 	if (!m_serialPort.open(QIODevice::ReadWrite)) {
-		m_serialPort.clearError();
-
 		// Here we can't throw an exception because otherwise it would be impossible to change the settings
 		// Simply printing a message to stderr
 		std::cerr << "Error opening serial port at " << port.toLatin1().data() << std::endl;
 	}
+
+	std::cerr << "Serial port opened, error: " << m_serialPort.error() << ", open: " << m_serialPort.isOpen() << std::endl;
+	m_serialPort.write("S\n");
+//	write(m_serialPort.handle(), "S\n", 2);
+	std::cerr << "Tried to write, error: " << m_serialPort.error() << ", open: " << m_serialPort.isOpen() << std::endl;
 }
 
 bool SerialCommunication::extractReceivedCommand()
@@ -59,7 +66,7 @@ bool SerialCommunication::extractReceivedCommand()
 	// Now fixing m_endCommandPosition
 	m_endCommandPosition = m_incomingData.indexOf('\n');
 
-// std::cerr << "===extractReceivedCommand=== command: \"" << command.toLatin1().data() << "\", m_endCommandPosition: " << m_endCommandPosition << ", all data: \"" << m_incomingData.data() << "\"" << std::endl;
+std::cerr << "===extractReceivedCommand=== command: \"" << command.toLatin1().data() << "\", m_endCommandPosition: " << m_endCommandPosition << ", all data: \"" << m_incomingData.data() << "\"" << std::endl;
 
 	return true;
 }
@@ -116,6 +123,8 @@ void SerialCommunication::sendCommand()
 	// Writing data
 	qint64 bytesWritten = m_serialPort.write(m_commandPartsToSend);
 
+std::cerr << "Command sent: " << m_commandPartsToSend.data() << std::endl;
+
 	if (bytesWritten == -1) {
 		std::cerr  << "Error writing data, error: " << m_serialPort.errorString().toLatin1().data() << std::endl;
 	} else if (bytesWritten != m_commandPartsToSend.size()) {
@@ -145,7 +154,7 @@ void SerialCommunication::handleReadyRead()
 		}
 	}
 
-// std::cerr << "===handleReadyRead=== new data: \"" << newData.data() << "\", oldSize: " << oldSize << ", firstNewlinePos: " << firstNewlinePos << ", numNewlines: " << numNewlines << ", m_endCommandPosition: " << m_endCommandPosition << ", all data: \"" << m_incomingData.data() << "\"" << std::endl;
+std::cerr << "===handleReadyRead=== new data: \"" << newData.data() << "\", oldSize: " << oldSize << ", firstNewlinePos: " << firstNewlinePos << ", numNewlines: " << numNewlines << ", m_endCommandPosition: " << m_endCommandPosition << ", all data: \"" << m_incomingData.data() << "\"" << std::endl;
 
 	// If there was at least one '\n' in the new data, checking what to do
 	if (numNewlines != 0) {

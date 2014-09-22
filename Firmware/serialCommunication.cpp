@@ -39,8 +39,9 @@ bool SerialCommunication::commandReceived()
 	while (Serial.available() > 0) {
 		const int datum = Serial.read();
 
-		if (datum == '\n') {
-			// Adding the final '\0'
+		if ((datum == '\n') || (m_receivedCommandLength >= maxCommandLength)){
+			// Adding the final '\0'. We get here also if command is too long, in that case
+			// we simply cut the command
 			m_receivedCommand[m_receivedCommandLength] = '\0';
 			m_commandReceived = true;
 
