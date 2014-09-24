@@ -27,7 +27,8 @@ class Controller : public QObject
 	 */
 	enum Status {
 		Menu,
-		JoystickCalibration
+		JoystickCalibration,
+		Game
 	};
 
 public:

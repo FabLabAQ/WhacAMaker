@@ -25,8 +25,6 @@ void setup() {
 
 	// Initializing joystick
 	joystick.begin(joystickP1, joystickP2, joystickX, joystickY);
-
-	pinMode(13, OUTPUT);
 }
 
 void loop() {
@@ -34,9 +32,10 @@ void loop() {
 	if (serialCommunication.commandReceived() && (serialCommunication.receivedCommandNumParts() != 0)) {
 		if (serialCommunication.receivedCommandPart(0)[0] == 'S') {
 			sendJoystick = true;
+		} else if (serialCommunication.receivedCommandPart(0)[0] == 'M') {
+			// Move servo to bring up or down the moles
+			// Check arduino int dimension: if it is at least 2 byte, we can send the list of moles to bring up or down as bits (if the i-th bit is 1 the i-th mole goes/stays up, if it s 0, it goes/stays down)
 		}
-
-		digitalWrite(13, HIGH);
 	}
 
 	if (sendJoystick) {
@@ -51,7 +50,7 @@ void loop() {
 		serialCommunication.appendCommandPart(joystick.button2Pressed());
 		serialCommunication.sendCommand();
 
-		// This is just to avoid flooding the PC
-		delay(50);
+// 		// This is just to avoid flooding the PC
+// 		delay(50);
 	}
 }

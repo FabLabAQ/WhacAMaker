@@ -5,6 +5,8 @@
 #include <QByteArray>
 #include <QObject>
 #include <QStringList>
+#include <QTimer>
+#include <QList>
 
 class Controller;
 
@@ -142,7 +144,23 @@ private slots:
 	 */
 	void handleError(QSerialPort::SerialPortError error);
 
+	/**
+	 * \brief The slot called a second after the serial port is opened
+	 *
+	 * This is needed to give Arduino time to boot. All commands sent
+	 * before this timeout expires are stored and send as soon as this is
+	 * called
+	 */
+	void arduinoBootFinished();
+
 private:
+	/**
+	 * \brief The function that actually sends data
+	 *
+	 * \param dataToSend the data  osend through the serial port
+	 */
+	void sendData(const QByteArray& dataToSend);
+
 	/**
 	 * \brief The controller object of the game
 	 */
@@ -152,6 +170,20 @@ private:
 	 * \brief The serial communication port
 	 */
 	QSerialPort m_serialPort;
+
+	/**
+	 * \brief The timer to wait for Arduino boot to finish
+	 *
+	 * See arduinoBootFinished() description
+	 */
+	QTimer m_arduinoBoot;
+
+	/**
+	 * \brief The list of commands sent prior to Arduino finishing boot
+	 *
+	 * See arduinoBootFinished() description
+	 */
+	QList<QByteArray> m_preBootCommands;
 
 	/**
 	 * \brief The buffer of data from the serial port

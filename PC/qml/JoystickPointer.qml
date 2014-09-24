@@ -49,10 +49,10 @@ Item {
 		id: pointerCalibration
 		x: -width / 2.0;
 		y: -height / 2.0;
-		width: 10
+		width: 10 // questo deve dipendere dalla grandezza del target per la calibrazione
 		height: 10
 		opacity: 0.5
-		color: "blue"
+		color: "green"
 		visible: false
 	}
 
@@ -71,8 +71,5 @@ Item {
 			PropertyChanges { target: pointerCalibration; visible: true }
 			PropertyChanges { target: container; width: pointerCalibration.width; height: pointerCalibration.height }
 		}
-	]
-
-	transitions: [
 	]
 }

@@ -22,8 +22,10 @@ Controller::Controller(QQuickView& view, QObject* parent)
 	, m_nextScoreLevel(GameItem::Easy)
 	, m_nextScore(0.0)
 {
+	// Getting the game object
+	GameItem* game = qmlGameObject();
 	// Setting ourself as the controller in the game object
-	qmlGameObject()->setController(this);
+	game->setController(this);
 
 	// Restores settings in the configuration parameters QML object
 	restoreParameters();
@@ -41,6 +43,7 @@ Controller::Controller(QQuickView& view, QObject* parent)
 	connect(m_view.rootObject(), SIGNAL(playerNameEntered(QString)), this, SLOT(savePlayerName(QString)));
 	connect(m_view.rootObject(), SIGNAL(joystickCalibrationStarted()), this, SLOT(joystickCalibrationStarted()));
 	connect(m_view.rootObject(), SIGNAL(joystickCalibrationInterrupted()), this, SLOT(joystickCalibrationInterrupted()));
+	connect(m_view.rootObject(), SIGNAL(gameStarted()), game, SLOT(startGame()));
 
 	// Telling the controller to start sending joystick data. We send two times because the first one there could
 	// be garbage

@@ -10,6 +10,8 @@ SerialCommunication::SerialCommunication(Controller* controller, QObject* parent
 	: QObject(parent)
 	, m_controller(controller)
 	, m_serialPort()
+	, m_arduinoBoot()
+	, m_preBootCommands()
 	, m_incomingData()
 	, m_endCommandPosition(-1)
 	, m_receivedCommandParts()
@@ -18,6 +20,10 @@ SerialCommunication::SerialCommunication(Controller* controller, QObject* parent
 	// Connecting signals from the serial port
 	connect(&m_serialPort, SIGNAL(readyRead()), this, SLOT(handleReadyRead()));
 	connect(&m_serialPort, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(handleError(QSerialPort::SerialPortError)));
+
+	// Connecting the signal for the Arduino boot timer. Also setting the timer to be singleShot
+	m_arduinoBoot.setSingleShot(true);
+	connect(&m_arduinoBoot, SIGNAL(timeout()), this, SLOT(arduinoBootFinished()));
 }
 
 SerialCommunication::~SerialCommunication()
@@ -43,10 +49,10 @@ void SerialCommunication::setSerialPort(QString port)
 		std::cerr << "Error opening serial port at " << port.toLatin1().data() << std::endl;
 	}
 
-	std::cerr << "Serial port opened, error: " << m_serialPort.error() << ", open: " << m_serialPort.isOpen() << std::endl;
-	m_serialPort.write("S\n");
-//	write(m_serialPort.handle(), "S\n", 2);
-	std::cerr << "Tried to write, error: " << m_serialPort.error() << ", open: " << m_serialPort.isOpen() << std::endl;
+	// This is necessary to give time to Arduino to "boot" (the board reboots every time the serial port
+	// is opened, and then there are 0.5 seconds taken by the bootloader)
+	m_arduinoBoot.start(1000);
+	m_preBootCommands.clear();
 }
 
 bool SerialCommunication::extractReceivedCommand()
@@ -66,7 +72,7 @@ bool SerialCommunication::extractReceivedCommand()
 	// Now fixing m_endCommandPosition
 	m_endCommandPosition = m_incomingData.indexOf('\n');
 
-std::cerr << "===extractReceivedCommand=== command: \"" << command.toLatin1().data() << "\", m_endCommandPosition: " << m_endCommandPosition << ", all data: \"" << m_incomingData.data() << "\"" << std::endl;
+// std::cerr << "===extractReceivedCommand=== command: \"" << command.toLatin1().data() << "\", m_endCommandPosition: " << m_endCommandPosition << ", all data: \"" << m_incomingData.data() << "\"" << std::endl;
 
 	return true;
 }
@@ -117,18 +123,16 @@ void SerialCommunication::appendCommandPart(float part)
 
 void SerialCommunication::sendCommand()
 {
-	// Adding the final endline
-	m_commandPartsToSend.append('\n');
+	// Adding the final endline if is not there already
+	if ((m_commandPartsToSend.size() != 0) && (!m_commandPartsToSend.endsWith('\n'))) {
+		m_commandPartsToSend.append('\n');
+	}
 
-	// Writing data
-	qint64 bytesWritten = m_serialPort.write(m_commandPartsToSend);
-
-std::cerr << "Command sent: " << m_commandPartsToSend.data() << std::endl;
-
-	if (bytesWritten == -1) {
-		std::cerr  << "Error writing data, error: " << m_serialPort.errorString().toLatin1().data() << std::endl;
-	} else if (bytesWritten != m_commandPartsToSend.size()) {
-		std::cerr  << "Cannot write all data, error: " << m_serialPort.errorString().toLatin1().data() << std::endl;
+	if (m_arduinoBoot.isActive()) {
+		// We cannot send the command yet, we have to wait for the boot procedure to finish
+		m_preBootCommands.append(m_commandPartsToSend);
+	} else {
+		sendData(m_commandPartsToSend);
 	}
 }
 
@@ -154,7 +158,7 @@ void SerialCommunication::handleReadyRead()
 		}
 	}
 
-std::cerr << "===handleReadyRead=== new data: \"" << newData.data() << "\", oldSize: " << oldSize << ", firstNewlinePos: " << firstNewlinePos << ", numNewlines: " << numNewlines << ", m_endCommandPosition: " << m_endCommandPosition << ", all data: \"" << m_incomingData.data() << "\"" << std::endl;
+// std::cerr << "===handleReadyRead=== new data: \"" << newData.data() << "\", oldSize: " << oldSize << ", firstNewlinePos: " << firstNewlinePos << ", numNewlines: " << numNewlines << ", m_endCommandPosition: " << m_endCommandPosition << ", all data: \"" << m_incomingData.data() << "\"" << std::endl;
 
 	// If there was at least one '\n' in the new data, checking what to do
 	if (numNewlines != 0) {
@@ -174,6 +178,30 @@ std::cerr << "===handleReadyRead=== new data: \"" << newData.data() << "\", oldS
 
 void SerialCommunication::handleError(QSerialPort::SerialPortError error)
 {
-	std::cerr << "Serial Communication error, code: " << error << std::endl;
+	if (error != QSerialPort::NoError) {
+		std::cerr << "Serial Communication error, code: " << error << std::endl;
+	}
 }
 
+void SerialCommunication::arduinoBootFinished()
+{
+	// Sending all queued command and clearing the queue
+	for (int i = 0; i < m_preBootCommands.size(); i++) {
+		sendData(m_preBootCommands[i]);
+	}
+	m_preBootCommands.clear();
+}
+
+void SerialCommunication::sendData(const QByteArray& dataToSend)
+{
+	// Writing data
+	qint64 bytesWritten = m_serialPort.write(dataToSend);
+
+// std::cerr << "Command sent: " << dataToSend.data() << std::endl;
+
+	if (bytesWritten == -1) {
+		std::cerr  << "Error writing data, error: " << m_serialPort.errorString().toLatin1().data() << std::endl;
+	} else if (bytesWritten != dataToSend.size()) {
+		std::cerr  << "Cannot write all data, error: " << m_serialPort.errorString().toLatin1().data() << std::endl;
+	}
+}

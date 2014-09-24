@@ -15,6 +15,8 @@ Rectangle {
 	signal joystickCalibrationStarted()
 	// The signal emitted when joystick calibration is cancelled by the user
 	signal joystickCalibrationInterrupted()
+	// The signal sent when game starts
+	signal gameStarted()
 
 	// The function returning the object that contains parameters (to be
 	// restored by C++ code)
@@ -127,6 +129,12 @@ Rectangle {
 		id: game
 		visible: false
 		anchors.fill: parent
+
+		onVisibleChanged: {
+			if (visible) {
+				gameStarted();
+			}
+		}
 
 		onGameFinished: {
 			visible = false;

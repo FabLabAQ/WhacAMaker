@@ -2,6 +2,8 @@
 #define __GAME_ITEM_H__
 
 #include <QQuickPaintedItem>
+#include <QStaticText>
+#include <QTimer>
 
 class Controller;
 class SerialCommunication;
@@ -64,6 +66,12 @@ public:
 	 */
 	void setDifficultyLevel(DifficultyLevel newLevel);
 
+public slots:
+	/**
+	 * \brief Call to start the game
+	 */
+	void startGame();
+
 signals:
 	/**
 	 * \brief The signal emitted when the game finishes
@@ -86,6 +94,12 @@ protected:
 	 */
 	virtual void mouseDoubleClickEvent(QMouseEvent *event);
 
+private slots:
+	/**
+	 * \brief The slot called by the game timer
+	 */
+	void timeout();
+
 private:
 	/**
 	 * \brief The controller object
@@ -96,6 +110,51 @@ private:
 	 * \brief The difficulty level of the game
 	 */
 	DifficultyLevel m_level;
+
+	/**
+	 * \brief The level static text
+	 */
+	QStaticText m_levelText;
+
+	/**
+	 * \brief The easy level static text
+	 */
+	QStaticText m_easyLevelText;
+
+	/**
+	 * \brief The medium level static text
+	 */
+	QStaticText m_mediumLevelText;
+
+	/**
+	 * \brief The hard level static text
+	 */
+	QStaticText m_hardLevelText;
+
+	/**
+	 * \brief The score static text
+	 */
+	QStaticText m_scoreText;
+
+	/**
+	 * \brief The remaining munitions static text
+	 */
+	QStaticText m_ammoText;
+
+	/**
+	 * \brief The remaining time static text
+	 */
+	QStaticText m_timeLeftText;
+
+	/**
+	 * \brief The game timer
+	 */
+	QTimer m_timer;
+
+	/**
+	 * \brief The remaining seconds
+	 */
+	int m_remainingSeconds;
 };
 
 #endif
