@@ -1,5 +1,5 @@
 #include "serialCommunication.h"
-#include "Arduino.h"
+#include <Arduino.h>
 
 SerialCommunication::SerialCommunication() :
 	m_receivedCommandLength(0),

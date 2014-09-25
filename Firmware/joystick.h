@@ -1,5 +1,5 @@
-#ifndef __JOYSTICK__
-#define __JOYSTICK__
+#ifndef __JOYSTICK_H__
+#define __JOYSTICK_H__
 
 /**
  * \brief The class to read input from joystick
@@ -80,7 +80,7 @@ public:
 
 private:
 	/**
-	 * \brief The the digital input pin of button 1
+	 * \brief The digital input pin of button 1
 	 */
 	int m_pinP1;
 

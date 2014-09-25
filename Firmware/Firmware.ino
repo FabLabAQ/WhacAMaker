@@ -1,5 +1,10 @@
 #include "serialCommunication.h"
 #include "joystick.h"
+#include "moles.h"
+
+// We need this here otherwise moles.h doesn't compile (the compiler can't find
+// Servo.h)
+#include <Servo.h>
 
 // The baud rate to use for communication with computer
 const long baudRate = 115200;
@@ -16,6 +21,13 @@ SerialCommunication serialCommunication;
 // The object taking care of reading joystick status
 Joystick joystick;
 
+// The object managing the moles and the moles pins (we can use any digital
+// output, the Servo library uses a timer interrupt to generate the PWM, not the
+// hardware PWM)
+int molesPins[10] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
+typedef Moles<9> GameMoles;
+GameMoles moles;
+
 // Whether to send joystick positions or not
 bool sendJoystick = false;
 
@@ -25,6 +37,9 @@ void setup() {
 
 	// Initializing joystick
 	joystick.begin(joystickP1, joystickP2, joystickX, joystickY);
+
+	// Initializing moles
+	moles.begin(molesPins);
 }
 
 void loop() {
@@ -32,9 +47,9 @@ void loop() {
 	if (serialCommunication.commandReceived() && (serialCommunication.receivedCommandNumParts() != 0)) {
 		if (serialCommunication.receivedCommandPart(0)[0] == 'S') {
 			sendJoystick = true;
-		} else if (serialCommunication.receivedCommandPart(0)[0] == 'M') {
+		} else if ((serialCommunication.receivedCommandPart(0)[0] == 'M') && (serialCommunication.receivedCommandNumParts() >= 2)) {
 			// Move servo to bring up or down the moles
-			// Check arduino int dimension: if it is at least 2 byte, we can send the list of moles to bring up or down as bits (if the i-th bit is 1 the i-th mole goes/stays up, if it s 0, it goes/stays down)
+			moles.setStatus(serialCommunication.receivedCommandPartAsInt(1));
 		}
 	}
 

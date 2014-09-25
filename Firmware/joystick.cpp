@@ -1,5 +1,5 @@
 #include "joystick.h"
-#include "Arduino.h"
+#include <Arduino.h>
 
 Joystick::Joystick() :
 	m_pinP1(0),
