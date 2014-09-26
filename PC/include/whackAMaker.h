@@ -21,7 +21,8 @@ public:
 	enum DifficultyLevel {
 		Easy,
 		Medium,
-		Hard
+		Hard,
+		Test
 	};
 
 	/**

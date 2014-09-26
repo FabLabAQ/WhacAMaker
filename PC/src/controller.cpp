@@ -19,8 +19,7 @@ Controller::Controller(QQuickView& view, QObject* parent)
 	, m_view(view)
 	, m_serialCom(this)
 	, m_joystickPointer(this, view)
-	, m_joystickCalibration(this)
-	, m_gameController(this, &m_joystickPointer, view)
+	, m_gameController(this, &m_joystickPointer, &m_serialCom, view)
 	, m_nextScoreLevel(WhackAMaker::Easy)
 	, m_nextScore(0.0)
 	, m_button1PrevStatus(false)
@@ -44,7 +43,7 @@ Controller::Controller(QQuickView& view, QObject* parent)
 	connect(m_view.rootObject(), SIGNAL(configurationParametersSaved()), this, SLOT(saveConfigurationParameters()));
 	connect(m_view.rootObject(), SIGNAL(playerNameEntered(QString)), this, SLOT(savePlayerName(QString)));
 	connect(m_view.rootObject(), SIGNAL(joystickCalibrationStarted()), this, SLOT(joystickCalibrationStarted()));
-	connect(m_view.rootObject(), SIGNAL(joystickCalibrationInterrupted()), this, SLOT(joystickCalibrationInterrupted()));
+	connect(m_view.rootObject(), SIGNAL(joystickCalibrationEnded()), this, SLOT(joystickCalibrationEnded()));
 	connect(m_view.rootObject(), SIGNAL(gameStarted()), this, SLOT(gameStarted()));
 	connect(m_view.rootObject(), SIGNAL(gameFinished()), this, SLOT(gameFinished()));
 
@@ -111,16 +110,6 @@ void Controller::commandReceived()
 	}
 }
 
-void Controller::joystickCalibrationProcedureEnded()
-{
-#warning TODO
-// 	???
-//
-// 	salvare parametri del joystick, se serve (probabilmente no)
-//
-// 	m_status = Menu;
-}
-
 void Controller::saveConfigurationParameters()
 {
 	// Getting a reference to the QML object string the parameters
@@ -131,9 +120,6 @@ void Controller::saveConfigurationParameters()
 		// Also setting the serial port in the serial communication object
 		setSerialPort();
 	}
-	copyPropertyToSettings(configurationItem, "screenDistance");
-	copyPropertyToSettings(configurationItem, "verticalScreenCenterDistance");
-	copyPropertyToSettings(configurationItem, "horizontalScreenCenterDistance");
 }
 
 void Controller::savePlayerName(const QString& name)
@@ -186,28 +172,24 @@ void Controller::savePlayerName(const QString& name)
 
 void Controller::joystickCalibrationStarted()
 {
-#warning TODO!!!
-// 	???
-//
-// 	qui dire a m_joystickCalibration di iniziare la procedura di calibrazione
-//
-// 	m_status = JoystickCalibration;
+	// Changing pointer status and movement type
+	m_joystickPointer.setStatus(JoystickPointer::Calibration);
+	m_joystickPointer.setMovementType(JoystickPointer::Absolute);
+	m_joystickPointer.setMovementArea();
 }
 
-void Controller::joystickCalibrationInterrupted()
+void Controller::joystickCalibrationEnded()
 {
-#warning TODO!!!
-// 	???
-//
-// 	qui dire a m_joystickCalibration che la procedura di calibrazione è stata interrotta
-//
-// 	m_status = Menu;
+	// Changing pointer status and movement type
+	m_joystickPointer.setStatus(JoystickPointer::Normal);
+	m_joystickPointer.setMovementType(JoystickPointer::Relative);
+	m_joystickPointer.setMovementArea();
 }
 
 void Controller::pointerPosition(qreal x, qreal y, bool button1Pressed, bool button2Pressed)
 {
-	// Checking status, we only do things in menu status
-	if (m_status != Menu) {
+	// Checking status, we only do things in menu and calibration status
+	if ((m_status != Menu) && (m_status != JoystickCalibration)) {
 		return;
 	}
 
@@ -257,9 +239,6 @@ void Controller::restoreParameters()
 
 	// Storing settings inside the configurationItem
 	copyPropertyToItem(configurationItem, "serialPort");
-	copyPropertyToItem(configurationItem, "screenDistance");
-	copyPropertyToItem(configurationItem, "verticalScreenCenterDistance");
-	copyPropertyToItem(configurationItem, "horizontalScreenCenterDistance");
 }
 
 void Controller::restoreHighScores(WhackAMaker::DifficultyLevel level)

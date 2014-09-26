@@ -26,11 +26,12 @@ public:
 	 *
 	 * \param controller the application controller object
 	 * \param pointer the joystick pointer
+	 * \param serialCommunication the object to send commands to Arduino
 	 * \param view the QML viewer, passed here to get the pointer to the QML
 	 *             joystick pointer
 	 * \param parent the parent QObject
 	 */
-	GameController(Controller* controller, JoystickPointer* pointer, QQuickView& view, QObject* parent = NULL);
+	GameController(Controller* controller, JoystickPointer* pointer, SerialCommunication* serialCommunication, QQuickView& view, QObject* parent = NULL);
 
 	/**
 	 * \brief Destructor
@@ -66,6 +67,12 @@ private slots:
 	 */
 	void timeout();
 
+	/**
+	 * \brief The slot called by the game timer, to make moles appear and
+	 *        disappear
+	 */
+	void changeMolesStatus();
+
 private:
 	/**
 	 * \brief Returns a string representation for the remaining time
@@ -73,6 +80,23 @@ private:
 	 * \return a string representation for the remaining time
 	 */
 	QString remainingTimeString() const;
+
+	/**
+	 * \brief Updates the moles status by sending command to Arduino and
+	 *        updating the qml game panel
+	 */
+	void updateMolesStatus();
+
+	/**
+	 * \brief Updates the qml game panel with the current score and
+	 *        remaining ammo
+	 */
+	void updateScoreAndAmmoGUI();
+
+	/**
+	 * \brief Stops all timers and resets moles status
+	 */
+	void stopGame();
 
 	/**
 	 * \brief The application controller object
@@ -85,6 +109,11 @@ private:
 	JoystickPointer* const m_pointer;
 
 	/**
+	 * \brief The object to send commands to Arduino
+	 */
+	SerialCommunication* const m_serialCommunication;
+
+	/**
 	 * \brief The QML game panel object
 	 */
 	QObject* const m_qmlGamePanel;
@@ -95,7 +124,7 @@ private:
 	int m_remainingSeconds;
 
 	/**
-	 * \brief The timer for the game
+	 * \brief The timer for the game time
 	 *
 	 * This is set to 1 sec, so that we can decrement m_remainingSeconds
 	 */
@@ -105,6 +134,39 @@ private:
 	 * \brief The current difficulty level
 	 */
 	WhackAMaker::DifficultyLevel m_difficultyLevel;
+
+	/**
+	 * \brief The current status of moles, as sent to Arduino
+	 */
+	int m_molesStatus;
+
+	/**
+	 * \brief The timer for the game
+	 *
+	 * This is used to make moles appear/disappear
+	 */
+	QTimer m_gameTimer;
+
+	/**
+	 * \brief The current score
+	 */
+	int m_score;
+
+	/**
+	 * \brief The number of hits left
+	 */
+	int m_ammoLeft;
+
+	/**
+	 * \brief The size of the game area (obtained from the qml game panel)
+	 */
+	qreal m_gameAreaSize;
+
+	/**
+	 * \brief True if a button was pressed when we received the previous
+	 *        joystick status
+	 */
+	bool m_prevButtonPressed;
 };
 
 #endif

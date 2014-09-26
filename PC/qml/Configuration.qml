@@ -24,16 +24,6 @@ AnimatedElementsPanelWithItems {
 	// Serial port
 	property alias serialPortValue: serialPort.text
 	property alias serialPortAcceptable: serialPort.acceptableInput
-	// Distance from monitor
-	property alias screenDistanceValue: screenDistance.text
-	property alias screenDistanceAcceptable: screenDistance.acceptableInput
-	// Vertical distance from screen center
-	property alias verticalScreenCenterDistanceValue: verticalScreenCenterDistance.text
-	property alias verticalScreenCenterDistanceAcceptable: verticalScreenCenterDistance.acceptableInput
-	// Horizontal distance from screen center
-	property alias horizontalScreenCenterDistanceValue: horizontalScreenCenterDistance.text
-	property alias horizontalScreenCenterDistanceAcceptable: horizontalScreenCenterDistance.acceptableInput
-
 
 	// The signal emitted when the save button is clicked
 	signal save()
@@ -46,33 +36,6 @@ AnimatedElementsPanelWithItems {
 		label: "Porta seriale Gioco:"
 		labelInputProportion: container.labelInputProportion
 		spacing: container.labelInputSpacing
-	}
-
-	// ... distance from screen...
-	InputField {
-		id: screenDistance
-		label: "Distanza dallo schermo:"
-		labelInputProportion: container.labelInputProportion
-		spacing: container.labelInputSpacing
-		validator: DoubleValidator { bottom: 0 }
-	}
-
-	// ... vertical distance from screen center...
-	InputField {
-		id: verticalScreenCenterDistance
-		label: "Distanza verticale dal centro dello schermo:"
-		labelInputProportion: container.labelInputProportion
-		spacing: container.labelInputSpacing
-		validator: DoubleValidator {}
-	}
-
-	// ... and horizontal distance from screen center.
-	InputField {
-		id: horizontalScreenCenterDistance
-		label: "Distanza orizzontale dal centro dello schermo:"
-		labelInputProportion: container.labelInputProportion
-		spacing: container.labelInputSpacing
-		validator: DoubleValidator {}
 	}
 
 	// Now adding the buttons to save...
@@ -102,7 +65,7 @@ AnimatedElementsPanelWithItems {
 	}
 
 	// The list of items and buttons
-	items: [serialPort, screenDistance, verticalScreenCenterDistance, horizontalScreenCenterDistance]
+	items: [serialPort]
 	buttons: [saveButton, backButton]
 
 	// The function called when all elements have disappeared

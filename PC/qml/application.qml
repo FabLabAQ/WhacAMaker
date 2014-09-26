@@ -13,8 +13,8 @@ Rectangle {
 	signal playerNameEntered(string playerName)
 	// The signal emitted when joystick calibration starts
 	signal joystickCalibrationStarted()
-	// The signal emitted when joystick calibration is cancelled by the user
-	signal joystickCalibrationInterrupted()
+	// The signal emitted when joystick calibration ends
+	signal joystickCalibrationEnded()
 	// The signal sent when game starts
 	signal gameStarted()
 	// The signal sent when the game ends
@@ -50,11 +50,6 @@ Rectangle {
 	function joystickCalibrationObject()
 	{
 		return joystickCalibration;
-	}
-	// The function to end the joystick calibration procedure
-	function endJoystickCalibration()
-	{
-		joystickCalibration.endCalibration();
 	}
 	// The function returning the joystick joystick pointer
 	function joystickPointerObject()
@@ -107,8 +102,14 @@ Rectangle {
 		id: settingsMenu
 		visible: false
 		backItem: mainMenu
-		buttonCaptions: ["Calibrazione Joystick", "Configurazione"]
+		buttonCaptions: ["Test", "Calibrazione Joystick", "Configurazione"]
 		anchors.fill: parent
+
+		onButtonClicked: {
+			if (caption == "Test") {
+				game.difficultyLevel = WhackAMaker.Test;
+			}
+		}
 	}
 
 	HighScores {
@@ -172,8 +173,8 @@ Rectangle {
 		backItem: settingsMenu
 		anchors.fill: parent
 
-		onCalibrationStarted: application.joystickCalibrationStarted()
-		onGoBack: application.joystickCalibrationInterrupted()
+		onStart: application.joystickCalibrationStarted()
+		onEnd: application.joystickCalibrationEnded()
 	}
 
 	NameSelection {
@@ -195,6 +196,6 @@ Rectangle {
 		mainMenu.buttonItems = [gameLevelMenu, scoreLevelMenu, settingsMenu]
 		gameLevelMenu.buttonItems = [game, game, game]
 		scoreLevelMenu.buttonItems = [easyHighScores, mediumHighScores, hardHighScores]
-		settingsMenu.buttonItems = [joystickCalibration, configuration]
+		settingsMenu.buttonItems = [game, joystickCalibration, configuration]
 	}
 }

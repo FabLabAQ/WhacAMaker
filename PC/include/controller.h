@@ -8,7 +8,6 @@
 #include <QVariant>
 #include "gameController.h"
 #include "serialCommunication.h"
-#include "joystickCalibrationProcedure.h"
 #include "joystickPointer.h"
 #include "whackAMaker.h"
 
@@ -85,12 +84,6 @@ public:
 	 */
 	void commandReceived();
 
-	/**
-	 * \brief The function to tell the controller that the joystick
-	 *        calibration process has ended
-	 */
-	void joystickCalibrationProcedureEnded();
-
 private slots:
 	/**
 	 * \brief This is the slot called when configuration parameters are
@@ -113,10 +106,9 @@ private slots:
 	void joystickCalibrationStarted();
 
 	/**
-	 * \brief The slot called when joystick calibration is interrupted by
-	 *        the user
+	 * \brief The slot called when joystick calibration ends
 	 */
-	void joystickCalibrationInterrupted();
+	void joystickCalibrationEnded();
 
 	/**
 	 * \brief The slot called with the new position of the joystick pointer
@@ -219,11 +211,6 @@ private:
 	 * \brief The object managing the joystick pointer
 	 */
 	JoystickPointer m_joystickPointer;
-
-	/**
-	 * \brief The object taking care of the joystick calibration procedure
-	 */
-	JoystickCalibrationProcedure m_joystickCalibration;
 
 	/**
 	 * \brief The object controlling the game
