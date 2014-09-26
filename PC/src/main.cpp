@@ -2,11 +2,12 @@
 #include <QQuickView>
 #include <QObject>
 #include <QQmlEngine>
+#include <QtQml>
 #include <iostream>
 #include <exception>
 #include "controller.h"
-#include "gameItem.h"
 #include "myRuntimeException.h"
+#include "whackAMaker.h"
 
 int main(int argc, char *argv[])
 {
@@ -20,7 +21,7 @@ int main(int argc, char *argv[])
 		QGuiApplication::setApplicationName("Tiro Al Mostro");
 
 		// Registering the new QML types
-		qmlRegisterType<GameItem>("TiroAlMostro", 1, 0, "GameItem");
+		qmlRegisterType<WhackAMaker>("WhackAMaker", 1, 0, "WhackAMaker");
 
 		// Creating the view
 		QQuickView view;

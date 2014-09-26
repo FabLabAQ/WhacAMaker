@@ -1,5 +1,5 @@
 import QtQuick 2.0
-import TiroAlMostro 1.0
+import WhackAMaker 1.0
 
 Rectangle {
 	id: application
@@ -17,6 +17,8 @@ Rectangle {
 	signal joystickCalibrationInterrupted()
 	// The signal sent when game starts
 	signal gameStarted()
+	// The signal sent when the game ends
+	signal gameFinished()
 
 	// The function returning the object that contains parameters (to be
 	// restored by C++ code)
@@ -59,6 +61,11 @@ Rectangle {
 	{
 		return joystickPointer;
 	}
+	// The function returning the game panel object
+	function gamePanelObject()
+	{
+		return game;
+	}
 
 	ButtonPanel {
 		id: mainMenu
@@ -79,11 +86,11 @@ Rectangle {
 
 		onButtonClicked: {
 			if (caption == "Facile") {
-				game.difficultyLevel = GameItem.Easy;
+				game.difficultyLevel = WhackAMaker.Easy;
 			} else if (caption == "Medio") {
-				game.difficultyLevel = GameItem.Medium;
+				game.difficultyLevel = WhackAMaker.Medium;
 			} else if (caption == "Difficile") {
-				game.difficultyLevel = GameItem.Hard;
+				game.difficultyLevel = WhackAMaker.Hard;
 			}
 		}
 	}
@@ -125,20 +132,23 @@ Rectangle {
 		anchors.fill: parent
 	}
 
-	GameItem {
+	GamePanel {
 		id: game
 		visible: false
 		anchors.fill: parent
 
-		onVisibleChanged: {
-			if (visible) {
-				gameStarted();
-			}
+		// Propagating the gameStarted signal
+		onGameStarted: {
+			application.gameStarted();
 		}
 
 		onGameFinished: {
 			visible = false;
 
+			// Propagating the signal
+			application.gameFinished()
+
+			// Checking what to show
 			if (newHighScore) {
 				nameSelection.visible = true;
 			} else {

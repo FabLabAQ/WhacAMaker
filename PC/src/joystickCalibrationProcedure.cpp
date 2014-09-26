@@ -7,6 +7,7 @@ JoystickCalibrationProcedure::JoystickCalibrationProcedure(Controller* controlle
 	: QObject(parent)
 	, m_controller(controller)
 {
+#warning QUI DEVE ANCHE CONNETTERSI AL SEGNALE DEL JOYSTICK POINTER ASSOLUTO!!!
 }
 
 JoystickCalibrationProcedure::~JoystickCalibrationProcedure()

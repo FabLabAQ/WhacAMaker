@@ -6,10 +6,11 @@
 #include <QSettings>
 #include <QList>
 #include <QVariant>
-#include "gameItem.h"
+#include "gameController.h"
 #include "serialCommunication.h"
 #include "joystickCalibrationProcedure.h"
 #include "joystickPointer.h"
+#include "whackAMaker.h"
 
 /**
  * \brief The main controller of the game
@@ -68,13 +69,13 @@ public:
 
 	/**
 	 * \brief If score is going to be a highscore for the given level,
-	 *        returns true and used it as the score of the next player
+	 *        returns true and uses it as the score of the next player
 	 *
 	 * \param level the difficulty level
 	 * \param score the score
 	 * \return true if score is in the highscores
 	 */
-	bool newHighScore(GameItem::DifficultyLevel level, double score);
+	bool newHighScore(WhackAMaker::DifficultyLevel level, double score);
 
 	/**
 	 * \brief The function called when a new command is received
@@ -117,6 +118,30 @@ private slots:
 	 */
 	void joystickCalibrationInterrupted();
 
+	/**
+	 * \brief The slot called with the new position of the joystick pointer
+	 *        on the screen
+	 *
+	 * This function emulates mouse clicks if buttons are pressed
+	 * \param x the x position of the pointer on the main view frame of
+	 *          reference
+	 * \param y the y position of the pointer on the main view frame of
+	 *          reference
+	 * \param button1Pressed whether the first button is pressed or not
+	 * \param button2Pressed whether the second button is pressed or not
+	 */
+	void pointerPosition(qreal x, qreal y, bool button1Pressed, bool button2Pressed);
+
+	/**
+	 * \brief The slot called when the game starts
+	 */
+	void gameStarted();
+
+	/**
+	 * \brief The slot called when the game ends
+	 */
+	void gameFinished();
+
 private:
 	/**
 	 * \brief Restores parameters in the configuration parameters QML object
@@ -128,14 +153,7 @@ private:
 	 *
 	 * \param level the difficulty level whose highscores to restore
 	 */
-	void restoreHighScores(GameItem::DifficultyLevel level);
-
-	/**
-	 * \brief Returns a pointer to the game object
-	 *
-	 * \return a pointer to the game object
-	 */
-	GameItem* qmlGameObject();
+	void restoreHighScores(WhackAMaker::DifficultyLevel level);
 
 	/**
 	 * \brief Copies a value from settings to an QML item
@@ -168,7 +186,7 @@ private:
 	 * \param players the vector to fill with players
 	 * \param levelName the vector with a string representation of level
 	 */
-	void getHighScoresFromSettings(GameItem::DifficultyLevel level, QList<QVariant>& highscores, QList<QVariant>& players, QString& levelName);
+	void getHighScoresFromSettings(WhackAMaker::DifficultyLevel level, QList<QVariant>& highscores, QList<QVariant>& players, QString& levelName);
 
 	/**
 	 * \brief Sets the serial port in the serial communication object
@@ -208,14 +226,29 @@ private:
 	JoystickCalibrationProcedure m_joystickCalibration;
 
 	/**
+	 * \brief The object controlling the game
+	 */
+	GameController m_gameController;
+
+	/**
 	 * \brief The level of the next highscore
 	 */
-	GameItem::DifficultyLevel m_nextScoreLevel;
+	WhackAMaker::DifficultyLevel m_nextScoreLevel;
 
 	/**
 	 * \brief The score of the next highscore
 	 */
 	double m_nextScore;
+
+	/**
+	 * \brief The previous status of button 1 (whether pressed or not)
+	 */
+	bool m_button1PrevStatus;
+
+	/**
+	 * \brief The previous status of button 2 (whether pressed or not)
+	 */
+	bool m_button2PrevStatus;
 };
 
 #endif

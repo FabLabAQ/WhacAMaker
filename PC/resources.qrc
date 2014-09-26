@@ -10,11 +10,14 @@
 	<file>qml/Button.qml</file>
 	<file>qml/CalibrationTarget.qml</file>
 	<file>qml/Configuration.qml</file>
+	<file>qml/GameInformation.qml</file>
+	<file>qml/GamePanel.qml</file>
 	<file>qml/HighScores.qml</file>
 	<file>qml/InputField.qml</file>
 	<file>qml/JoystickCalibration.qml</file>
 	<file>qml/JoystickPointer.qml</file>
 	<file>qml/Keyboard.qml</file>
+	<file>qml/MoleCell.qml</file>
 	<file>qml/NameSelection.qml</file>
 	<file>qml/SingleScore.qml</file>
 	<file>qml/test.qml</file>

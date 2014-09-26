@@ -2,6 +2,7 @@
 #include <QQuickItem>
 #include <QMetaObject>
 #include <QQmlProperty>
+#include <QGuiApplication>
 #include "myRuntimeException.h"
 #include "helpers.h"
 #include <iostream>
@@ -19,14 +20,12 @@ Controller::Controller(QQuickView& view, QObject* parent)
 	, m_serialCom(this)
 	, m_joystickPointer(this, view)
 	, m_joystickCalibration(this)
-	, m_nextScoreLevel(GameItem::Easy)
+	, m_gameController(this, &m_joystickPointer, view)
+	, m_nextScoreLevel(WhackAMaker::Easy)
 	, m_nextScore(0.0)
+	, m_button1PrevStatus(false)
+	, m_button2PrevStatus(false)
 {
-	// Getting the game object
-	GameItem* game = qmlGameObject();
-	// Setting ourself as the controller in the game object
-	game->setController(this);
-
 	// Restores settings in the configuration parameters QML object
 	restoreParameters();
 
@@ -34,16 +33,23 @@ Controller::Controller(QQuickView& view, QObject* parent)
 	setSerialPort();
 
 	// Restoring all highscores
-	restoreHighScores(GameItem::Easy);
-	restoreHighScores(GameItem::Medium);
-	restoreHighScores(GameItem::Hard);
+	restoreHighScores(WhackAMaker::Easy);
+	restoreHighScores(WhackAMaker::Medium);
+	restoreHighScores(WhackAMaker::Hard);
+
+	// Initially setting the movement type of the pointer to relative
+	m_joystickPointer.setMovementType(JoystickPointer::Relative);
 
 	// Connecting signals from m_view to our slots
 	connect(m_view.rootObject(), SIGNAL(configurationParametersSaved()), this, SLOT(saveConfigurationParameters()));
 	connect(m_view.rootObject(), SIGNAL(playerNameEntered(QString)), this, SLOT(savePlayerName(QString)));
 	connect(m_view.rootObject(), SIGNAL(joystickCalibrationStarted()), this, SLOT(joystickCalibrationStarted()));
 	connect(m_view.rootObject(), SIGNAL(joystickCalibrationInterrupted()), this, SLOT(joystickCalibrationInterrupted()));
-	connect(m_view.rootObject(), SIGNAL(gameStarted()), game, SLOT(startGame()));
+	connect(m_view.rootObject(), SIGNAL(gameStarted()), this, SLOT(gameStarted()));
+	connect(m_view.rootObject(), SIGNAL(gameFinished()), this, SLOT(gameFinished()));
+
+	// Connecting the joystick relative movement signal from the joystick pointer to our slot
+	connect(&m_joystickPointer, SIGNAL(joystickMovedRelative(qreal, qreal, bool, bool)), this, SLOT(pointerPosition(qreal, qreal, bool, bool)));
 
 	// Telling the controller to start sending joystick data. We send two times because the first one there could
 	// be garbage
@@ -60,15 +66,15 @@ Controller::~Controller()
 	// Nothing to do here
 }
 
-bool Controller::newHighScore(GameItem::DifficultyLevel level, double score)
+bool Controller::newHighScore(WhackAMaker::DifficultyLevel level, double score)
 {
 	// First of all getting the list of highscores for the level
 	QString paramName = "";
-	if (level == GameItem::Easy) {
+	if (level == WhackAMaker::Easy) {
 		paramName = "EasyScores";
-	} else if (level == GameItem::Medium) {
+	} else if (level == WhackAMaker::Medium) {
 		paramName = "MediumScores";
-	} else if (level == GameItem::Hard) {
+	} else if (level == WhackAMaker::Hard) {
 		paramName = "HardScores";
 	}
 	const QList<QVariant> highscores = m_settings.value("highscores/" + paramName).toList();
@@ -198,6 +204,52 @@ void Controller::joystickCalibrationInterrupted()
 // 	m_status = Menu;
 }
 
+void Controller::pointerPosition(qreal x, qreal y, bool button1Pressed, bool button2Pressed)
+{
+	// Checking status, we only do things in menu status
+	if (m_status != Menu) {
+		return;
+	}
+
+	// Checking if we have to send a click signal. We send button pressed whenever a button is pressed
+	// and in the previous step both buttons where released, we send a button released event whenever
+	// both buttons are released and in the previous step at least one button was pressed
+	if (!m_button1PrevStatus && !m_button2PrevStatus) {
+		if (button1Pressed || button2Pressed) {
+			// Send mouse button pressed
+			QMouseEvent* pressEvent = new QMouseEvent(QEvent::MouseButtonPress, QPointF(x, y), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+			QGuiApplication::sendEvent(&m_view, pressEvent);
+		}
+	} else if (m_button1PrevStatus || m_button2PrevStatus) {
+		if (!button1Pressed && !button2Pressed) {
+			// Send mouse button released
+			QMouseEvent* releaseEvent = new QMouseEvent(QEvent::MouseButtonRelease, QPointF(x, y), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+			QGuiApplication::sendEvent(&m_view, releaseEvent);
+		}
+	}
+
+	// Saving the status of buttons
+	m_button1PrevStatus = button1Pressed;
+	m_button2PrevStatus = button2Pressed;
+}
+
+void Controller::gameStarted()
+{
+	m_status = Game;
+
+	m_gameController.startGame();
+}
+
+void Controller::gameFinished()
+{
+	m_status = Menu;
+
+	// Changing pointer status and movement type
+	m_joystickPointer.setStatus(JoystickPointer::Normal);
+	m_joystickPointer.setMovementType(JoystickPointer::Relative);
+	m_joystickPointer.setMovementArea();
+}
+
 void Controller::restoreParameters()
 {
 	// Getting a reference to the QML object string the parameters
@@ -210,7 +262,7 @@ void Controller::restoreParameters()
 	copyPropertyToItem(configurationItem, "horizontalScreenCenterDistance");
 }
 
-void Controller::restoreHighScores(GameItem::DifficultyLevel level)
+void Controller::restoreHighScores(WhackAMaker::DifficultyLevel level)
 {
 	// First of all getting the list of highscores for the level
 	QList<QVariant> highscores;
@@ -233,17 +285,6 @@ void Controller::restoreHighScores(GameItem::DifficultyLevel level)
 	QQmlProperty::write(scoreItem, "playersScores", highscores);
 }
 
-GameItem* Controller::qmlGameObject()
-{
-	GameItem* const gameItem = dynamic_cast<GameItem *>(getQmlObject(m_view, "gameObject"));
-
-	if (gameItem == NULL) {
-		throwMyRuntimeException("Wrong type for the game object");
-	}
-
-	return gameItem;
-}
-
 void Controller::copyPropertyToItem(QObject* item, QString propName)
 {
 	QQmlProperty::write(item, propName + "Value", m_settings.value("configuration/" + propName));
@@ -262,15 +303,9 @@ bool Controller::copyPropertyToSettings(QObject* item, QString propName)
 	}
 }
 
-void Controller::getHighScoresFromSettings(GameItem::DifficultyLevel level, QList<QVariant>& highscores, QList<QVariant>& players, QString& levelName)
+void Controller::getHighScoresFromSettings(WhackAMaker::DifficultyLevel level, QList<QVariant>& highscores, QList<QVariant>& players, QString& levelName)
 {
-	if (level == GameItem::Easy) {
-		levelName = "Easy";
-	} else if (level == GameItem::Medium) {
-		levelName = "Medium";
-	} else if (level == GameItem::Hard) {
-		levelName = "Hard";
-	}
+	levelName = WhackAMaker::difficultyLevelToString(level);
 	highscores = m_settings.value("highscores/" + levelName + "Scores").toList();
 	players = m_settings.value("highscores/" + levelName + "Players").toList();
 }

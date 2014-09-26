@@ -65,7 +65,8 @@ void loop() {
 		serialCommunication.appendCommandPart(joystick.button2Pressed());
 		serialCommunication.sendCommand();
 
-// 		// This is just to avoid flooding the PC
-// 		delay(50);
+		// This is just to avoid flooding the PC: joystick movement depends on the time
+		// passed since the last command and this measurement has millisecond resolution
+		delay(5);
 	}
 }

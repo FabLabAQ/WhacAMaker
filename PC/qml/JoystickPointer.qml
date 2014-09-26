@@ -16,7 +16,11 @@ Item {
 	width: pointerNormal.width
 	height: pointerNormal.height
 
-// 	funzioni eseguite quando l utente preme un pulsante del joystick (animazioni)
+	// The function that takes the status of joystick buttons
+	function joystickButtonStates(button1Pressed, button2Pressed)
+	{
+		// console.log("Button1: " + button1Pressed + ", Button2: " + button2Pressed);
+	}
 
 	// The pointer in "" status
 // 	Rectangle {
@@ -56,12 +60,25 @@ Item {
 		visible: false
 	}
 
+	// The pointer in "game" status
+	Rectangle {
+		id: pointerGame
+		x: -width / 2.0;
+		y: -height / 2.0;
+		width: 10
+		height: 10
+		opacity: 0.5
+		color: "red"
+		visible: false
+	}
+
 	states: [
 		State {
 			name: "game"
 
 			PropertyChanges { target: pointerNormal; visible: false }
 			PropertyChanges { target: pointerCalibration; visible: false }
+			PropertyChanges { target: pointerGame; visible: true }
 			PropertyChanges { target: container; width: pointerGame.width; height: pointerGame.height }
 		},
 		State {
@@ -69,6 +86,7 @@ Item {
 
 			PropertyChanges { target: pointerNormal; visible: false }
 			PropertyChanges { target: pointerCalibration; visible: true }
+			PropertyChanges { target: pointerGame; visible: false }
 			PropertyChanges { target: container; width: pointerCalibration.width; height: pointerCalibration.height }
 		}
 	]
