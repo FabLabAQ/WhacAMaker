@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.11)
 
-project(TiroAlMostro)
+project(WhackAMaker)
 
 # Find the QtQml library
 find_package(Qt5Qml 5.3 REQUIRED)
@@ -25,7 +25,7 @@ include_directories(include)
 qt5_add_resources(SRCS resources.qrc)
 
 # Tell CMake to create the helloworld executable
-add_executable(TiroAlMostro ${SRCS} ${HDRS})
+add_executable(${PROJECT_NAME} ${SRCS} ${HDRS})
 
 # Use the Widgets module from Qt 5.
-target_link_libraries(TiroAlMostro Qt5::Qml Qt5::Gui Qt5::Quick Qt5::SerialPort)
+target_link_libraries(${PROJECT_NAME} Qt5::Qml Qt5::Gui Qt5::Quick Qt5::SerialPort)

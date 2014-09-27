@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 		// Setting organization, domain and application names to be used by QSettings
 		QGuiApplication::setOrganizationName("FabLab AQ");
 		QGuiApplication::setOrganizationDomain("fablaquila.org");
-		QGuiApplication::setApplicationName("Tiro Al Mostro");
+		QGuiApplication::setApplicationName("Whack A Maker");
 
 		// Registering the new QML types
 		qmlRegisterType<WhackAMaker>("WhackAMaker", 1, 0, "WhackAMaker");
@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 		// Creating the view
 		QQuickView view;
 		view.setResizeMode(QQuickView::SizeRootObjectToView);
-		view.setSource(QUrl("qrc:/qml/application.qml"));
+		view.setSource(QUrl("qrc:///qml/application.qml"));
 		view.show();
 
 		// Connecting the signal to quict the application when the QML engine terminates

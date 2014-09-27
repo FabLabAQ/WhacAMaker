@@ -22,17 +22,6 @@ Item {
 		// console.log("Button1: " + button1Pressed + ", Button2: " + button2Pressed);
 	}
 
-	// The pointer in "" status
-// 	Rectangle {
-// 		id: pointerNormal
-// 		x: -width / 2.0;
-// 		y: -height / 2.0;
-// 		width: 10
-// 		height: 10
-// 		opacity: 0.5
-// 		color: "green"
-// 		visible: true
-// 	}
 	AnimatedImage {
 		id: pointerNormal
 		x: -width / 2.0;
@@ -43,9 +32,6 @@ Item {
 		visible: true
 		playing: true
 		source: "qrc:///worm.gif"
-// 		source: "qrc:///bball.png"
-// 		source: "qrc:///soccer_ball_animated.svg"
-// 		source: "qrc:///Rotating_earth.gif"
 	}
 
 	// The pointer in "calibration" status
