@@ -119,7 +119,7 @@ AnimatedElementsPanel {
 	// Called when all elements have appeared
 	onAllAppeared: {
 		// Signalling game start
-		gameStarted()
+		gameStarted();
 	}
 
 	// Called when all elements have disappeared

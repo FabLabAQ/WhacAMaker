@@ -134,6 +134,10 @@ void GameController::pointerPosition(qreal x, qreal y, bool button1Pressed, bool
 		if (((m_molesStatus >> moleID) & 1) == 1) {
 			// Good shot, mole hit!
 			m_score++;
+
+			// Bringing the mole down and updating moles status
+			m_molesStatus &= ~(1 << moleID);
+			updateMolesStatus();
 		}
 
 		updateScoreAndAmmoGUI();
@@ -186,10 +190,7 @@ void GameController::changeMolesStatus()
 		updateScoreAndAmmoGUI();
 	} else {
 #warning IL NUMERO DI TALPE DOVREBBE DIPENDERE DAL LIVELLO DI DIFFICOLTÀ
-		m_molesStatus = 0;
-		for (int i = 0; i < 9; i++) {
-			m_molesStatus |= (qrand() % 2) << i;
-		}
+		m_molesStatus = qrand();
 	}
 
 	updateMolesStatus();
