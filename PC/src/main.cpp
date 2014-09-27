@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 		QQuickView view;
 		view.setResizeMode(QQuickView::SizeRootObjectToView);
 		view.setSource(QUrl("qrc:///qml/application.qml"));
-		view.show();
+		view.setVisibility(QWindow::FullScreen);
 
 		// Connecting the signal to quict the application when the QML engine terminates
 		QObject::connect(view.engine(), SIGNAL(quit()), QGuiApplication::instance(), SLOT(quit()));

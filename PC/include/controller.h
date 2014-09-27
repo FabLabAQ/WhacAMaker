@@ -134,6 +134,11 @@ private slots:
 	 */
 	void gameFinished();
 
+	/**
+	 * \brief Resizes the movement area of the joystick
+	 */
+	void resizeJoystickMovementArea();
+
 private:
 	/**
 	 * \brief Restores parameters in the configuration parameters QML object
@@ -226,6 +231,16 @@ private:
 	 * \brief The score of the next highscore
 	 */
 	double m_nextScore;
+
+	/**
+	 * \brief The previous x position of the joystick pointer
+	 */
+	qreal m_joystickPrevX;
+
+	/**
+	 * \brief The previous y position of the joystick pointer
+	 */
+	qreal m_joystickPrevY;
 
 	/**
 	 * \brief The previous status of button 1 (whether pressed or not)

@@ -3,9 +3,11 @@
 #include <QMetaObject>
 #include <QQmlProperty>
 #include <QGuiApplication>
+#include <QTest>
 #include "myRuntimeException.h"
 #include "helpers.h"
 #include <iostream>
+#include <cmath>
 
 namespace {
 	// Some constants
@@ -22,6 +24,8 @@ Controller::Controller(QQuickView& view, QObject* parent)
 	, m_gameController(this, &m_joystickPointer, &m_serialCom, view)
 	, m_nextScoreLevel(WhackAMaker::Easy)
 	, m_nextScore(0.0)
+	, m_joystickPrevX(0.0)
+	, m_joystickPrevY(0.0)
 	, m_button1PrevStatus(false)
 	, m_button2PrevStatus(false)
 {
@@ -39,7 +43,11 @@ Controller::Controller(QQuickView& view, QObject* parent)
 	// Initially setting the movement type of the pointer to relative
 	m_joystickPointer.setMovementType(JoystickPointer::Relative);
 
-	// Connecting signals from m_view to our slots
+	// Connecting signals from m_view to our slot to be notified of dimension changes
+	connect(&m_view, SIGNAL(widthChanged(int)), this, SLOT(resizeJoystickMovementArea()));
+	connect(&m_view, SIGNAL(heightChanged(int)), this, SLOT(resizeJoystickMovementArea()));
+
+	// Connecting signals from qml root object to our slots
 	connect(m_view.rootObject(), SIGNAL(configurationParametersSaved()), this, SLOT(saveConfigurationParameters()));
 	connect(m_view.rootObject(), SIGNAL(playerNameEntered(QString)), this, SLOT(savePlayerName(QString)));
 	connect(m_view.rootObject(), SIGNAL(joystickCalibrationStarted()), this, SLOT(joystickCalibrationStarted()));
@@ -79,14 +87,16 @@ bool Controller::newHighScore(WhackAMaker::DifficultyLevel level, double score)
 	const QList<QVariant> highscores = m_settings.value("highscores/" + paramName).toList();
 
 	// Now checking if the score is higher than the last score
-	if ((highscores.isEmpty()) || (score > highscores.last().toDouble())) {
+	if ((highscores.size() < numHighscores) || (score > highscores.last().toDouble())) {
 		m_nextScoreLevel = level;
 		m_nextScore = score;
 
 		return true;
-	}
+	} else {
+		m_nextScore = -1.0;
 
-	return false;
+		return false;
+	}
 }
 
 void Controller::commandReceived()
@@ -172,18 +182,22 @@ void Controller::savePlayerName(const QString& name)
 
 void Controller::joystickCalibrationStarted()
 {
+	m_status = JoystickCalibration;
+
 	// Changing pointer status and movement type
 	m_joystickPointer.setStatus(JoystickPointer::Calibration);
 	m_joystickPointer.setMovementType(JoystickPointer::Absolute);
-	m_joystickPointer.setMovementArea();
+	resizeJoystickMovementArea();
 }
 
 void Controller::joystickCalibrationEnded()
 {
+	m_status = Menu;
+
 	// Changing pointer status and movement type
 	m_joystickPointer.setStatus(JoystickPointer::Normal);
 	m_joystickPointer.setMovementType(JoystickPointer::Relative);
-	m_joystickPointer.setMovementArea();
+	resizeJoystickMovementArea();
 }
 
 void Controller::pointerPosition(qreal x, qreal y, bool button1Pressed, bool button2Pressed)
@@ -193,24 +207,17 @@ void Controller::pointerPosition(qreal x, qreal y, bool button1Pressed, bool but
 		return;
 	}
 
-	// Checking if we have to send a click signal. We send button pressed whenever a button is pressed
-	// and in the previous step both buttons where released, we send a button released event whenever
-	// both buttons are released and in the previous step at least one button was pressed
-	if (!m_button1PrevStatus && !m_button2PrevStatus) {
-		if (button1Pressed || button2Pressed) {
-			// Send mouse button pressed
-			QMouseEvent* pressEvent = new QMouseEvent(QEvent::MouseButtonPress, QPointF(x, y), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
-			QGuiApplication::sendEvent(&m_view, pressEvent);
-		}
-	} else if (m_button1PrevStatus || m_button2PrevStatus) {
+	// Simulating a mouse click. We use the Qt Test framework (perhaps it was not thought for this but it workd)
+	if (m_button1PrevStatus || m_button2PrevStatus) {
 		if (!button1Pressed && !button2Pressed) {
-			// Send mouse button released
-			QMouseEvent* releaseEvent = new QMouseEvent(QEvent::MouseButtonRelease, QPointF(x, y), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
-			QGuiApplication::sendEvent(&m_view, releaseEvent);
+			// Send mouse click released
+			QTest::mouseClick(&m_view, Qt::LeftButton, Qt::NoModifier, QPoint(x, y));
 		}
 	}
 
-	// Saving the status of buttons
+	// Saving the status of buttons and position of pointer
+	m_joystickPrevX = x;
+	m_joystickPrevY = y;
 	m_button1PrevStatus = button1Pressed;
 	m_button2PrevStatus = button2Pressed;
 }
@@ -229,6 +236,11 @@ void Controller::gameFinished()
 	// Changing pointer status and movement type
 	m_joystickPointer.setStatus(JoystickPointer::Normal);
 	m_joystickPointer.setMovementType(JoystickPointer::Relative);
+	resizeJoystickMovementArea();
+}
+
+void Controller::resizeJoystickMovementArea()
+{
 	m_joystickPointer.setMovementArea();
 }
 
