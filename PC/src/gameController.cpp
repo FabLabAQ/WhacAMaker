@@ -109,26 +109,28 @@ void GameController::pointerPosition(qreal x, qreal y, bool button1Pressed, bool
 		return;
 	}
 
+	// Checking which mole is under the pointer
+	int moleX = 1;
+	if (x < (m_gameAreaSize / 3.0)) {
+		moleX = 0;
+	} else if (x > (2.0 * m_gameAreaSize / 3.0)) {
+		moleX = 2;
+	}
+	int moleY = 1;
+	if (y < (m_gameAreaSize / 3.0)) {
+		moleY = 0;
+	} else if (y > (2.0 * m_gameAreaSize / 3.0)) {
+		moleY = 2;
+	}
+	const int moleID = moleX + moleY * 3;
+
+	// Updating the pointed mole
+	QMetaObject::invokeMethod(m_qmlGamePanel, "setPointedMole", Q_ARG(QVariant, QVariant(moleID)));
+
 	const bool buttonPressed = button1Pressed || button2Pressed;
 	if (m_prevButtonPressed && !buttonPressed && (m_ammoLeft != 0)) {
 		// An hit attempt!
 		m_ammoLeft--;
-
-		// Checking which mole is under the pointer
-		int moleX = 1;
-		if (x < (m_gameAreaSize / 3.0)) {
-			moleX = 0;
-		} else if (x > (2.0 * m_gameAreaSize / 3.0)) {
-			moleX = 2;
-		}
-		int moleY = 1;
-		if (y < (m_gameAreaSize / 3.0)) {
-			moleY = 0;
-		} else if (y > (2.0 * m_gameAreaSize / 3.0)) {
-			moleY = 2;
-		}
-
-		const int moleID = moleX + moleY * 3;
 
 		// Checking if a mole was hit
 		if (((m_molesStatus >> moleID) & 1) == 1) {

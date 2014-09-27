@@ -54,6 +54,18 @@ AnimatedElementsPanel {
 		}
 	}
 
+	// Sets which cell is pointed
+	function setPointedMole(moleID)
+	{
+		for (var i = 0; i < internalVars.moleCells.length; i++) {
+			if (i == moleID) {
+				internalVars.moleCells[i].pointed = true;
+			} else {
+				internalVars.moleCells[i].pointed = false;
+			}
+		}
+	}
+
 	// Creates all moles cells
 	function createCells()
 	{

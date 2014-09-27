@@ -19,6 +19,8 @@ AnimatedElement {
 	// The size of the spot (its diameter) as a portion of the size of the
 	// cell
 	property real spotSize: 0.6
+	// Set to true tf the joystick is on this cells
+	property bool pointed: false
 	// Width and height are equal to size
 	width: size
 	height: size
@@ -49,6 +51,22 @@ AnimatedElement {
 		radius: width / 2
 		z: 10
 		opacity: 0
+	}
+
+	// The joystick pointer. This is visible only when the joystick pointer
+	// is on this cell
+	Rectangle {
+		id: pointer
+
+		width: container.size * container.spotSize
+		height: container.size * container.spotSize
+		x: (container.width - width) / 2.0
+		y: (container.height - height) / 2.0
+		color: "red"
+		border.width: 0
+		z: 20
+		opacity: 0.5
+		visible: container.pointed
 	}
 
 	states: [

@@ -50,9 +50,9 @@ Item {
 		id: pointerGame
 		x: -width / 2.0;
 		y: -height / 2.0;
-		width: 10
-		height: 10
-		opacity: 0.5
+		width: 1
+		height: 1
+		opacity: 0.0
 		color: "red"
 		visible: false
 	}
