@@ -26,11 +26,6 @@ Rectangle {
 	{
 		return configuration;
 	}
-	// The function returning the game object
-	function gameObject()
-	{
-		return game;
-	}
 	// The function returning the easy score object
 	function easyScoreObject()
 	{
@@ -62,133 +57,144 @@ Rectangle {
 		return game;
 	}
 
-	ButtonPanel {
-		id: mainMenu
-		visible: true
-		buttonCaptions: ["Gioco", "Punteggi", "Impostazioni"]
-		backButtonCaption: "Uscita"
-		anchors.fill: parent
+	Item {
+		id: internalItems
 
-		onGoBack: { Qt.quit() }
-	}
+		anchors.fill:parent
+// 		rotation: 90
+// 		width: application.height
+// 		height: application.width
+// 		x: (height - width) / 2.0
+// 		y: (width - height) / 2.0
 
-	ButtonPanel {
-		id: gameLevelMenu
-		visible: false
-		backItem: mainMenu
-		buttonCaptions: ["Facile", "Medio", "Difficile"]
-		anchors.fill: parent
+		ButtonPanel {
+			id: mainMenu
+			visible: true
+			buttonCaptions: ["Gioco", "Punteggi", "Impostazioni"]
+			backButtonCaption: "Uscita"
+			anchors.fill: parent
 
-		onButtonClicked: {
-			if (caption == "Facile") {
-				game.difficultyLevel = WhackAMaker.Easy;
-			} else if (caption == "Medio") {
-				game.difficultyLevel = WhackAMaker.Medium;
-			} else if (caption == "Difficile") {
-				game.difficultyLevel = WhackAMaker.Hard;
+			onGoBack: { Qt.quit() }
+		}
+
+		ButtonPanel {
+			id: gameLevelMenu
+			visible: false
+			backItem: mainMenu
+			buttonCaptions: ["Facile", "Medio", "Difficile"]
+			anchors.fill: parent
+
+			onButtonClicked: {
+				if (caption == "Facile") {
+					game.difficultyLevel = WhackAMaker.Easy;
+				} else if (caption == "Medio") {
+					game.difficultyLevel = WhackAMaker.Medium;
+				} else if (caption == "Difficile") {
+					game.difficultyLevel = WhackAMaker.Hard;
+				}
 			}
 		}
-	}
 
-	ButtonPanel {
-		id: scoreLevelMenu
-		visible: false
-		backItem: mainMenu
-		buttonCaptions: ["Facile", "Medio", "Difficile"]
-		anchors.fill: parent
-	}
+		ButtonPanel {
+			id: scoreLevelMenu
+			visible: false
+			backItem: mainMenu
+			buttonCaptions: ["Facile", "Medio", "Difficile"]
+			anchors.fill: parent
+		}
 
-	ButtonPanel {
-		id: settingsMenu
-		visible: false
-		backItem: mainMenu
-		buttonCaptions: ["Test", "Calibrazione Joystick", "Configurazione"]
-		anchors.fill: parent
+		ButtonPanel {
+			id: settingsMenu
+			visible: false
+			backItem: mainMenu
+			buttonCaptions: ["Test", "Calibrazione Joystick", "Configurazione"]
+			anchors.fill: parent
 
-		onButtonClicked: {
-			if (caption == "Test") {
-				game.difficultyLevel = WhackAMaker.Test;
+			onButtonClicked: {
+				if (caption == "Test") {
+					game.difficultyLevel = WhackAMaker.Test;
+				}
 			}
 		}
-	}
 
-	HighScores {
-		id: easyHighScores
-		visible: false
-		backItem: scoreLevelMenu
-		anchors.fill: parent
-	}
-
-	HighScores {
-		id: mediumHighScores
-		visible: false
-		backItem: scoreLevelMenu
-		anchors.fill: parent
-	}
-
-	HighScores {
-		id: hardHighScores
-		visible: false
-		backItem: scoreLevelMenu
-		anchors.fill: parent
-	}
-
-	GamePanel {
-		id: game
-		visible: false
-		anchors.fill: parent
-
-		// Propagating the gameStarted signal
-		onGameStarted: {
-			application.gameStarted();
+		HighScores {
+			id: easyHighScores
+			visible: false
+			backItem: scoreLevelMenu
+			anchors.fill: parent
 		}
 
-		onGameFinished: {
-			visible = false;
+		HighScores {
+			id: mediumHighScores
+			visible: false
+			backItem: scoreLevelMenu
+			anchors.fill: parent
+		}
 
-			// Propagating the signal
-			application.gameFinished()
+		HighScores {
+			id: hardHighScores
+			visible: false
+			backItem: scoreLevelMenu
+			anchors.fill: parent
+		}
 
-			// Checking what to show
-			if (newHighScore) {
-				nameSelection.visible = true;
-			} else {
-				mainMenu.visible = true;
+		GamePanel {
+			id: game
+			visible: false
+			anchors.fill: parent
+
+			// Propagating the gameStarted signal
+			onGameStarted: {
+				application.gameStarted();
+			}
+
+			onGameFinished: {
+				visible = false;
+
+				// Propagating the signal
+				application.gameFinished()
+
+				// Checking what to show
+				if (newHighScore) {
+					nameSelection.visible = true;
+				} else {
+					mainMenu.visible = true;
+				}
 			}
 		}
-	}
 
-	Configuration {
-		id: configuration
-		visible: false
-		panelToShow: settingsMenu
-		anchors.fill: parent
+		Configuration {
+			id: configuration
+			visible: false
+			panelToShow: settingsMenu
+			anchors.fill: parent
 
-		onSave: application.configurationParametersSaved()
-	}
+			onSave: application.configurationParametersSaved()
+		}
 
-	JoystickCalibration {
-		id: joystickCalibration
-		visible: false
-		backItem: settingsMenu
-		anchors.fill: parent
+		JoystickCalibration {
+			id: joystickCalibration
+			visible: false
+			backItem: settingsMenu
+			anchors.fill: parent
 
-		onStart: application.joystickCalibrationStarted()
-		onEnd: application.joystickCalibrationEnded()
-	}
+			onStart: application.joystickCalibrationStarted()
+			onEnd: application.joystickCalibrationEnded()
+		}
 
-	NameSelection {
-		id: nameSelection
-		labelText: "Ottimo punteggio!"
-		visible: false
-		backItem: mainMenu
-		anchors.fill: parent
+		NameSelection {
+			id: nameSelection
+			labelText: "Ottimo punteggio!"
+			visible: false
+			backItem: mainMenu
+			anchors.fill: parent
 
-		onEnterPressed: application.playerNameEntered(t)
-	}
+			onEnterPressed: application.playerNameEntered(t)
+		}
 
-	JoystickPointer {
-		id: joystickPointer
+		JoystickPointer {
+			id: joystickPointer
+		}
 	}
 
 	Component.onCompleted: {
