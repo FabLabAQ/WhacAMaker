@@ -12,14 +12,22 @@ AnimatedElement {
 	property alias ammo: ammoText.text
 	// The remaining time
 	property alias time: timeText.text
+	// The font size
+	property real fontPointSize: 72 // 24
+	// The font type
+	property string fontFamily: "Digital-7 Mono"
+	// The text color
+	property color textColor: "green"
 
 	Text {
 		id: levelLabel
-		text: "Livello"
+		//text: "Livello"
 		x: internalVars.textXPos
 		y: internalVars.firstLineYPosInArea
 		width: container.width
 		height: internalVars.textHeight
+		font { pointSize: container.fontPointSize; family: container.fontFamily }
+		color: container.textColor
 	}
 
 	Text {
@@ -28,15 +36,19 @@ AnimatedElement {
 		y: levelLabel.y + levelLabel.height
 		width: container.width
 		height: internalVars.textHeight
+		font { pointSize: container.fontPointSize; family: container.fontFamily }
+		color: container.textColor
 	}
 
 	Text {
 		id: scoreLabel
-		text: "Punteggio"
+		//text: "Punteggio"
 		x: internalVars.textXPos
 		y: internalVars.textAreaHeight + internalVars.firstLineYPosInArea
 		width: container.width
 		height: internalVars.textHeight
+		font { pointSize: container.fontPointSize; family: container.fontFamily }
+		color: container.textColor
 	}
 
 	Text {
@@ -45,15 +57,19 @@ AnimatedElement {
 		y: scoreLabel.y + scoreLabel.height
 		width: container.width
 		height: internalVars.textHeight
+		font { pointSize: container.fontPointSize; family: container.fontFamily }
+		color: container.textColor
 	}
 
 	Text {
 		id: ammoLabel
-		text: "Colpi rimasti"
+		//text: "Colpi rimasti"
 		x: internalVars.textXPos
 		y: 2 * internalVars.textAreaHeight + internalVars.firstLineYPosInArea
 		width: container.width
 		height: internalVars.textHeight
+		font { pointSize: container.fontPointSize; family: container.fontFamily }
+		color: container.textColor
 	}
 
 	Text {
@@ -62,15 +78,19 @@ AnimatedElement {
 		y: ammoLabel.y + ammoLabel.height
 		width: container.width
 		height: internalVars.textHeight
+		font { pointSize: container.fontPointSize; family: container.fontFamily }
+		color: container.textColor
 	}
 
 	Text {
 		id: timeLabel
-		text: "Tempo rimasto"
+		//text: "Tempo rimasto"
 		x: internalVars.textXPos
 		y: 3 * internalVars.textAreaHeight + internalVars.firstLineYPosInArea
 		width: container.width
 		height: internalVars.textHeight
+		font { pointSize: container.fontPointSize; family: container.fontFamily }
+		color: container.textColor
 	}
 
 	Text {
@@ -79,6 +99,8 @@ AnimatedElement {
 		y: timeLabel.y + timeLabel.height
 		width: container.width
 		height: internalVars.textHeight
+		font { pointSize: container.fontPointSize; family: container.fontFamily }
+		color: container.textColor
 	}
 
 	// An object with internal variables

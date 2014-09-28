@@ -23,7 +23,8 @@ AnimatedElement {
 		height: container.height
 		horizontalAlignment: Text.AlignRight
 		verticalAlignment: Text.AlignVCenter
-		font { pointSize: 24; bold: true }
+		font { pointSize: 24; family: "Digital-7 Mono" }
+		color: "green"
 		text: container.rank + "."
 		clip: true
 	}
@@ -36,7 +37,8 @@ AnimatedElement {
 		height: container.height
 		horizontalAlignment: Text.AlignLeft
 		verticalAlignment: Text.AlignVCenter
-		font { pointSize: 24; bold: true }
+		font { pointSize: 24; family: "Digital-7 Mono" }
+		color: "green"
 		text: " " + container.playerName
 		clip: true
 	}
@@ -49,7 +51,8 @@ AnimatedElement {
 		height: container.height
 		horizontalAlignment: Text.AlignLeft
 		verticalAlignment: Text.AlignVCenter
-		font { pointSize: 24; bold: true }
+		font { pointSize: 24; family: "Digital-7 Mono" }
+		color: "green"
 		text: container.score
 		clip: true
 	}

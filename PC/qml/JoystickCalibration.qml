@@ -17,7 +17,7 @@ AnimatedElementsPanel {
 	// The size of the square targets
 	property real targetSide: 20
 	// The color of target
-	property color targetColor: "black"
+	property color targetColor: "white"
 
 	// The signal emitted when calibration starts (i.e. this widget is made
 	// visible)

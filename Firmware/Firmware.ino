@@ -1,6 +1,7 @@
 #include "serialCommunication.h"
 #include "joystick.h"
 #include "moles.h"
+#include "microsmooth.h"
 
 // We need this here otherwise moles.h doesn't compile (the compiler can't find
 // Servo.h)
@@ -31,6 +32,10 @@ GameMoles moles;
 // Whether to send joystick positions or not
 bool sendJoystick = false;
 
+// The smoothing filter
+uint16_t* filterXHistory = NULL;
+uint16_t* filterYHistory = NULL;
+
 void setup() {
 	// Initializing serial communication
 	serialCommunication.begin(baudRate);
@@ -40,6 +45,10 @@ void setup() {
 
 	// Initializing moles
 	moles.begin(molesPins);
+
+	// Initializing filters
+	filterXHistory = ms_init(SMA);
+	filterYHistory = ms_init(SMA);
 }
 
 void loop() {
@@ -57,10 +66,13 @@ void loop() {
 		// Reading joystick and sending activations
 		joystick.readStatus();
 
+		const int filteredX = sma_filter(joystick.xPosition(), filterXHistory);
+		const int filteredY = sma_filter(joystick.yPosition(), filterYHistory);
+
 		serialCommunication.newCommandToSend();
 		serialCommunication.appendCommandPart("J");
-		serialCommunication.appendCommandPart(joystick.xPosition());
-		serialCommunication.appendCommandPart(joystick.yPosition());
+		serialCommunication.appendCommandPart(filteredX);
+		serialCommunication.appendCommandPart(filteredY);
 		serialCommunication.appendCommandPart(joystick.button1Pressed());
 		serialCommunication.appendCommandPart(joystick.button2Pressed());
 		serialCommunication.sendCommand();

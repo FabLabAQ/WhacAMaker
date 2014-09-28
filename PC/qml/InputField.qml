@@ -26,6 +26,7 @@ AnimatedElement {
 		horizontalAlignment: Text.AlignRight
 		verticalAlignment: Text.AlignVCenter
 		font { pointSize: 24; bold: true }
+		color: "white"
 	}
 
 	Rectangle {

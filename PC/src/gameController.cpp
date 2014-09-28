@@ -13,18 +13,18 @@ namespace {
 	// How many seconds the game lasts
 	const int gameDuration = 120;
 	// The interval between moles changes in various difficulty levels in milliseconds
-	const int easyInterval = 1000;
-	const int mediumInterval = 800;
-	const int hardInterval = 500;
+	const int easyInterval = 5000;
+	const int mediumInterval = 3000;
+	const int hardInterval = 1000;
 	const int testInterval = 2000;
 	// The initial number of hits in various difficulty levels
 	const int easyAmmo = 100;
 	const int mediumAmmo = 80;
 	const int hardAmmo = 50;
 	// The number of moles at each step for various difficulty levels
-	const int easyNumMoles = 4;
-	const int mediumNumMoles = 3;
-	const int hardNumMoles = 2;
+	const int easyNumMoles = 6;
+	const int mediumNumMoles = 4;
+	const int hardNumMoles = 4;
 }
 
 GameController::GameController(Controller* controller, JoystickPointer* pointer, SerialCommunication* serialCommunication, QQuickView& view, QObject* parent)
@@ -103,13 +103,15 @@ void GameController::startGame()
 		m_numMolesPerStep = hardNumMoles;
 		msec = hardInterval;
 	} else {
-		m_ammoLeft = 11;
+		m_ammoLeft = 1000;
 		msec = testInterval;
 	}
 	updateScoreAndAmmoGUI();
 
 	// Starting the timer for the game. The speed depends on the difficulty level
 	m_gameTimer.start(msec);
+	// Also calling the changeMolesStatus function immediately for the first step
+	changeMolesStatus();
 }
 
 void GameController::pointerPosition(qreal x, qreal y, bool button1Pressed, bool button2Pressed)
@@ -147,9 +149,15 @@ void GameController::pointerPosition(qreal x, qreal y, bool button1Pressed, bool
 			// Good shot, mole hit!
 			m_score++;
 
+			// Signal QML the mole was hit
+			QMetaObject::invokeMethod(m_qmlGamePanel, "moleHit", Q_ARG(QVariant, QVariant(moleID)));
+
 			// Bringing the mole down and updating moles status
 			m_molesStatus &= ~(1 << moleID);
 			updateMolesStatus();
+		} else {
+			// Signal QML the mole was missed
+			QMetaObject::invokeMethod(m_qmlGamePanel, "moleMissed", Q_ARG(QVariant, QVariant(moleID)));
 		}
 
 		updateScoreAndAmmoGUI();

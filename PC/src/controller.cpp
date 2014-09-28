@@ -12,6 +12,8 @@
 namespace {
 	// Some constants
 	const int numHighscores = 7;
+	// Joystick movement in the menus
+	const JoystickPointer::MovementType joystickMovementInMenu = JoystickPointer::Absolute;
 }
 
 Controller::Controller(QQuickView& view, QObject* parent)
@@ -41,7 +43,7 @@ Controller::Controller(QQuickView& view, QObject* parent)
 	restoreHighScores(WhackAMaker::Hard);
 
 	// Initially setting the movement type of the pointer to relative
-	m_joystickPointer.setMovementType(JoystickPointer::Relative);
+	m_joystickPointer.setMovementType(joystickMovementInMenu);
 
 	// Connecting signals from m_view to our slot to be notified of dimension changes
 	connect(&m_view, SIGNAL(widthChanged(int)), this, SLOT(resizeJoystickMovementArea()));
@@ -196,7 +198,7 @@ void Controller::joystickCalibrationEnded()
 
 	// Changing pointer status and movement type
 	m_joystickPointer.setStatus(JoystickPointer::Normal);
-	m_joystickPointer.setMovementType(JoystickPointer::Relative);
+	m_joystickPointer.setMovementType(joystickMovementInMenu);
 	resizeJoystickMovementArea();
 }
 
@@ -235,7 +237,7 @@ void Controller::gameFinished()
 
 	// Changing pointer status and movement type
 	m_joystickPointer.setStatus(JoystickPointer::Normal);
-	m_joystickPointer.setMovementType(JoystickPointer::Relative);
+	m_joystickPointer.setMovementType(joystickMovementInMenu);
 	resizeJoystickMovementArea();
 }
 

@@ -3,7 +3,7 @@ import WhackAMaker 1.0
 
 Rectangle {
 	id: application
-	color: "lightgray"
+	color: "black" // "lightgray"
 	width: 640
 	height: 480
 

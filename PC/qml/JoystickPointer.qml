@@ -22,16 +22,18 @@ Item {
 		// console.log("Button1: " + button1Pressed + ", Button2: " + button2Pressed);
 	}
 
-	AnimatedImage {
+	// The normal pointer
+	Rectangle {
 		id: pointerNormal
+
 		x: -width / 2.0;
 		y: -height / 2.0;
-		width: 100
-		height: 100
+		width: 50
+		height: 50
+		color: "red"
 		opacity: 0.8
-		visible: true
-		playing: true
-		source: "qrc:///worm.gif"
+		border.width: 0
+		radius: width / 2.0
 	}
 
 	// The pointer in "calibration" status

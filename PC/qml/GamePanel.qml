@@ -47,9 +47,9 @@ AnimatedElementsPanel {
 		for (var i = 0; i < internalVars.moleCells.length; i++) {
 			var state = (status >> i) & 1;
 			if (state == 1) {
-				internalVars.moleCells[i].state = "spotOn";
+				internalVars.moleCells[i].spotOn = true;
 			} else {
-				internalVars.moleCells[i].state = "";
+				internalVars.moleCells[i].spotOn = false;
 			}
 		}
 	}
@@ -64,6 +64,18 @@ AnimatedElementsPanel {
 				internalVars.moleCells[i].pointed = false;
 			}
 		}
+	}
+
+	// Activate the animation for a successful hit
+	function moleHit(moleID)
+	{
+		internalVars.moleCells[moleID].moleHit = true;
+	}
+
+	// Activate the animation for a missed hit
+	function moleMissed(moleID)
+	{
+		internalVars.moleCells[moleID].moleMissed = true;
 	}
 
 	// Creates all moles cells
@@ -83,7 +95,7 @@ AnimatedElementsPanel {
 			var cell = component.createObject(container, {"name": ("Cell" + i)});
 
 			if (cell == null) {
-				console.log("Error creating button " + caption);
+				console.log("Error creating cell");
 			}
 
 			cell.index = i;

@@ -20,6 +20,5 @@
 	<file>qml/NameSelection.qml</file>
 	<file>qml/SingleScore.qml</file>
 	<file>qml/test.qml</file>
-	<file>worm.gif</file>
 </qresource>
 </RCC>
