@@ -6,6 +6,7 @@
 #include <QQmlProperty>
 #include <QDateTime>
 #include <cstdlib>
+#include <algorithm>
 
 // Useful constants
 namespace {
@@ -20,6 +21,10 @@ namespace {
 	const int easyAmmo = 100;
 	const int mediumAmmo = 80;
 	const int hardAmmo = 50;
+	// The number of moles at each step for various difficulty levels
+	const int easyNumMoles = 4;
+	const int mediumNumMoles = 3;
+	const int hardNumMoles = 2;
 }
 
 GameController::GameController(Controller* controller, JoystickPointer* pointer, SerialCommunication* serialCommunication, QQuickView& view, QObject* parent)
@@ -35,8 +40,10 @@ GameController::GameController(Controller* controller, JoystickPointer* pointer,
 	, m_gameTimer()
 	, m_score(0)
 	, m_ammoLeft(0)
+	, m_numMolesPerStep(easyNumMoles)
 	, m_gameAreaSize(0)
 	, m_prevButtonPressed(false)
+	, m_moles(9)
 {
 	// Connecting the joystick absolute movement signal from the joystick pointer to our slot
 	connect(m_pointer, SIGNAL(joystickMovedAbsolute(qreal, qreal, bool, bool)), this, SLOT(pointerPosition(qreal, qreal, bool, bool)));
@@ -50,6 +57,11 @@ GameController::GameController(Controller* controller, JoystickPointer* pointer,
 
 	// We also need to initialize the random number generator
 	qsrand(uint(QDateTime::currentMSecsSinceEpoch() / 1000));
+
+	// Initializig the vector of moles ids
+	for (int i = 0; i < m_moles.size(); ++i) {
+		m_moles[i] = i;
+	}
 }
 
 GameController::~GameController()
@@ -77,28 +89,26 @@ void GameController::startGame()
 	QQmlProperty::write(m_qmlGamePanel, "infoLevel", WhackAMaker::difficultyLevelToString(m_difficultyLevel));
 	QQmlProperty::write(m_qmlGamePanel, "infoTime", remainingTimeString());
 	m_score = 0;
+	int msec = 100000;
 	if (m_difficultyLevel == WhackAMaker::Easy) {
 		m_ammoLeft = easyAmmo;
+		m_numMolesPerStep = easyNumMoles;
+		msec = easyInterval;
 	} else if (m_difficultyLevel == WhackAMaker::Medium) {
 		m_ammoLeft = mediumAmmo;
+		m_numMolesPerStep = mediumNumMoles;
+		msec = mediumInterval;
 	} else if (m_difficultyLevel == WhackAMaker::Hard) {
 		m_ammoLeft = hardAmmo;
+		m_numMolesPerStep = hardNumMoles;
+		msec = hardInterval;
 	} else {
 		m_ammoLeft = 11;
+		msec = testInterval;
 	}
 	updateScoreAndAmmoGUI();
 
 	// Starting the timer for the game. The speed depends on the difficulty level
-	int msec = 100000;
-	if (m_difficultyLevel == WhackAMaker::Easy) {
-		msec = easyInterval;
-	} else if (m_difficultyLevel == WhackAMaker::Medium) {
-		msec = mediumInterval;
-	} else if (m_difficultyLevel == WhackAMaker::Hard) {
-		msec = hardInterval;
-	} else {
-		msec = testInterval;
-	}
 	m_gameTimer.start(msec);
 }
 
@@ -177,6 +187,14 @@ void GameController::timeout()
 	}
 }
 
+namespace {
+	// A function used by random_shuffle as a source of randomness
+	int randomShuffleGen(int i)
+	{
+		return qrand() % i;
+	}
+}
+
 void GameController::changeMolesStatus()
 {
 	if (m_difficultyLevel == WhackAMaker::Test) {
@@ -191,8 +209,14 @@ void GameController::changeMolesStatus()
 
 		updateScoreAndAmmoGUI();
 	} else {
-#warning IL NUMERO DI TALPE DOVREBBE DIPENDERE DAL LIVELLO DI DIFFICOLTÀ
-		m_molesStatus = qrand();
+		// Randomizing the vector of moles
+		std::random_shuffle(m_moles.begin(), m_moles.end(), randomShuffleGen);
+
+		// Initializing status
+		m_molesStatus = 0;
+		for (int i = 0; i < m_numMolesPerStep; i++) {
+			m_molesStatus |= 1 << m_moles[i];
+		}
 	}
 
 	updateMolesStatus();

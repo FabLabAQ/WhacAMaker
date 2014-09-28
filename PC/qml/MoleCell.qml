@@ -37,20 +37,52 @@ AnimatedElement {
 		antialiasing: true
 	}
 
-	// The spot "illuminating" the mole. This is on when state is "spotOn",
-	// in default state its opacity is 0
-	Rectangle {
+	// The spot "illuminating" the mole. This is on when state is "spotOn"
+	Canvas {
 		id: spot
 
-		width: container.size * container.spotSize
-		height: container.size * container.spotSize
-		x: (container.width - width) / 2.0
-		y: (container.height - height) / 2.0
-		color: "white"
-		border.width: 0
-		radius: width / 2
-		z: 10
-		opacity: 0
+		anchors.fill: parent
+		contextType: "2d";
+		renderStrategy: Canvas.Threaded;
+		renderTarget: Canvas.Image;
+		antialiasing: true;
+		smooth: true;
+		visible: false
+		// The current angle of the rotating circle
+		property real angle: 0
+		// The width of the rotating circle line
+		property real lineWidth: 4
+		// The color of the line of the rotating line
+		property color lineColor: "blue"
+
+		// The animation on the angle property to have a rotating circle
+		NumberAnimation on angle {
+			id: animation
+
+			from: 0
+			to: 2 * Math.PI
+			duration: 1000
+			loops: Animation.Infinite
+			paused: !container.visible
+		}
+
+		// The code to paint
+		onPaint: {
+			if (context) {
+				context.clearRect(0, 0, width, height);
+
+				// Creating the arc path
+				context.beginPath();
+				context.arc(x + width / 2.0, y + height / 2.0, (container.size * container.spotSize) / 2.0, angle, angle + 1.5 * Math.PI);
+
+				// Stroking it
+				context.lineWidth = lineWidth;
+				context.strokeStyle = lineColor;
+				context.stroke();
+			}
+		}
+
+		onAngleChanged: requestPaint()
 	}
 
 	// The joystick pointer. This is visible only when the joystick pointer
@@ -72,21 +104,7 @@ AnimatedElement {
 	states: [
 		State {
 			name: "spotOn"
-			PropertyChanges { target: spot; opacity: 1 }
-		}
-	]
-
-	transitions: [
-		Transition {
-			from: "*"
-			to: "*"
-
-			NumberAnimation {
-				target: spot
-				properties: "opacity"
-				duration: 100;
-				easing.type: Easing.InOutQuad
-			}
+			PropertyChanges { target: spot; visible: true }
 		}
 	]
 }

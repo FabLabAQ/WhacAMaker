@@ -158,6 +158,11 @@ private:
 	int m_ammoLeft;
 
 	/**
+	 * \brief The number of moles for each step
+	 */
+	int m_numMolesPerStep;
+
+	/**
 	 * \brief The size of the game area (obtained from the qml game panel)
 	 */
 	qreal m_gameAreaSize;
@@ -167,6 +172,13 @@ private:
 	 *        joystick status
 	 */
 	bool m_prevButtonPressed;
+
+	/**
+	 * \brief The vector of moles id. This is shuffled at each step and the
+	 *        first are takes as the active moles (the number depends on the
+	 *        difficulty level
+	 */
+	QVector<int> m_moles;
 };
 
 #endif
