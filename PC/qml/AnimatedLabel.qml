@@ -8,6 +8,8 @@ AnimatedElement {
 	property alias text: buttonText.text
 	// The background color
 	property alias backgroundColor: rectangle.color
+	// The color of text
+	property alias textColor: buttonText.color
 
 	Rectangle {
 		id: rectangle

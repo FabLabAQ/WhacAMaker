@@ -24,6 +24,7 @@ AnimatedElementsPanel {
 		width: container.width
 		height: container.height / 5
 		backgroundColor: "#00000000"
+		textColor: "white"
 	}
 
 	// The label with text
