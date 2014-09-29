@@ -7,7 +7,7 @@
 #include <exception>
 #include "controller.h"
 #include "myRuntimeException.h"
-#include "whackAMaker.h"
+#include "whacAMaker.h"
 
 int main(int argc, char *argv[])
 {
@@ -18,10 +18,10 @@ int main(int argc, char *argv[])
 		// Setting organization, domain and application names to be used by QSettings
 		QGuiApplication::setOrganizationName("FabLab AQ");
 		QGuiApplication::setOrganizationDomain("fablaquila.org");
-		QGuiApplication::setApplicationName("Whack A Maker");
+		QGuiApplication::setApplicationName("WhacAMaker");
 
 		// Registering the new QML types
-		qmlRegisterType<WhackAMaker>("WhackAMaker", 1, 0, "WhackAMaker");
+		qmlRegisterType<WhacAMaker>("WhacAMaker", 1, 0, "WhacAMaker");
 
 		// Creating the view
 		QQuickView view;

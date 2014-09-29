@@ -9,7 +9,7 @@
 #include "gameController.h"
 #include "serialCommunication.h"
 #include "joystickPointer.h"
-#include "whackAMaker.h"
+#include "whacAMaker.h"
 
 /**
  * \brief The main controller of the game
@@ -74,7 +74,7 @@ public:
 	 * \param score the score
 	 * \return true if score is in the highscores
 	 */
-	bool newHighScore(WhackAMaker::DifficultyLevel level, double score);
+	bool newHighScore(WhacAMaker::DifficultyLevel level, double score);
 
 	/**
 	 * \brief The function called when a new command is received
@@ -150,7 +150,7 @@ private:
 	 *
 	 * \param level the difficulty level whose highscores to restore
 	 */
-	void restoreHighScores(WhackAMaker::DifficultyLevel level);
+	void restoreHighScores(WhacAMaker::DifficultyLevel level);
 
 	/**
 	 * \brief Copies a value from settings to an QML item
@@ -183,7 +183,7 @@ private:
 	 * \param players the vector to fill with players
 	 * \param levelName the vector with a string representation of level
 	 */
-	void getHighScoresFromSettings(WhackAMaker::DifficultyLevel level, QList<QVariant>& highscores, QList<QVariant>& players, QString& levelName);
+	void getHighScoresFromSettings(WhacAMaker::DifficultyLevel level, QList<QVariant>& highscores, QList<QVariant>& players, QString& levelName);
 
 	/**
 	 * \brief Sets the serial port in the serial communication object
@@ -225,7 +225,7 @@ private:
 	/**
 	 * \brief The level of the next highscore
 	 */
-	WhackAMaker::DifficultyLevel m_nextScoreLevel;
+	WhacAMaker::DifficultyLevel m_nextScoreLevel;
 
 	/**
 	 * \brief The score of the next highscore

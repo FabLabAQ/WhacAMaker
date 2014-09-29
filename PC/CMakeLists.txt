@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.11)
 
-project(WhackAMaker)
+project(WhacAMaker)
 
 # Find the QtQml library
 find_package(Qt5Qml 5.3 REQUIRED)

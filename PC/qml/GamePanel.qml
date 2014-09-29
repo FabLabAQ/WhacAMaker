@@ -2,7 +2,7 @@
 // side, the rest is used to show game information (difficulty level, score,
 // time left...). A mouse click on the game area terminates the game earlier
 import QtQuick 2.0
-import WhackAMaker 1.0
+import WhacAMaker 1.0
 
 AnimatedElementsPanel {
 	id: container

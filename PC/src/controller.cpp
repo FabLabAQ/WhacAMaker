@@ -24,7 +24,7 @@ Controller::Controller(QQuickView& view, QObject* parent)
 	, m_serialCom(this)
 	, m_joystickPointer(this, view)
 	, m_gameController(this, &m_joystickPointer, &m_serialCom, view)
-	, m_nextScoreLevel(WhackAMaker::Easy)
+	, m_nextScoreLevel(WhacAMaker::Easy)
 	, m_nextScore(0.0)
 	, m_joystickPrevX(0.0)
 	, m_joystickPrevY(0.0)
@@ -38,9 +38,9 @@ Controller::Controller(QQuickView& view, QObject* parent)
 	setSerialPort();
 
 	// Restoring all highscores
-	restoreHighScores(WhackAMaker::Easy);
-	restoreHighScores(WhackAMaker::Medium);
-	restoreHighScores(WhackAMaker::Hard);
+	restoreHighScores(WhacAMaker::Easy);
+	restoreHighScores(WhacAMaker::Medium);
+	restoreHighScores(WhacAMaker::Hard);
 
 	// Initially setting the movement type of the pointer to relative
 	m_joystickPointer.setMovementType(joystickMovementInMenu);
@@ -75,15 +75,15 @@ Controller::~Controller()
 	// Nothing to do here
 }
 
-bool Controller::newHighScore(WhackAMaker::DifficultyLevel level, double score)
+bool Controller::newHighScore(WhacAMaker::DifficultyLevel level, double score)
 {
 	// First of all getting the list of highscores for the level
 	QString paramName = "";
-	if (level == WhackAMaker::Easy) {
+	if (level == WhacAMaker::Easy) {
 		paramName = "EasyScores";
-	} else if (level == WhackAMaker::Medium) {
+	} else if (level == WhacAMaker::Medium) {
 		paramName = "MediumScores";
-	} else if (level == WhackAMaker::Hard) {
+	} else if (level == WhacAMaker::Hard) {
 		paramName = "HardScores";
 	}
 	const QList<QVariant> highscores = m_settings.value("highscores/" + paramName).toList();
@@ -255,7 +255,7 @@ void Controller::restoreParameters()
 	copyPropertyToItem(configurationItem, "serialPort");
 }
 
-void Controller::restoreHighScores(WhackAMaker::DifficultyLevel level)
+void Controller::restoreHighScores(WhacAMaker::DifficultyLevel level)
 {
 	// First of all getting the list of highscores for the level
 	QList<QVariant> highscores;
@@ -296,9 +296,9 @@ bool Controller::copyPropertyToSettings(QObject* item, QString propName)
 	}
 }
 
-void Controller::getHighScoresFromSettings(WhackAMaker::DifficultyLevel level, QList<QVariant>& highscores, QList<QVariant>& players, QString& levelName)
+void Controller::getHighScoresFromSettings(WhacAMaker::DifficultyLevel level, QList<QVariant>& highscores, QList<QVariant>& players, QString& levelName)
 {
-	levelName = WhackAMaker::difficultyLevelToString(level);
+	levelName = WhacAMaker::difficultyLevelToString(level);
 	highscores = m_settings.value("highscores/" + levelName + "Scores").toList();
 	players = m_settings.value("highscores/" + levelName + "Players").toList();
 }

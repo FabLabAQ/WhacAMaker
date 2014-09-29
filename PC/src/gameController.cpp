@@ -35,7 +35,7 @@ GameController::GameController(Controller* controller, JoystickPointer* pointer,
 	, m_qmlGamePanel(getQmlObject(view, "gamePanelObject"))
 	, m_remainingSeconds(0)
 	, m_timer()
-	, m_difficultyLevel(WhackAMaker::Easy)
+	, m_difficultyLevel(WhacAMaker::Easy)
 	, m_molesStatus(0)
 	, m_gameTimer()
 	, m_score(0)
@@ -78,7 +78,7 @@ void GameController::startGame()
 	m_pointer->setMovementArea(QRectF(m_gameAreaSize / 6.0, m_gameAreaSize / 6.0, 2.0 * m_gameAreaSize / 3.0, 2.0 * m_gameAreaSize / 3.0));
 
 	// Getting the difficulty level
-	m_difficultyLevel = static_cast<WhackAMaker::DifficultyLevel>(QQmlProperty::read(m_qmlGamePanel, "difficultyLevel").toInt());
+	m_difficultyLevel = static_cast<WhacAMaker::DifficultyLevel>(QQmlProperty::read(m_qmlGamePanel, "difficultyLevel").toInt());
 
 	// Actually start game
 	m_remainingSeconds = gameDuration;
@@ -86,19 +86,19 @@ void GameController::startGame()
 	m_timer.start(1000);
 
 	// Setting initial value of information
-	QQmlProperty::write(m_qmlGamePanel, "infoLevel", WhackAMaker::difficultyLevelToString(m_difficultyLevel));
+	QQmlProperty::write(m_qmlGamePanel, "infoLevel", WhacAMaker::difficultyLevelToString(m_difficultyLevel));
 	QQmlProperty::write(m_qmlGamePanel, "infoTime", remainingTimeString());
 	m_score = 0;
 	int msec = 100000;
-	if (m_difficultyLevel == WhackAMaker::Easy) {
+	if (m_difficultyLevel == WhacAMaker::Easy) {
 		m_ammoLeft = easyAmmo;
 		m_numMolesPerStep = easyNumMoles;
 		msec = easyInterval;
-	} else if (m_difficultyLevel == WhackAMaker::Medium) {
+	} else if (m_difficultyLevel == WhacAMaker::Medium) {
 		m_ammoLeft = mediumAmmo;
 		m_numMolesPerStep = mediumNumMoles;
 		msec = mediumInterval;
-	} else if (m_difficultyLevel == WhackAMaker::Hard) {
+	} else if (m_difficultyLevel == WhacAMaker::Hard) {
 		m_ammoLeft = hardAmmo;
 		m_numMolesPerStep = hardNumMoles;
 		msec = hardInterval;
@@ -117,7 +117,7 @@ void GameController::startGame()
 void GameController::pointerPosition(qreal x, qreal y, bool button1Pressed, bool button2Pressed)
 {
 	// In test we don't consider the joystick
-	if (m_difficultyLevel == WhackAMaker::Test) {
+	if (m_difficultyLevel == WhacAMaker::Test) {
 		return;
 	}
 
@@ -186,7 +186,7 @@ void GameController::timeout()
 		stopGame();
 
 		QVariant newHighScore;
-		if (m_difficultyLevel == WhackAMaker::Test) {
+		if (m_difficultyLevel == WhacAMaker::Test) {
 			newHighScore = false;
 		} else {
 			newHighScore = m_controller->newHighScore(m_difficultyLevel, m_score);
@@ -205,7 +205,7 @@ namespace {
 
 void GameController::changeMolesStatus()
 {
-	if (m_difficultyLevel == WhackAMaker::Test) {
+	if (m_difficultyLevel == WhacAMaker::Test) {
 		// Activating the moles in sequence
 		if (m_ammoLeft == 11) {
 			m_molesStatus = 256;

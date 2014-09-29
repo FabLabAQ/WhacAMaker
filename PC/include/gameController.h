@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QQuickView>
 #include <QTimer>
-#include "whackAMaker.h"
+#include "whacAMaker.h"
 
 class Controller;
 class SerialCommunication;
@@ -133,7 +133,7 @@ private:
 	/**
 	 * \brief The current difficulty level
 	 */
-	WhackAMaker::DifficultyLevel m_difficultyLevel;
+	WhacAMaker::DifficultyLevel m_difficultyLevel;
 
 	/**
 	 * \brief The current status of moles, as sent to Arduino

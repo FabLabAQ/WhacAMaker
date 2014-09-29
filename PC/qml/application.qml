@@ -1,5 +1,5 @@
 import QtQuick 2.0
-import WhackAMaker 1.0
+import WhacAMaker 1.0
 
 Rectangle {
 	id: application
@@ -86,11 +86,11 @@ Rectangle {
 
 			onButtonClicked: {
 				if (caption == "Facile") {
-					game.difficultyLevel = WhackAMaker.Easy;
+					game.difficultyLevel = WhacAMaker.Easy;
 				} else if (caption == "Medio") {
-					game.difficultyLevel = WhackAMaker.Medium;
+					game.difficultyLevel = WhacAMaker.Medium;
 				} else if (caption == "Difficile") {
-					game.difficultyLevel = WhackAMaker.Hard;
+					game.difficultyLevel = WhacAMaker.Hard;
 				}
 			}
 		}
@@ -112,7 +112,7 @@ Rectangle {
 
 			onButtonClicked: {
 				if (caption == "Test") {
-					game.difficultyLevel = WhackAMaker.Test;
+					game.difficultyLevel = WhacAMaker.Test;
 				}
 			}
 		}

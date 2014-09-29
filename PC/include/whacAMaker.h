@@ -1,5 +1,5 @@
-#ifndef __WHACK_A_MAKER_H__
-#define __WHACK_A_MAKER_H__
+#ifndef __WHAC_A_MAKER_H__
+#define __WHAC_A_MAKER_H__
 
 #include <QObject>
 #include <QString>
@@ -9,7 +9,7 @@
  *
  * This is more like a namespace for game-specific constants and enumerations
  */
-class WhackAMaker : public QObject
+class WhacAMaker : public QObject
 {
 	Q_OBJECT
 	Q_ENUMS(DifficultyLevel)
