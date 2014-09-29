@@ -36,7 +36,7 @@ public:
 	/**
 	 * \brief Destructor
 	 */
-	~GameController();
+	virtual ~GameController();
 
 	/**
 	 * \brief Starts the game

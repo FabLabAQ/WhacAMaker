@@ -60,7 +60,7 @@ public:
 	/**
 	 * \brief Destructor
 	 */
-	~JoystickPointer();
+	virtual ~JoystickPointer();
 
 	/**
 	 * \brief The joystick commands as received from Arduino

@@ -33,7 +33,7 @@ public:
 	/**
 	 * \brief Destructor
 	 */
-	~SerialCommunication();
+	virtual ~SerialCommunication();
 
 	/**
 	 * \brief Sets the serial port to use and opens it
