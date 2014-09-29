@@ -25,7 +25,9 @@ Joystick joystick;
 // The object managing the moles and the moles pins (we can use any digital
 // output, the Servo library uses a timer interrupt to generate the PWM, not the
 // hardware PWM)
-int molesPins[10] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
+int molesPins[10] = {   2,    3,    4,    5,    6,    7,    8,    9,   10,   11};
+int servoMin[10]  = { 544,  544,  544,  544,  544,  544,  544,  544,  544,  544};
+int servoMax[10]  = {2400, 2400, 2400, 2400, 2400, 2400, 2400, 2400, 2400, 2400};
 typedef Moles<9> GameMoles;
 GameMoles moles;
 
@@ -44,7 +46,7 @@ void setup() {
 	joystick.begin(joystickP1, joystickP2, joystickX, joystickY);
 
 	// Initializing moles
-	moles.begin(molesPins);
+	moles.begin(molesPins, servoMin, servoMax);
 
 	// Initializing filters
 	filterXHistory = ms_init(SMA);

@@ -33,8 +33,12 @@ public:
 	 * the initialization. So we must call this function inside setup()
 	 * \param molesPins the array with pins to use for moles. The array must
 	 *                  have at least N elements
+	 * \param servoMin the minimum pulse for servos (corresponding to 0
+	 *                 degrees)
+	 * \param servoMax the maximum pulse for servos (corresponding to 180
+	 *                 degrees)
 	 */
-	void begin(int molesPins[]);
+	void begin(int molesPins[], int servoMin[], int servoMax[]);
 
 	/**
 	 * \brief Sets the status of moles
@@ -105,13 +109,13 @@ Moles<N>::Moles()
 }
 
 template <unsigned int N>
-void Moles<N>::begin(int molesPins[])
+void Moles<N>::begin(int molesPins[], int servoMin[], int servoMax[])
 {
 	// Attaching mole pins to servos and moving them all down
 	for (int i = 0; i < N; i++) {
 		m_servos[i].attach(molesPins[i]);
-		moveMole(i, DOWN);
 	}
+	setStatus(0);
 }
 
 template <unsigned int N>
