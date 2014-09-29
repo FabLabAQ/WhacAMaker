@@ -3,6 +3,7 @@
 // time left...). A mouse click on the game area terminates the game earlier
 import QtQuick 2.0
 import WhacAMaker 1.0
+import QtMultimedia 5.0
 
 AnimatedElementsPanel {
 	id: container
@@ -69,12 +70,14 @@ AnimatedElementsPanel {
 	// Activate the animation for a successful hit
 	function moleHit(moleID)
 	{
+		moleHit.play();
 		internalVars.moleCells[moleID].moleHit = true;
 	}
 
 	// Activate the animation for a missed hit
 	function moleMissed(moleID)
 	{
+		moleMissed.play();
 		internalVars.moleCells[moleID].moleMissed = true;
 	}
 
@@ -123,6 +126,18 @@ AnimatedElementsPanel {
 		height: (container.height < container.width) ? container.height : (container.height - container.width)
 		x: (container.width < container.height) ? 0 : container.height
 		yWhenVisible: (container.height < container.width) ? 0 : container.width
+	}
+
+	// The sound to play when an hit is successful
+	SoundEffect {
+		id: moleHit
+		source: "qrc:///whack.wav"
+	}
+
+	// The sound to play when a mole is missed
+	SoundEffect {
+		id: moleMissed
+		source: "qrc:///slide.wav"
 	}
 
 	// An object with internal variables
