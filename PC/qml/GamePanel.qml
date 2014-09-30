@@ -14,6 +14,7 @@ AnimatedElementsPanel {
 	property int difficultyLevel
 
 	// Aliases for properties in GameInformation
+	CAMBIARE QUESTE DOPO AVER CAMBIATO GameInformation
 	// The text with the current level
 	property alias infoLevel: gameInformation.level
 	// The current score

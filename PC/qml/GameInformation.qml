@@ -4,6 +4,8 @@ import QtQuick 2.0
 AnimatedElement {
 	id: container
 
+	CAMBIARE: PRENDERE DUE LISTE DI STRINGHE, LA PRIMA SONO LE CAPTION (ORA COMMENTATE), L ALTRA I VALORI DA MOSTRARE
+
 	// The text with the current level
 	property alias level: levelText.text
 	// The current score

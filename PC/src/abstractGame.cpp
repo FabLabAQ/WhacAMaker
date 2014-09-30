@@ -1,4 +1,5 @@
 #include "abstractGame.h"
+#include "gameController.h"
 
 AbstractGame::AbstractGame(GameController* controller)
 	: QObject(controller)

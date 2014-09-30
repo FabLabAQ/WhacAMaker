@@ -32,7 +32,7 @@ public:
 		Test,
 		Classical,
 		MatchColor
-	}
+	};
 
 	/**
 	 * \brief Returns a string representation of the given DifficultyLevel

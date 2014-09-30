@@ -220,7 +220,7 @@ Rectangle {
 
 	Component.onCompleted: {
 		// Here we associate menus with buttons
-		mainMenu.buttonItems = [gameLevelMenu, scoreLevelMenu, settingsMenu]
+		mainMenu.buttonItems = [gameModalityMenu, scoreLevelMenu, settingsMenu]
 		gameModalityMenu.buttonItems = [gameLevelMenu, gameLevelMenu]
 		gameLevelMenu.buttonItems = [game, game, game]
 		scoreLevelMenu.buttonItems = [easyHighScores, mediumHighScores, hardHighScores]

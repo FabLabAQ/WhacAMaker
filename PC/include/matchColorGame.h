@@ -39,6 +39,13 @@ public:
 	virtual void startGame(WhacAMaker::DifficultyLevel difficulty);
 
 	/**
+	 * \brief Stops the game
+	 *
+	 * This is called when the game should stop for external reasons
+	 */
+	virtual void stopGame();
+
+	/**
 	 * \brief The current joystick pointer status
 	 *
 	 * \param moleID the id of the mole under the pointer
@@ -46,6 +53,13 @@ public:
 	 * \param button2Pressed the status of the second button
 	 */
 	virtual void pointerStatus(int moleID, bool button1Pressed, bool button2Pressed);
+
+	/**
+	 * \brief The player score
+	 *
+	 * \return the player score
+	 */
+	virtual qreal score() const;
 };
 
 #endif

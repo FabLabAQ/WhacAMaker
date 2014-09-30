@@ -45,6 +45,22 @@ public:
 	void startGame();
 
 	/**
+	 * \brief Stops all timers and resets moles status
+	 *
+	 * \param checkHighScore if true checks if score is a highscore,
+	 *                       otherwise no check is performed and score is
+	 *                       not saved
+	 */
+	void stopGame(bool checkHighScore);
+
+	/**
+	 * \brief Updates the moles status by sending command to Arduino
+	 *
+	 * \param status the new mole status
+	 */
+	void updateArduinoMolesStatus(int status);
+
+	/**
 	 * \brief Returns a const pointer to the application controller object
 	 *
 	 * \return a const pointer to the application controller object
@@ -144,46 +160,7 @@ private slots:
 	 */
 	void terminateGame();
 
-	/**
-	 * \brief The slot for the timer timeout
-	 */
-	void timeout();
-
-	/**
-	 * \brief The slot called by the game timer, to make moles appear and
-	 *        disappear
-	 */
-	void changeMolesStatus();
-
 private:
-	/**
-	 * \brief Returns a string representation for the remaining time
-	 *
-	 * \return a string representation for the remaining time
-	 */
-	QString remainingTimeString() const;
-
-	/**
-	 * \brief Updates the moles status by sending command to Arduino and
-	 *        updating the qml game panel
-	 */
-	void updateMolesStatus();
-
-	/**
-	 * \brief Updates the qml game panel with the current score and
-	 *        remaining ammo
-	 */
-	void updateScoreAndAmmoGUI();
-
-	/**
-	 * \brief Stops all timers and resets moles status
-	 *
-	 * \param checkHighScore if true checks if score is a highscore,
-	 *                       otherwise no check is performed and score is
-	 *                       not saved
-	 */
-	void stopGame(bool checkHighScore);
-
 	/**
 	 * \brief Creates a game depending on the selected modality
 	 *
@@ -228,61 +205,9 @@ private:
 	WhacAMaker::DifficultyLevel m_difficultyLevel;
 
 	/**
-	 * \brief The remaining time in seconds
-	 */
-	int m_remainingSeconds;
-
-	/**
-	 * \brief The timer for the game time
-	 *
-	 * This is set to 1 sec, so that we can decrement m_remainingSeconds
-	 */
-	QTimer m_timer;
-
-	/**
-	 * \brief The current status of moles, as sent to Arduino
-	 */
-	int m_molesStatus;
-
-	/**
-	 * \brief The timer for the game
-	 *
-	 * This is used to make moles appear/disappear
-	 */
-	QTimer m_gameTimer;
-
-	/**
-	 * \brief The current score
-	 */
-	int m_score;
-
-	/**
-	 * \brief The number of hits left
-	 */
-	int m_ammoLeft;
-
-	/**
-	 * \brief The number of moles for each step
-	 */
-	int m_numMolesPerStep;
-
-	/**
 	 * \brief The size of the game area (obtained from the qml game panel)
 	 */
 	qreal m_gameAreaSize;
-
-	/**
-	 * \brief True if a button was pressed when we received the previous
-	 *        joystick status
-	 */
-	bool m_prevButtonPressed;
-
-	/**
-	 * \brief The vector of moles id. This is shuffled at each step and the
-	 *        first are takes as the active moles (the number depends on the
-	 *        difficulty level
-	 */
-	QVector<int> m_moles;
 };
 
 #endif
