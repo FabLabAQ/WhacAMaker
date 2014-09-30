@@ -46,6 +46,7 @@ public:
 	 */
 	virtual void pointerStatus(int moleID, bool button1Pressed, bool button2Pressed) = 0;
 
+	AGGIUNGERE FUNZIONE CHE RITORNA LO SCORE FINALE, ASTRATTA
 protected:
 	/**
 	 * \brief The game controller object

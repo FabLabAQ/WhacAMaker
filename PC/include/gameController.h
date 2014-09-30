@@ -7,6 +7,7 @@
 #include "whacAMaker.h"
 
 class Controller;
+class AbstractGame;
 class SerialCommunication;
 class JoystickPointer;
 
@@ -42,6 +43,87 @@ public:
 	 * \brief Starts the game
 	 */
 	void startGame();
+
+	/**
+	 * \brief Returns a const pointer to the application controller object
+	 *
+	 * \return a const pointer to the application controller object
+	 */
+	const Controller* controller() const
+	{
+		return m_controller;
+	}
+
+	/**
+	 * \brief Returns a pointer to the application controller object
+	 *
+	 * \return a pointer to the application controller object
+	 */
+	Controller* controller()
+	{
+		return m_controller;
+	}
+
+	/**
+	 * \brief Returns a const pointer to the joystick pointer
+	 *
+	 * \return a const pointer to the joystick pointer
+	 */
+	const JoystickPointer* pointer() const
+	{
+		return m_pointer;
+	}
+
+	/**
+	 * \brief Returns a pointer to the joystick pointer
+	 *
+	 * \return a pointer to the joystick pointer
+	 */
+	JoystickPointer* pointer()
+	{
+		return m_pointer;
+	}
+
+	/**
+	 * \brief Returns a const pointer to the object to send commands to
+	 *        Arduino
+	 *
+	 * \return a const pointer to the object to send commands to Arduino
+	 */
+	const SerialCommunication* serialCommunication() const
+	{
+		return m_serialCommunication;
+	}
+
+	/**
+	 * \brief Returns a pointer to the object to send commands to Arduino
+	 *
+	 * \return a pointer to the object to send commands to Arduino
+	 */
+	SerialCommunication* serialCommunication()
+	{
+		return m_serialCommunication;
+	}
+
+	/**
+	 * \brief Returns a const pointer to the QML game panel object
+	 *
+	 * \return a const pointer to the QML game panel object
+	 */
+	const QObject* qmlGamePanel() const
+	{
+		return m_qmlGamePanel;
+	}
+
+	/**
+	 * \brief Returns a pointer to the QML game panel object
+	 *
+	 * \return a pointer to the QML game panel object
+	 */
+	QObject* qmlGamePanel()
+	{
+		return m_qmlGamePanel;
+	}
 
 private slots:
 	/**
@@ -95,8 +177,20 @@ private:
 
 	/**
 	 * \brief Stops all timers and resets moles status
+	 *
+	 * \param checkHighScore if true checks if score is a highscore,
+	 *                       otherwise no check is performed and score is
+	 *                       not saved
 	 */
-	void stopGame();
+	void stopGame(bool checkHighScore);
+
+	/**
+	 * \brief Creates a game depending on the selected modality
+	 *
+	 * This doesn't start the game. The pointer to the created object is
+	 * m_game. If a game existed, it is deleted
+	 */
+	void gameFactory();
 
 	/**
 	 * \brief The application controller object
@@ -119,6 +213,21 @@ private:
 	QObject* const m_qmlGamePanel;
 
 	/**
+	 * \brief The current game
+	 */
+	AbstractGame* m_game;
+
+	/**
+	 * \brief The current game modality
+	 */
+	WhacAMaker::GameType m_gameType;
+
+	/**
+	 * \brief The current difficulty level
+	 */
+	WhacAMaker::DifficultyLevel m_difficultyLevel;
+
+	/**
 	 * \brief The remaining time in seconds
 	 */
 	int m_remainingSeconds;
@@ -129,11 +238,6 @@ private:
 	 * This is set to 1 sec, so that we can decrement m_remainingSeconds
 	 */
 	QTimer m_timer;
-
-	/**
-	 * \brief The current difficulty level
-	 */
-	WhacAMaker::DifficultyLevel m_difficultyLevel;
 
 	/**
 	 * \brief The current status of moles, as sent to Arduino

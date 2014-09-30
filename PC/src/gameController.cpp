@@ -3,6 +3,9 @@
 #include "controller.h"
 #include "joystickPointer.h"
 #include "helpers.h"
+#include "classicalGame.h"
+#include "matchColorGame.h"
+#include "testGame.h"
 #include <QQmlProperty>
 #include <QDateTime>
 #include <cstdlib>
@@ -34,9 +37,11 @@ GameController::GameController(Controller* controller, JoystickPointer* pointer,
 	, m_pointer(pointer)
 	, m_serialCommunication(serialCommunication)
 	, m_qmlGamePanel(getQmlObject(view, "gamePanelObject"))
+	, m_game(NULL)
+	, m_gameType(WhacAMaker::Classical)
+	, m_difficultyLevel(WhacAMaker::Easy)
 	, m_remainingSeconds(0)
 	, m_timer()
-	, m_difficultyLevel(WhacAMaker::Easy)
 	, m_molesStatus(0)
 	, m_gameTimer()
 	, m_score(0)
@@ -67,7 +72,7 @@ GameController::GameController(Controller* controller, JoystickPointer* pointer,
 
 GameController::~GameController()
 {
-	// Nothing to do here
+	delete m_game;
 }
 
 void GameController::startGame()
@@ -249,17 +254,41 @@ void GameController::updateMolesStatus()
 	QMetaObject::invokeMethod(m_qmlGamePanel, "changeMoleSpotStatus", Q_ARG(QVariant, QVariant(m_molesStatus)));
 }
 
-void GameController::stopGame()
-{
-	m_timer.stop();
-	m_gameTimer.stop();
-	m_molesStatus = 0;
-	updateMolesStatus();
-}
-
 void GameController::updateScoreAndAmmoGUI()
 {
 	QQmlProperty::write(m_qmlGamePanel, "infoScore", QString::number(m_score));
 	QQmlProperty::write(m_qmlGamePanel, "infoAmmo", QString::number(m_ammoLeft));
 }
 
+void GameController::stopGame(bool checkHighScore)
+{
+	QUESTA VA FATTA PUBBLICA
+	bool newHighScore = false;
+	if (checkHighScore) {
+		QUI CONTROLLARE, COPIARE DA SOPRA
+	}
+
+	m_timer.stop();
+	m_gameTimer.stop();
+	m_molesStatus = 0;
+	updateMolesStatus();
+
+	CHIAMARE FUNZIONE DI OGGETTO QML PER TERMINARE GIOCO
+}
+
+void GameController::gameFactory()
+{
+	delete m_game;
+
+	switch(m_gameType) {
+		case WhacAMaker::Test:
+			m_game = new TestGame(this);
+			break;
+		case WhacAMaker::Classical:
+			m_game = new ClassicalGame(this);
+			break;
+		case WhacAMaker::MatchColorGame:
+			m_game = new MatchColorGame(this);
+			break;
+	}
+}
