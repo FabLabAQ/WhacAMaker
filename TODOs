@@ -1,2 +1,5 @@
-- far scomparire puntatore mouse se fermo
-- procedura test con possibilità di decidere che servo sale e quale scende
+Per la giocabilità:
+Fai alzare più talpe ma dagli colori diversi (tramite proiettore) c’è da colpire solo quella di un certo colore.
+Sbagliare talpa da un malus, quella giusta un bonus.
+Al solito il tempo “la fa da padrone” quindi si potrebbe tenere su le talpe fino allo sparo e riabbassarle solo allora: il tempo impiegato a colpire la talpa del giusto colore è inversamente proporzionale al punteggio.
+Una partita potrebbe articolarsi in 3 o 5 manches  (ciclo fuori/sparo/dentro delle talpe).
