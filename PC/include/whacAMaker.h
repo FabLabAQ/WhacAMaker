@@ -13,6 +13,7 @@ class WhacAMaker : public QObject
 {
 	Q_OBJECT
 	Q_ENUMS(DifficultyLevel)
+	Q_ENUMS(GameType)
 
 public:
 	/**
@@ -21,9 +22,17 @@ public:
 	enum DifficultyLevel {
 		Easy,
 		Medium,
-		Hard,
-		Test
+		Hard
 	};
+
+	/**
+	 * \brief The game type
+	 */
+	enum GameType {
+		Test,
+		Classical,
+		MatchColor
+	}
 
 	/**
 	 * \brief Returns a string representation of the given DifficultyLevel
@@ -31,6 +40,13 @@ public:
 	 * \return a string representation of the given DifficultyLevel
 	 */
 	static QString difficultyLevelToString(DifficultyLevel level);
+
+	/**
+	 * \brief Returns a string representation of the given GameType
+	 *
+	 * \return a string representation of the given GameType
+	 */
+	static QString gameTypeToString(GameType type);
 };
 
 #endif

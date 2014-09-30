@@ -81,9 +81,25 @@ Rectangle {
 		}
 
 		ButtonPanel {
-			id: gameLevelMenu
+			id: gameModalityMenu
 			visible: false
 			backItem: mainMenu
+			buttonCaptions: ["Classico", "Colore"]
+			anchors.fill: parent
+
+			onButtonClicked: {
+				if (caption == "Classico") {
+					game.gameModality = WhacAMaker.Classical;
+				} else if (caption == "Colore") {
+					game.gameModality = WhacAMaker.MatchColor;
+				}
+			}
+		}
+
+		ButtonPanel {
+			id: gameLevelMenu
+			visible: false
+			backItem: gameModalityMenu
 			buttonCaptions: ["Facile", "Medio", "Difficile"]
 			anchors.fill: parent
 
@@ -115,7 +131,7 @@ Rectangle {
 
 			onButtonClicked: {
 				if (caption == "Test") {
-					game.difficultyLevel = WhacAMaker.Test;
+					game.gameModality = WhacAMaker.Test;
 				}
 			}
 		}
@@ -205,6 +221,7 @@ Rectangle {
 	Component.onCompleted: {
 		// Here we associate menus with buttons
 		mainMenu.buttonItems = [gameLevelMenu, scoreLevelMenu, settingsMenu]
+		gameModalityMenu.buttonItems = [gameLevelMenu, gameLevelMenu]
 		gameLevelMenu.buttonItems = [game, game, game]
 		scoreLevelMenu.buttonItems = [easyHighScores, mediumHighScores, hardHighScores]
 		settingsMenu.buttonItems = [game, joystickCalibration, configuration]

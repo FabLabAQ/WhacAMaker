@@ -13,3 +13,17 @@ QString WhacAMaker::difficultyLevelToString(DifficultyLevel level)
 
 	return levelName;
 }
+
+QString WhacAMaker::gameTypeToString(GameType type)
+{
+	QString typeName;
+	if (type == WhacAMaker::Test) {
+		typeName = "Test";
+	} else if (type == WhacAMaker::Classical) {
+		typeName = "Classical";
+	} else if (type == WhacAMaker::MatchColor) {
+		typeName = "MatchColor";
+	}
+
+	return typeName;
+}

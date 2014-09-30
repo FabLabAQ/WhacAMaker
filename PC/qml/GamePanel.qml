@@ -8,6 +8,8 @@ import QtMultimedia 5.0
 AnimatedElementsPanel {
 	id: container
 
+	// The game modality
+	property int gameModality
 	// The difficulty level
 	property int difficultyLevel
 
