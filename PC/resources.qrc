@@ -20,7 +20,8 @@
 	<file>qml/NameSelection.qml</file>
 	<file>qml/SingleScore.qml</file>
 	<file>qml/test.qml</file>
-	<file>whack.wav</file>
-	<file>slide.wav</file>
+	<file>sounds/whack.wav</file>
+	<file>sounds/slide.wav</file>
+	<file>sounds/applause.wav</file>
 </qresource>
 </RCC>

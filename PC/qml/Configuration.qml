@@ -24,6 +24,9 @@ AnimatedElementsPanelWithItems {
 	// Serial port
 	property alias serialPortValue: serialPort.text
 	property alias serialPortAcceptable: serialPort.acceptableInput
+	// Sound volume
+	property alias volumeValue: soundVolume.text
+	property alias volumeAcceptable: soundVolume.acceptableInput
 
 	// The signal emitted when the save button is clicked
 	signal save()
@@ -36,6 +39,15 @@ AnimatedElementsPanelWithItems {
 		label: "Porta seriale Gioco:"
 		labelInputProportion: container.labelInputProportion
 		spacing: container.labelInputSpacing
+	}
+
+	// ... and sound volume
+	InputField {
+		id: soundVolume
+		label: "Volume audio:"
+		labelInputProportion: container.labelInputProportion
+		spacing: container.labelInputSpacing
+		validator: DoubleValidator { bottom: 0; top: 1 }
 	}
 
 	// Now adding the buttons to save...
@@ -65,7 +77,7 @@ AnimatedElementsPanelWithItems {
 	}
 
 	// The list of items and buttons
-	items: [serialPort]
+	items: [serialPort, soundVolume]
 	buttons: [saveButton, backButton]
 
 	// The function called when all elements have disappeared

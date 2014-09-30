@@ -4,8 +4,11 @@ import WhacAMaker 1.0
 Rectangle {
 	id: application
 	color: "black" // "lightgray"
-	width: 640
-	height: 480
+	width: 1024
+	height: 768
+
+	// The volume of sound effects
+	property real volume: 1
 
 	// The signal emitted when configuration parameters are saved
 	signal configurationParametersSaved()
@@ -142,6 +145,7 @@ Rectangle {
 			id: game
 			visible: false
 			anchors.fill: parent
+			volume: application.volume
 
 			// Propagating the gameStarted signal
 			onGameStarted: {
@@ -188,6 +192,7 @@ Rectangle {
 			visible: false
 			backItem: mainMenu
 			anchors.fill: parent
+			volume: application.volume
 
 			onEnterPressed: application.playerNameEntered(t)
 		}

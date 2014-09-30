@@ -20,6 +20,8 @@ AnimatedElementsPanel {
 	property alias infoAmmo: gameInformation.ammo
 	// The remaining time
 	property alias infoTime: gameInformation.time
+	// The volume of sound effects
+	property real volume: 1.0
 
 	// The total game area size
 	property real gameAreaSize: internalVars.moleCellSize * 3
@@ -131,13 +133,15 @@ AnimatedElementsPanel {
 	// The sound to play when an hit is successful
 	SoundEffect {
 		id: moleHit
-		source: "qrc:///whack.wav"
+		source: "qrc:///sounds/whack.wav"
+		volume: container.volume
 	}
 
 	// The sound to play when a mole is missed
 	SoundEffect {
 		id: moleMissed
-		source: "qrc:///slide.wav"
+		source: "qrc:///sounds/slide.wav"
+		volume: container.volume
 	}
 
 	// An object with internal variables

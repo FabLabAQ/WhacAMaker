@@ -37,6 +37,9 @@ Controller::Controller(QQuickView& view, QObject* parent)
 	// Sets the port in the serial comunication
 	setSerialPort();
 
+	// Sets the audio volume
+	setAudioVolume();
+
 	// Restoring all highscores
 	restoreHighScores(WhacAMaker::Easy);
 	restoreHighScores(WhacAMaker::Medium);
@@ -131,6 +134,10 @@ void Controller::saveConfigurationParameters()
 	if (copyPropertyToSettings(configurationItem, "serialPort")) {
 		// Also setting the serial port in the serial communication object
 		setSerialPort();
+	}
+	if (copyPropertyToSettings(configurationItem, "volume")) {
+		// Also setting the audio volume in the main component
+		setAudioVolume();
 	}
 }
 
@@ -253,6 +260,7 @@ void Controller::restoreParameters()
 
 	// Storing settings inside the configurationItem
 	copyPropertyToItem(configurationItem, "serialPort");
+	copyPropertyToItem(configurationItem, "volume");
 }
 
 void Controller::restoreHighScores(WhacAMaker::DifficultyLevel level)
@@ -306,4 +314,9 @@ void Controller::getHighScoresFromSettings(WhacAMaker::DifficultyLevel level, QL
 void Controller::setSerialPort()
 {
 	m_serialCom.setSerialPort(m_settings.value("configuration/serialPort").toString());
+}
+
+void Controller::setAudioVolume()
+{
+	QQmlProperty::write(m_view.rootObject(), "volume", m_settings.value("configuration/volume"));
 }

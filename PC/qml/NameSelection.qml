@@ -1,5 +1,6 @@
 // A panel that allows to select a text with a on-screen keyboard
 import QtQuick 2.0
+import QtMultimedia 5.0
 
 AnimatedElementsPanel {
 	id: container
@@ -11,6 +12,8 @@ AnimatedElementsPanel {
 	property int maxCharacters: 10
 	// The text for the label on top of the item
 	property alias labelText: titleLabel.text
+	// The volume of the sound to play
+	property real volume: 1.0
 
 	// The signal emitted when the enter keyboard is pressed. t is the text
 	// that has been entered
@@ -64,6 +67,13 @@ AnimatedElementsPanel {
 		}
 	}
 
+	// The sound to play when a this appears (i.e. wen there is a new highscore)
+	SoundEffect {
+		id: sound
+		source: "qrc:///sounds/applause.wav"
+		volume: container.volume
+	}
+
 	// The animated elements
 	animatedElements: [titleLabel, label, keyboard]
 
@@ -80,6 +90,9 @@ AnimatedElementsPanel {
 		label.text = "";
 
 		if (visible) {
+			// Also play sound
+			sound.play();
+
 			showAll();
 		}
 	}

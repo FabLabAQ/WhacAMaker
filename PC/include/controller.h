@@ -192,6 +192,11 @@ private:
 	void setSerialPort();
 
 	/**
+	 * \brief Sets the volume of sound effects
+	 */
+	void setAudioVolume();
+
+	/**
 	 * \brief The current status
 	 */
 	Status m_status;
