@@ -8,7 +8,7 @@
 /**
  * \brief The modality in which only moles of a given color should be hit
  *
- * In this modality moles come up and stay up. Only one mole ihas to be hit (the
+ * In this modality moles come up and stay up. Only one mole has to be hit (the
  * red one). If the correct one is hit the score depends on the time the mole
  * has been up (more time means less score). If a wrong mole is hit the total
  * score is reduced. Each round moles go up and stay up until one is hit. There
