@@ -98,14 +98,21 @@ AnimatedElementsPanel {
 	// Activate the animation for a successful hit
 	function moleHit(moleID)
 	{
-		moleHit.play();
+		moleHitSound.play();
 		internalVars.moleCells[moleID].moleHit = true;
+	}
+
+	// Activate the animation for the hit of a wrong mole
+	function moleWrongHit(moleID)
+	{
+		moleWrongHitSound.play();
+		internalVars.moleCells[moleID].moleWrongHit = true;
 	}
 
 	// Activate the animation for a missed hit
 	function moleMissed(moleID)
 	{
-		moleMissed.play();
+		moleMissedSound.play();
 		internalVars.moleCells[moleID].moleMissed = true;
 	}
 
@@ -160,14 +167,21 @@ AnimatedElementsPanel {
 
 	// The sound to play when an hit is successful
 	SoundEffect {
-		id: moleHit
+		id: moleHitSound
+		source: "qrc:///sounds/whack.wav"
+		volume: container.volume
+	}
+
+	// The sound to play when the wrong mole was hit
+	SoundEffect {
+		id: moleWrongHitSound
 		source: "qrc:///sounds/whack.wav"
 		volume: container.volume
 	}
 
 	// The sound to play when a mole is missed
 	SoundEffect {
-		id: moleMissed
+		id: moleMissedSound
 		source: "qrc:///sounds/slide.wav"
 		volume: container.volume
 	}

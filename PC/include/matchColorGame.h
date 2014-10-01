@@ -2,6 +2,9 @@
 #define __MATCH_COLOR_GAME_H__
 
 #include <QObject>
+#include <QTimer>
+#include <QTime>
+#include <QVector>
 #include "whacAMaker.h"
 #include "abstractGame.h"
 
@@ -60,6 +63,96 @@ public:
 	 * \return the player score
 	 */
 	virtual qreal score() const;
+
+private slots:
+	/**
+	 * \brief The function called every tenth of second to increase the
+	 *        elapsed time counter and update the GUI
+	 */
+	void timeout();
+
+	/**
+	 * \brief The slot called to start a new round of the game
+	 */
+	void startNewRound();
+
+private:
+	/**
+	 * \brief Updates the remaining time in the GUI
+	 */
+	void updateGUIRemainingTime();
+
+	/**
+	 * \brief Updates the current score and round in the GUI
+	 */
+	void updateGUIScoreAndRound();
+
+	/**
+	 * \brief Brings all moles up and changes the spot color of the target
+	 *        mole
+	 */
+	void bringMolesUp();
+
+	/**
+	 * \brief Brings all moles down and deactivates all spots
+	 */
+	void bringMolesDown();
+
+	/**
+	 * \brief The timer for the game time
+	 *
+	 * This is set to 1 sec, so that we can decrement m_remainingSeconds
+	 */
+	QTimer m_timer;
+
+	/**
+	 * \brief The timer for the inter-round delayr
+	 */
+	QTimer m_interRoundDelayTimer;
+
+	/**
+	 * \brief When the round started
+	 */
+	QTime m_roundStart;
+
+	/**
+	 * \brief The current score
+	 */
+	qreal m_score;
+
+	/**
+	 * \brief The milliseconds that pass from the end of a round and the
+	 *        start of the subsequent round
+	 */
+	int m_interRoundInterval;
+
+	/**
+	 * \brief The number of moles for each round
+	 */
+	int m_numMolesPerRound;
+
+	/**
+	 * \brief The number of rounds in the game
+	 */
+	int m_numRounds;
+
+	/**
+	 * \brief The current round in the game
+	 */
+	int m_curRound;
+
+	/**
+	 * \brief The vector of moles id. This is shuffled at each step, the
+	 *        first are taken as the active moles (the number depends on the
+	 *        difficulty level) and the very first one is the mole to hit
+	 */
+	QVector<int> m_moles;
+
+	/**
+	 * \brief True if a button was pressed when we received the previous
+	 *        joystick status
+	 */
+	bool m_prevButtonPressed;
 };
 
 #endif

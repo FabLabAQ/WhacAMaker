@@ -131,8 +131,8 @@ private:
 
 	/**
 	 * \brief The vector of moles id. This is shuffled at each step and the
-	 *        first are takes as the active moles (the number depends on the
-	 *        difficulty level
+	 *        first are taken as the active moles (the number depends on the
+	 *        difficulty level)
 	 */
 	QVector<int> m_moles;
 

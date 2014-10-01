@@ -30,6 +30,8 @@ AnimatedElement {
 	property bool spotOn: false
 	// Set to true when a mole is hit
 	property bool moleHit: false
+	// Set to true when the wrong mole is hit
+	property bool moleWrongHit: false
 	// Set to true when the user missed the mole
 	property bool moleMissed: false
 	// Width and height are equal to size
@@ -40,6 +42,20 @@ AnimatedElement {
 		if (moleHit) {
 			hitAnimation.start();
 			moleHit = false;
+		}
+	}
+
+	onMoleWrongHitChanged: {
+		if (moleWrongHit) {
+			wrongHitAnimation.start();
+			moleWrongHit = false;
+		}
+	}
+
+	onMoleMissedChanged: {
+		if (moleMissed) {
+			missAnimation.start();
+			moleMissed = false;
 		}
 	}
 
@@ -147,6 +163,58 @@ AnimatedElement {
 				from: 1
 				to: 0
 				target: hitSignal
+				property: "opacity"
+				duration: 1000
+			}
+		}
+	}
+
+	Rectangle {
+		id: wrongHitSignal
+
+		width: container.size * container.spotSize
+		height: container.size * container.spotSize
+		x: (container.width - width) / 2.0
+		y: (container.height - height) / 2.0
+		color: "green"
+		border.width: 0
+		z: 30
+		opacity: 0.0
+		visible: true
+
+		SequentialAnimation {
+			id: wrongHitAnimation
+
+			NumberAnimation {
+				from: 1
+				to: 0
+				target: wrongHitSignal
+				property: "opacity"
+				duration: 1000
+			}
+		}
+	}
+
+	Rectangle {
+		id: missSignal
+
+		width: container.size * container.spotSize
+		height: container.size * container.spotSize
+		x: (container.width - width) / 2.0
+		y: (container.height - height) / 2.0
+		color: "blue"
+		border.width: 0
+		z: 30
+		opacity: 0.0
+		visible: true
+
+		SequentialAnimation {
+			id: missAnimation
+
+			NumberAnimation {
+				from: 1
+				to: 0
+				target: missSignal
 				property: "opacity"
 				duration: 1000
 			}
