@@ -49,6 +49,10 @@ void GameController::startGame()
 	m_gameType = static_cast<WhacAMaker::GameType>(QQmlProperty::read(m_qmlGamePanel, "gameModality").toInt());
 	m_difficultyLevel = static_cast<WhacAMaker::DifficultyLevel>(QQmlProperty::read(m_qmlGamePanel, "difficultyLevel").toInt());
 
+	// Ganerating text for the modality and level informative string
+	QString modality = WhacAMaker::gameTypeToString(m_gameType, true) + " - " + WhacAMaker::difficultyLevelToString(m_difficultyLevel, true);
+	QMetaObject::invokeMethod(m_qmlGamePanel, "setInformationFieldValue", Q_ARG(QVariant, 0), Q_ARG(QVariant, modality));
+
 	// Creating the game object, depending on the value of m_gameType
 	gameFactory();
 
@@ -81,6 +85,10 @@ void GameController::updateArduinoMolesStatus(int status)
 
 void GameController::pointerPosition(qreal x, qreal y, bool button1Pressed, bool button2Pressed)
 {
+	if (m_game == NULL) {
+		return;
+	}
+
 	// Checking which mole is under the pointer
 	int moleX = 1;
 	if (x < (m_gameAreaSize / 3.0)) {

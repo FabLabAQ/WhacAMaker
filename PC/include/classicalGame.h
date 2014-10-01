@@ -2,6 +2,8 @@
 #define __CLASSICAL_GAME_H__
 
 #include <QObject>
+#include <QTimer>
+#include <QVector>
 #include "whacAMaker.h"
 #include "abstractGame.h"
 
@@ -58,98 +60,87 @@ public:
 	 * \return the player score
 	 */
 	virtual qreal score() const;
+
+private slots:
+	/**
+	 * \brief The function called every second to decrease the remaining
+	 *        time counter
+	 */
+	void timeout();
+
+	/**
+	 * \brief Changes moles status
+	 */
+	void changeMolesStatus();
+
+private:
+	/**
+	 * \brief Updates the remaining time in the GUI
+	 */
+	void updateGUIRemainingTime();
+
+	/**
+	 * \brief Updates the current score and ammo in the GUI
+	 */
+	void updateGUIScoreAndAmmo();
+
+	/**
+	 * \brief Updates the status of moles both in Arduino and GUI to match
+	 *        m_molesStatus
+	 */
+	void updateMolesStatus();
+
+	/**
+	 * \brief The timer for the game time
+	 *
+	 * This is set to 1 sec, so that we can decrement m_remainingSeconds
+	 */
+	QTimer m_timer;
+
+	/**
+	 * \brief The timer for the game
+	 *
+	 * This is used to make moles appear/disappear
+	 */
+	QTimer m_gameTimer;
+
+	/**
+	 * \brief The current status of moles, as sent to Arduino
+	 */
+	int m_molesStatus;
+
+	/**
+	 * \brief The remaining time in seconds
+	 */
+	int m_remainingSeconds;
+
+	/**
+	 * \brief The current score
+	 */
+	qreal m_score;
+
+	/**
+	 * \brief The number of hits left
+	 */
+	int m_ammoLeft;
+
+	/**
+	 * \brief The number of moles for each step
+	 */
+	int m_numMolesPerStep;
+
+	/**
+	 * \brief The vector of moles id. This is shuffled at each step and the
+	 *        first are takes as the active moles (the number depends on the
+	 *        difficulty level
+	 */
+	QVector<int> m_moles;
+
+	/**
+	 * \brief True if a button was pressed when we received the previous
+	 *        joystick status
+	 */
+	bool m_prevButtonPressed;
 };
-
-
-
-
-
-
-// 	/**
-// 	 * \brief The application controller object
-// 	 */
-// 	Controller* const m_controller;
-//
-// 	/**
-// 	 * \brief The joystick pointer
-// 	 */
-// 	JoystickPointer* const m_pointer;
-//
-// 	/**
-// 	 * \brief The object to send commands to Arduino
-// 	 */
-// 	SerialCommunication* const m_serialCommunication;
-//
-// 	/**
-// 	 * \brief The QML game panel object
-// 	 */
-// 	QObject* const m_qmlGamePanel;
-//
-// 	/**
-// 	 * \brief The current game
-// 	 */
-// 	AbstractGame* m_game;
-//
-// 	/**
-// 	 * \brief The current game modality
-// 	 */
-// 	WhacAMaker::GameType m_gameType;
-//
-// 	/**
-// 	 * \brief The current difficulty level
-// 	 */
-// 	WhacAMaker::DifficultyLevel m_difficultyLevel;
-//
-// 	/**
-// 	 * \brief The remaining time in seconds
-// 	 */
-// 	int m_remainingSeconds;
-//
-// 	/**
-// 	 * \brief The timer for the game time
-// 	 *
-// 	 * This is set to 1 sec, so that we can decrement m_remainingSeconds
-// 	 */
-// 	QTimer m_timer;
-//
-// 	/**
-// 	 * \brief The current status of moles, as sent to Arduino
-// 	 */
-// 	int m_molesStatus;
-//
-// 	/**
-// 	 * \brief The timer for the game
-// 	 *
-// 	 * This is used to make moles appear/disappear
-// 	 */
-// 	QTimer m_gameTimer;
-//
-// 	/**
-// 	 * \brief The current score
-// 	 */
-// 	int m_score;
-//
-// 	/**
-// 	 * \brief The number of hits left
-// 	 */
-// 	int m_ammoLeft;
-//
-// 	/**
-// 	 * \brief The number of moles for each step
-// 	 */
-// 	int m_numMolesPerStep;
-//
-// 	/**
-// 	 * \brief True if a button was pressed when we received the previous
-// 	 *        joystick status
-// 	 */
-// 	bool m_prevButtonPressed;
-//
-// 	/**
-// 	 * \brief The vector of moles id. This is shuffled at each step and the
-// 	 *        first are takes as the active moles (the number depends on the
-// 	 *        difficulty level
-// 	 */
-// 	QVector<int> m_moles;
 
 #endif

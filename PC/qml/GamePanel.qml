@@ -1,7 +1,7 @@
 // The panel for the game. The game area takes a square portion on the left/up
 // side, the rest is used to show game information (difficulty level, score,
 // time left...). A mouse click on the game area terminates the game earlier
-import QtQuick 2.0
+import QtQuick 2.3
 import WhacAMaker 1.0
 import QtMultimedia 5.0
 
@@ -14,15 +14,7 @@ AnimatedElementsPanel {
 	property int difficultyLevel
 
 	// Aliases for properties in GameInformation
-	CAMBIARE QUESTE DOPO AVER CAMBIATO GameInformation
-	// The text with the current level
-	property alias infoLevel: gameInformation.level
-	// The current score
-	property alias infoScore: gameInformation.score
-	// The remaining ammunitions
-	property alias infoAmmo: gameInformation.ammo
-	// The remaining time
-	property alias infoTime: gameInformation.time
+	property alias informationFields: gameInformation.fields
 	// The volume of sound effects
 	property real volume: 1.0
 
@@ -38,6 +30,15 @@ AnimatedElementsPanel {
 	// button click)
 	signal terminateGame()
 
+	// The function to set the value to display for the i-th field. The
+	// field with id 0 is always the game modality and level, other start
+	// from 1
+	function setInformationFieldValue(i, value)
+	{
+		// Simply forwarding call to the GameInformation function
+		gameInformation.setFieldValue(i, value);
+	}
+
 	// The function to close the game
 	function endGame(newHighScore)
 	{
@@ -45,7 +46,8 @@ AnimatedElementsPanel {
 
 		hideAll();
 	}
-	// The function to switch mole cells spots on of off. The status
+
+	// The function to switch mole cells spots on or off. The status
 	// parameter has the same format as the status used for Arduino, it is
 	// and integer and each bit corresponds to a mole
 	function changeMoleSpotStatus(status)
@@ -58,6 +60,27 @@ AnimatedElementsPanel {
 				internalVars.moleCells[i].spotOn = false;
 			}
 		}
+	}
+
+	// The function that changes the color of the spot of all moles. This
+	// doesn't change the visible property of the spot
+	function changeAllMolesSpotColor(color)
+	{
+		for (var i = 0; i < internalVars.moleCells.length; i++) {
+			internalVars.moleCells[i].spotColor = color;
+		}
+	}
+
+	// The function that changes the color of the spot of the i-th mole.
+	// This doesn't change the visible property of the spot
+	function changeMoleSpotColor(i, color)
+	{
+		// Ignoring invalid moles
+		if ((i < 0) || (i >= internalVars.moleCells.length)) {
+			return;
+		}
+
+		internalVars.moleCells[i].spotColor = color;
 	}
 
 	// Sets which cell is pointed
@@ -131,6 +154,8 @@ AnimatedElementsPanel {
 		height: (container.height < container.width) ? container.height : (container.height - container.width)
 		x: (container.width < container.height) ? 0 : container.height
 		yWhenVisible: (container.height < container.width) ? 0 : container.width
+
+		showCaptions: true
 	}
 
 	// The sound to play when an hit is successful

@@ -1,6 +1,6 @@
 // A container for AnimatedElements with functions to show all elements or hide
 // them all
-import QtQuick 2.0
+import QtQuick 2.3
 
 Item {
 	id: container

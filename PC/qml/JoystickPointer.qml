@@ -5,7 +5,7 @@
 // 	- "": normal, used in menus
 // 	- "game": used during the game
 // 	- "calibration": used during calibration
-import QtQuick 2.0
+import QtQuick 2.3
 
 Item {
 	id: container

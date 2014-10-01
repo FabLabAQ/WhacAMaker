@@ -45,7 +45,7 @@ public:
 	void startGame();
 
 	/**
-	 * \brief Stops all timers and resets moles status
+	 * \brief Stops all timers and brings all moles down
 	 *
 	 * \param checkHighScore if true checks if score is a highscore,
 	 *                       otherwise no check is performed and score is

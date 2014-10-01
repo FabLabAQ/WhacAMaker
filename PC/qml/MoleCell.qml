@@ -1,6 +1,6 @@
 // A single cell containing the mole. The cell is square, has a uniform color
 // and a border. This has two states: default and "spotOn"
-import QtQuick 2.0
+import QtQuick 2.3
 
 AnimatedElement {
 	id: container
@@ -19,6 +19,8 @@ AnimatedElement {
 	// The size of the spot (its diameter) as a portion of the size of the
 	// cell
 	property real spotSize: 1.0 // 0.6
+	// The color of the spot
+	property alias spotColor: spot.spotColor
 	// The size of the circle (its diameter) as a portion of the size of the
 	// cell
 	property real circleSize: 0.45
@@ -70,7 +72,7 @@ AnimatedElement {
 		// The width of the rotating circle line
 		property real lineWidth: 12
 		// The color of the line of the rotating line
-		property color lineColor: "yellow"
+		property color spotColor: "yellow"
 
 		// The animation on the angle property to have a rotating circle
 		NumberAnimation on angle {
@@ -95,12 +97,12 @@ AnimatedElement {
 				context.lineTo(x + width / 2.0, y + height / 2.0);
 
 				// Filling it
-				context.fillStyle = lineColor;
+				context.fillStyle = spotColor;
 				context.fill();
 
 				// Stroking it
 				context.lineWidth = lineWidth;
-				context.strokeStyle = lineColor;
+				context.strokeStyle = spotColor;
 				context.lineCap = "round";
 				context.stroke();
 			}

@@ -59,6 +59,12 @@ public:
 	 * \return the player score
 	 */
 	virtual qreal score() const;
+
+private:
+	/**
+	 * \brief The current mole status
+	 */
+	int m_molesStatus;
 };
 
 #endif

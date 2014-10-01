@@ -2,7 +2,7 @@
 // two sates which can be used to trigger animations, "appearing" and
 // "disappearing". This also has a signal that is emitted when the disappearing
 // animation is finished.
-import QtQuick 2.0
+import QtQuick 2.3
 
 Item {
 	id: container

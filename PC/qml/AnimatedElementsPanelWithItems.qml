@@ -3,7 +3,7 @@
 // AnimatedElement. This only takes care of placing elements, you must take care
 // of actions connected to buttons in inherited items. You should not change
 // position and size of items and buttons
-import QtQuick 2.0
+import QtQuick 2.3
 
 AnimatedElementsPanel {
 	id: container

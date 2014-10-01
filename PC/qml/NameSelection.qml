@@ -1,5 +1,5 @@
 // A panel that allows to select a text with a on-screen keyboard
-import QtQuick 2.0
+import QtQuick 2.3
 import QtMultimedia 5.0
 
 AnimatedElementsPanel {

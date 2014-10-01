@@ -1,5 +1,5 @@
 // A simple label inheriting from AnimatedElement
-import QtQuick 2.0
+import QtQuick 2.3
 
 AnimatedElement {
 	id: container

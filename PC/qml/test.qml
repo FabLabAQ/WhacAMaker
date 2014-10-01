@@ -1,5 +1,5 @@
 // A simple code to test stuffs during development
-import QtQuick 2.0
+import QtQuick 2.3
 
 Rectangle {
 	id: application

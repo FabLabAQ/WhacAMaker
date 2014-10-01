@@ -1,5 +1,5 @@
 // The panel showing high scores
-import QtQuick 2.0
+import QtQuick 2.3
 
 AnimatedElementsPanelWithItems {
 	id: container

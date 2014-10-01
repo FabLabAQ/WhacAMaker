@@ -1,114 +1,44 @@
 #include "classicalGame.h"
 #include "gameController.h"
-
-ClassicalGame::ClassicalGame(GameController* controller)
-	: AbstractGame(controller)
-{
-#warning TODO!!!
-}
-
-ClassicalGame::~ClassicalGame()
-{
-#warning TODO!!!
-}
-
-void ClassicalGame::startGame(WhacAMaker::DifficultyLevel difficulty)
-{
-#warning TODO!!!
-}
-
-void ClassicalGame::stopGame()
-{
-#warning TODO!!!
-	// Ending game with no highscore
-	m_controller->stopGame(false);
-}
-
-void ClassicalGame::pointerStatus(int moleID, bool button1Pressed, bool button2Pressed)
-{
-#warning TODO!!!
-}
-
-qreal ClassicalGame::score() const
-{
-#warning TODO!!!
-
-	return 0.0;
-}
-
-
-
-
-
-
-
-
-
-/*
-
-
-#include "gameController.h"
-#include "myRuntimeException.h"
-#include "controller.h"
-#include "joystickPointer.h"
 #include "helpers.h"
-#include "classicalGame.h"
-#include "matchColorGame.h"
-#include "testGame.h"
 #include <QQmlProperty>
 #include <QDateTime>
-#include <cstdlib>
+#include <QStringList>
 #include <algorithm>
 
 // Useful constants
 namespace {
 	// How many seconds the game lasts
-	const int gameDuration = 120;
+	const int gameDuration = 60;
 	// The interval between moles changes in various difficulty levels in milliseconds
 	const int easyInterval = 5000;
 	const int mediumInterval = 3000;
 	const int hardInterval = 1000;
-	const int testInterval = 20000;
 	// The initial number of hits in various difficulty levels
 	const int easyAmmo = 100;
 	const int mediumAmmo = 80;
 	const int hardAmmo = 50;
-	const int testAmmo = 10000;
 	// The number of moles at each step for various difficulty levels
 	const int easyNumMoles = 6;
 	const int mediumNumMoles = 4;
 	const int hardNumMoles = 4;
 }
 
-GameController::GameController(Controller* controller, JoystickPointer* pointer, SerialCommunication* serialCommunication, QQuickView& view, QObject* parent)
-	: QObject(parent)
-	, m_controller(controller)
-	, m_pointer(pointer)
-	, m_serialCommunication(serialCommunication)
-	, m_qmlGamePanel(getQmlObject(view, "gamePanelObject"))
-	, m_game(NULL)
-	, m_gameType(WhacAMaker::Classical)
-	, m_difficultyLevel(WhacAMaker::Easy)
-	, m_remainingSeconds(0)
+ClassicalGame::ClassicalGame(GameController* controller)
+	: AbstractGame(controller)
 	, m_timer()
-	, m_molesStatus(0)
 	, m_gameTimer()
-	, m_score(0)
+	, m_molesStatus(0)
+	, m_remainingSeconds(0)
+	, m_score(0.0)
 	, m_ammoLeft(0)
-	, m_numMolesPerStep(easyNumMoles)
-	, m_gameAreaSize(0)
-	, m_prevButtonPressed(false)
+	, m_numMolesPerStep(0)
 	, m_moles(9)
+	, m_prevButtonPressed(false)
 {
-	// Connecting the joystick absolute movement signal from the joystick pointer to our slot
-	connect(m_pointer, SIGNAL(joystickMovedAbsolute(qreal, qreal, bool, bool)), this, SLOT(pointerPosition(qreal, qreal, bool, bool)));
-
 	// Connecting timer signals
 	connect(&m_timer, SIGNAL(timeout()), this, SLOT(timeout()));
 	connect(&m_gameTimer, SIGNAL(timeout()), this, SLOT(changeMolesStatus()));
-
-	// Connecting to QML signals
-	connect(m_qmlGamePanel, SIGNAL(terminateGame()), this, SLOT(terminateGame()));
 
 	// We also need to initialize the random number generator
 	qsrand(uint(QDateTime::currentMSecsSinceEpoch() / 1000));
@@ -119,215 +49,145 @@ GameController::GameController(Controller* controller, JoystickPointer* pointer,
 	}
 }
 
-GameController::~GameController()
+ClassicalGame::~ClassicalGame()
 {
-	delete m_game;
+	// Nothing to do here
 }
 
-void GameController::startGame()
+void ClassicalGame::startGame(WhacAMaker::DifficultyLevel difficulty)
 {
-	// Changing the pointer and the movement type
-	m_pointer->setStatus(JoystickPointer::Game);
-	m_pointer->setMovementType(JoystickPointer::Absolute);
-	m_gameAreaSize = QQmlProperty::read(m_qmlGamePanel, "gameAreaSize").toReal();
-	m_pointer->setMovementArea(QRectF(m_gameAreaSize / 6.0, m_gameAreaSize / 6.0, 2.0 * m_gameAreaSize / 3.0, 2.0 * m_gameAreaSize / 3.0));
-
-	// Getting the difficulty level
-	m_difficultyLevel = static_cast<WhacAMaker::DifficultyLevel>(QQmlProperty::read(m_qmlGamePanel, "difficultyLevel").toInt());
-
-	// Actually start game
-	m_remainingSeconds = gameDuration;
-	// This is not very accurate (each timeout signal has 5% tolerance), but for he moment it is enough
-	m_timer.start(1000);
-
-	// Setting initial value of information
-	QQmlProperty::write(m_qmlGamePanel, "infoLevel", WhacAMaker::difficultyLevelToString(m_difficultyLevel));
-	QQmlProperty::write(m_qmlGamePanel, "infoTime", remainingTimeString());
-	m_score = 0;
-	int msec = 0;
-	if (m_difficultyLevel == WhacAMaker::Easy) {
-		m_ammoLeft = easyAmmo;
-		m_numMolesPerStep = easyNumMoles;
-		msec = easyInterval;
-	} else if (m_difficultyLevel == WhacAMaker::Medium) {
-		m_ammoLeft = mediumAmmo;
-		m_numMolesPerStep = mediumNumMoles;
-		msec = mediumInterval;
-	} else if (m_difficultyLevel == WhacAMaker::Hard) {
-		m_ammoLeft = hardAmmo;
-		m_numMolesPerStep = hardNumMoles;
-		msec = hardInterval;
-	} else {
-		m_ammoLeft = testAmmo;
-		msec = -1;
-	}
-	updateScoreAndAmmoGUI();
-
 	// Bringing all moles down
 	m_molesStatus = 0;
 	updateMolesStatus();
 
-	// Starting the timer for the game. The speed depends on the difficulty level. We don't activate the timer in test
-	if (msec != -1) {
-		m_gameTimer.start(msec);
-		// Also calling the changeMolesStatus function immediately for the first step
-		changeMolesStatus();
+	// Setting fields for information to show and setting spot color to yellow
+	QStringList informationFields = QStringList() << "Punteggio" << "Colpi Rimasti" << "Tempo rimanente";
+	QQmlProperty::write(m_controller->qmlGamePanel(), "informationFields", informationFields);
+	QMetaObject::invokeMethod(m_controller->qmlGamePanel(), "changeAllMolesSpotColor", Q_ARG(QVariant, QColor(Qt::yellow)));
+
+	// Setting al variables to their initial status depending on the difficulty level
+	m_remainingSeconds = gameDuration;
+	m_score = 0;
+	int gameTimerDelay = 0;
+	if (difficulty == WhacAMaker::Easy) {
+		m_ammoLeft = easyAmmo;
+		m_numMolesPerStep = easyNumMoles;
+		gameTimerDelay = easyInterval;
+	} else if (difficulty == WhacAMaker::Medium) {
+		m_ammoLeft = mediumAmmo;
+		m_numMolesPerStep = mediumNumMoles;
+		gameTimerDelay = mediumInterval;
+	} else if (difficulty == WhacAMaker::Hard) {
+		m_ammoLeft = hardAmmo;
+		m_numMolesPerStep = hardNumMoles;
+		gameTimerDelay = hardInterval;
 	}
+
+	// Setting initial value of information
+	updateGUIRemainingTime();
+	updateGUIScoreAndAmmo();
+
+	// Starting both timers
+	m_timer.start(1000); // This is not very accurate (each timeout signal has 5% tolerance), but for he moment it is enough
+	m_gameTimer.start(gameTimerDelay);
+
+	// Also calling the changeMolesStatus function immediately for the first step
+	changeMolesStatus();
 }
 
-void GameController::pointerPosition(qreal x, qreal y, bool button1Pressed, bool button2Pressed)
+void ClassicalGame::stopGame()
 {
-	// Checking which mole is under the pointer
-	int moleX = 1;
-	if (x < (m_gameAreaSize / 3.0)) {
-		moleX = 0;
-	} else if (x > (2.0 * m_gameAreaSize / 3.0)) {
-		moleX = 2;
-	}
-	int moleY = 1;
-	if (y < (m_gameAreaSize / 3.0)) {
-		moleY = 0;
-	} else if (y > (2.0 * m_gameAreaSize / 3.0)) {
-		moleY = 2;
-	}
-	const int moleID = moleX + moleY * 3;
+	m_timer.stop();
+	m_gameTimer.stop();
 
-	// Updating the pointed mole
-	QMetaObject::invokeMethod(m_qmlGamePanel, "setPointedMole", Q_ARG(QVariant, QVariant(moleID)));
+	// Ending game with no highscore
+	m_controller->stopGame(false);
+}
 
-	if (m_difficultyLevel == WhacAMaker::Test) {
-		// Moving moles depending on joystick commands
-		if (button1Pressed) {
-			m_molesStatus |= (1 << moleID);
-			updateMolesStatus();
-		} else if (button2Pressed) {
+void ClassicalGame::pointerStatus(int moleID, bool button1Pressed, bool button2Pressed)
+{
+	const bool buttonPressed = button1Pressed || button2Pressed;
+	if (m_prevButtonPressed && !buttonPressed && (m_ammoLeft != 0)) {
+		// An hit attempt!
+		m_ammoLeft--;
+
+		// Checking if a mole was hit
+		if (((m_molesStatus >> moleID) & 1) == 1) {
+			// Good shot, mole hit!
+			m_score++;
+
+			// Signal QML the mole was hit
+			QMetaObject::invokeMethod(m_controller->qmlGamePanel(), "moleHit", Q_ARG(QVariant, QVariant(moleID)));
+
+			// Bringing the mole down and updating moles status
 			m_molesStatus &= ~(1 << moleID);
 			updateMolesStatus();
-		}
-	} else {
-		const bool buttonPressed = button1Pressed || button2Pressed;
-		if (m_prevButtonPressed && !buttonPressed && (m_ammoLeft != 0)) {
-			// An hit attempt!
-			m_ammoLeft--;
-
-			// Checking if a mole was hit
-			if (((m_molesStatus >> moleID) & 1) == 1) {
-				// Good shot, mole hit!
-				m_score++;
-
-				// Signal QML the mole was hit
-				QMetaObject::invokeMethod(m_qmlGamePanel, "moleHit", Q_ARG(QVariant, QVariant(moleID)));
-
-				// Bringing the mole down and updating moles status
-				m_molesStatus &= ~(1 << moleID);
-				updateMolesStatus();
-			} else {
-				// Signal QML the mole was missed
-				QMetaObject::invokeMethod(m_qmlGamePanel, "moleMissed", Q_ARG(QVariant, QVariant(moleID)));
-			}
-
-			updateScoreAndAmmoGUI();
+		} else {
+			// Signal QML the mole was missed
+			QMetaObject::invokeMethod(m_controller->qmlGamePanel(), "moleMissed", Q_ARG(QVariant, QVariant(moleID)));
 		}
 
-		m_prevButtonPressed = buttonPressed;
+		updateGUIScoreAndAmmo();
 	}
+
+	m_prevButtonPressed = buttonPressed;
 }
 
-void GameController::terminateGame()
+qreal ClassicalGame::score() const
 {
-	// Ending game with no highscore
-	stopGame(false);
+	return m_score;
 }
 
-void GameController::timeout()
+void ClassicalGame::timeout()
 {
 	m_remainingSeconds--;
 
 	// Updating qml property
-	QQmlProperty::write(m_qmlGamePanel, "infoTime", remainingTimeString());
+	updateGUIRemainingTime();
 
 	// Checking if game has ended
 	if ((m_remainingSeconds == 0) || (m_ammoLeft == 0)) {
-		stopGame(true);
+		m_timer.stop();
+		m_gameTimer.stop();
+
+		m_controller->stopGame(true);
 	}
 }
 
-namespace {
-	// A function used by random_shuffle as a source of randomness
-	int randomShuffleGen(int i)
-	{
-		return qrand() % i;
-	}
-}
-
-void GameController::changeMolesStatus()
+void ClassicalGame::changeMolesStatus()
 {
-	if (m_difficultyLevel != WhacAMaker::Test) {
-		// Randomizing the vector of moles
-		std::random_shuffle(m_moles.begin(), m_moles.end(), randomShuffleGen);
+	// Randomizing the vector of moles
+	std::random_shuffle(m_moles.begin(), m_moles.end(), randomShuffleGen);
 
-		// Initializing status
-		m_molesStatus = 0;
-		for (int i = 0; i < m_numMolesPerStep; i++) {
-			m_molesStatus |= 1 << m_moles[i];
-		}
-
-		updateMolesStatus();
+	// Initializing status
+	m_molesStatus = 0;
+	for (int i = 0; i < m_numMolesPerStep; i++) {
+		m_molesStatus |= 1 << m_moles[i];
 	}
+
+	updateMolesStatus();
 }
 
-QString GameController::remainingTimeString() const
+void ClassicalGame::updateGUIRemainingTime()
 {
-	return QString("%1:%2").arg(m_remainingSeconds / 60).arg(m_remainingSeconds % 60, 2, 10, QChar('0'));
+	QString timeString = QString("%1:%2").arg(m_remainingSeconds / 60).arg(m_remainingSeconds % 60, 2, 10, QChar('0'));
+
+	// The remaining time has index 3 in the information fields list
+	QMetaObject::invokeMethod(m_controller->qmlGamePanel(), "setInformationFieldValue", Q_ARG(QVariant, 3), Q_ARG(QVariant, timeString));
 }
 
-void GameController::updateMolesStatus()
+void ClassicalGame::updateGUIScoreAndAmmo()
+{
+	// The score and remaining ammo have index 1 and 2 respectively in the information fields list
+	QMetaObject::invokeMethod(m_controller->qmlGamePanel(), "setInformationFieldValue", Q_ARG(QVariant, 1), Q_ARG(QVariant, QString::number(m_score)));
+	QMetaObject::invokeMethod(m_controller->qmlGamePanel(), "setInformationFieldValue", Q_ARG(QVariant, 2), Q_ARG(QVariant, QString::number(m_ammoLeft)));
+}
+
+void ClassicalGame::updateMolesStatus()
 {
 	// Sending command to Arduino
-	m_serialCommunication->newCommandToSend();
-	m_serialCommunication->appendCommandPart("M");
-	m_serialCommunication->appendCommandPart(m_molesStatus);
-	m_serialCommunication->sendCommand();
+	m_controller->updateArduinoMolesStatus(m_molesStatus);
 
 	// Updating qml game panel
-	QMetaObject::invokeMethod(m_qmlGamePanel, "changeMoleSpotStatus", Q_ARG(QVariant, QVariant(m_molesStatus)));
+	QMetaObject::invokeMethod(m_controller->qmlGamePanel(), "changeMoleSpotStatus", Q_ARG(QVariant, QVariant(m_molesStatus)));
 }
-
-void GameController::updateScoreAndAmmoGUI()
-{
-	QQmlProperty::write(m_qmlGamePanel, "infoScore", QString::number(m_score));
-	QQmlProperty::write(m_qmlGamePanel, "infoAmmo", QString::number(m_ammoLeft));
-}
-
-void GameController::stopGame(bool checkHighScore)
-{
-	m_timer.stop();
-	m_gameTimer.stop();
-	m_molesStatus = 0;
-	updateMolesStatus();
-
-	QVariant newHighScore;
-	if (checkHighScore) {
-		newHighScore = m_controller->newHighScore(m_difficultyLevel, m_score);
-	} else {
-		newHighScore = false;
-	}
-	QMetaObject::invokeMethod(m_qmlGamePanel, "endGame", Q_ARG(QVariant, newHighScore));
-}
-
-void GameController::gameFactory()
-{
-	delete m_game;
-
-	switch(m_gameType) {
-		case WhacAMaker::Test:
-			m_game = new TestGame(this);
-			break;
-		case WhacAMaker::Classical:
-			m_game = new ClassicalGame(this);
-			break;
-		case WhacAMaker::MatchColorGame:
-			m_game = new MatchColorGame(this);
-			break;
-	}
-}*/

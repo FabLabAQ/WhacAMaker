@@ -1,6 +1,6 @@
 // A simple button used in the game. This also contains animations to make the
 // button appear/disappear
-import QtQuick 2.0
+import QtQuick 2.3
 
 AnimatedElement {
 	id: container

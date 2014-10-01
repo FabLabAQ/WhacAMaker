@@ -1,7 +1,7 @@
 // A keyboard on screen. This has three signals: one emitted every time the
 // button of a character is clicked, one for backspace and one for enter.
 // Buttons are in 4 rows with 10 buttons each
-import QtQuick 2.0
+import QtQuick 2.3
 
 AnimatedElement {
 	id: container

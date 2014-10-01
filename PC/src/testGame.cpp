@@ -3,30 +3,40 @@
 
 TestGame::TestGame(GameController* controller)
 	: AbstractGame(controller)
+	, m_molesStatus(0)
 {
-#warning TODO!!!
 }
 
 TestGame::~TestGame()
 {
-#warning TODO!!!
+	// Nothing to do here
 }
 
 void TestGame::startGame(WhacAMaker::DifficultyLevel difficulty)
 {
-#warning TODO!!!
+	// Bringing all moles down
+	m_molesStatus = 0;
+	m_controller->updateArduinoMolesStatus(m_molesStatus);
 }
 
 void TestGame::stopGame()
 {
-#warning TODO!!!
 	// Ending game with no highscore
 	m_controller->stopGame(false);
 }
 
 void TestGame::pointerStatus(int moleID, bool button1Pressed, bool button2Pressed)
 {
-#warning TODO!!!
+	// Moving moles depending on joystick commands. If both buttons are pressed stopping test
+	if (button1Pressed && button2Pressed) {
+		stopGame();
+	} else if (button1Pressed) {
+		m_molesStatus |= (1 << moleID);
+		m_controller->updateArduinoMolesStatus(m_molesStatus);
+	} else if (button2Pressed) {
+		m_molesStatus &= ~(1 << moleID);
+		m_controller->updateArduinoMolesStatus(m_molesStatus);
+	}
 }
 
 qreal TestGame::score() const

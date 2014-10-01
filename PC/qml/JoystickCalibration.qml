@@ -1,6 +1,6 @@
 // The panel for joystick calibration. It instructions on top and a target in
 // the centra part. Any click will go back to the previous panel
-import QtQuick 2.0
+import QtQuick 2.3
 
 AnimatedElementsPanel {
 	id: container
