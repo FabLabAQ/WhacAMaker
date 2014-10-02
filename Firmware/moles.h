@@ -113,7 +113,7 @@ void Moles<N>::begin(int molesPins[], int servoMin[], int servoMax[])
 {
 	// Attaching mole pins to servos and moving them all down
 	for (int i = 0; i < N; i++) {
-		m_servos[i].attach(molesPins[i]);
+		m_servos[i].attach(molesPins[i], servoMin[i], servoMax[i]);
 	}
 	setStatus(0);
 }

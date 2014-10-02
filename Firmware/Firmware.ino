@@ -11,10 +11,10 @@
 const long baudRate = 115200;
 
 // Pin numbers: Joystick
-const int joystickP1 = 52;
-const int joystickP2 = 53;
-const int joystickX = A14;
-const int joystickY = A15;
+const int joystickP1 = 11;
+const int joystickP2 = 12;
+const int joystickX = A0;
+const int joystickY = A1;
 
 // The object taking care of serial communication
 SerialCommunication serialCommunication;
@@ -25,9 +25,12 @@ Joystick joystick;
 // The object managing the moles and the moles pins (we can use any digital
 // output, the Servo library uses a timer interrupt to generate the PWM, not the
 // hardware PWM)
-int molesPins[10] = {   2,    3,    4,    5,    6,    7,    8,    9,   10,   11};
-int servoMin[10]  = { 544,  544,  544,  544,  544,  544,  544,  544,  544,  544};
-int servoMax[10]  = {2400, 2400, 2400, 2400, 2400, 2400, 2400, 2400, 2400, 2400};
+// int molesPins[9] = {   8,    5,    2,    9,    6,    3,    10,    7,   4};
+int molesPins[9] = {   4,    7,    10,   3,    6,    9,     2,    5,   8};
+// int servoMin[10]  = { 544,  544,  544,  544,  544,  544,  544,  544,  544};
+// int servoMax[10]  = {2400, 2400, 2400, 2400, 2400, 2400, 2400, 2400, 2400};
+int servoMin[9]  = { 600,  600,  600,  600,  600,  600,  600,  600,  600};
+int servoMax[9]  = {2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000};
 typedef Moles<9> GameMoles;
 GameMoles moles;
 
