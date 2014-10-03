@@ -61,6 +61,10 @@ void loop() {
 	if (serialCommunication.commandReceived() && (serialCommunication.receivedCommandNumParts() != 0)) {
 		if (serialCommunication.receivedCommandPart(0)[0] == 'S') {
 			sendJoystick = true;
+		} else if (serialCommunication.receivedCommandPart(0)[0] == 'A') {
+			moles.attach();
+		} else if (serialCommunication.receivedCommandPart(0)[0] == 'D') {
+			moles.detach();
 		} else if ((serialCommunication.receivedCommandPart(0)[0] == 'M') && (serialCommunication.receivedCommandNumParts() >= 2)) {
 			// Move servo to bring up or down the moles
 			moles.setStatus(serialCommunication.receivedCommandPartAsInt(1));
