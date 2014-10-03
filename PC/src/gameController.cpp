@@ -11,7 +11,7 @@
 // Useful constants
 namespace {
 	// How many seconds the game lasts
-	const int gameDuration = 120;
+	const int gameDuration = 60;
 	// The interval between moles changes in various difficulty levels in milliseconds
 	const int easyInterval = 5000;
 	const int mediumInterval = 3000;

@@ -143,7 +143,7 @@ AnimatedElementsPanel {
 	SoundEffect {
 		id: moleMissed
 		source: "qrc:///sounds/slide.wav"
-		volume: container.volume
+		volume: 0.0 //container.volume
 	}
 
 	// An object with internal variables
