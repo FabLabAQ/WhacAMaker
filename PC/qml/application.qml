@@ -160,6 +160,7 @@ Rectangle {
 
 				// Checking what to show
 				if (newHighScore) {
+					nameSelection.score = finalScore;
 					nameSelection.visible = true;
 				} else {
 					mainMenu.visible = true;
@@ -188,11 +189,12 @@ Rectangle {
 
 		NameSelection {
 			id: nameSelection
-			labelText: "Ottimo punteggio!"
+			labelText: "Ottimo punteggio! " + score + " punti"
 			visible: false
 			backItem: mainMenu
 			anchors.fill: parent
 			volume: application.volume
+			property real score: 0
 
 			onEnterPressed: application.playerNameEntered(t)
 		}

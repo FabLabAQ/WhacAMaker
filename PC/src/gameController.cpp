@@ -198,6 +198,9 @@ void GameController::timeout()
 	if ((m_remainingSeconds == 0) || (m_ammoLeft == 0)) {
 		stopGame();
 
+		// Setting the final score
+		QQmlProperty::write(m_qmlGamePanel, "finalScore", QString::number(m_score));
+
 		QVariant newHighScore;
 		if (m_difficultyLevel == WhacAMaker::Test) {
 			newHighScore = false;
