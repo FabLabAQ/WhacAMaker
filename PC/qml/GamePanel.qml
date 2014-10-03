@@ -20,6 +20,8 @@ AnimatedElementsPanel {
 
 	// The total game area size
 	property real gameAreaSize: internalVars.moleCellSize * 3
+	// The final score of the player
+	property real finalScore: 0
 
 	// The signal emitted when the game starts
 	signal gameStarted()

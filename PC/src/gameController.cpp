@@ -65,6 +65,9 @@ void GameController::stopGame(bool checkHighScore)
 	// Bringing all moles down
 	updateArduinoMolesStatus(0);
 
+	// Setting the final score
+	QQmlProperty::write(m_qmlGamePanel, "finalScore", QString::number(m_game->score()));
+
 	QVariant newHighScore;
 	if (checkHighScore) {
 		newHighScore = m_controller->newHighScore(m_difficultyLevel, m_game->score());
