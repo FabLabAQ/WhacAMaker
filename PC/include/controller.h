@@ -6,6 +6,7 @@
 #include <QSettings>
 #include <QList>
 #include <QVariant>
+#include <QTimer>
 #include "gameController.h"
 #include "serialCommunication.h"
 #include "joystickPointer.h"
@@ -139,6 +140,13 @@ private slots:
 	 */
 	void resizeJoystickMovementArea();
 
+	/**
+	 * \brief Deactivates the servos
+	 *
+	 * This is called by a timer to be sure all servos stopped moving
+	 */
+	void disableServos();
+
 private:
 	/**
 	 * \brief Restores parameters in the configuration parameters QML object
@@ -256,6 +264,11 @@ private:
 	 * \brief The previous status of button 2 (whether pressed or not)
 	 */
 	bool m_button2PrevStatus;
+
+	/**
+	 * \brief The timer with the delay before disabling servos
+	 */
+	QTimer m_servoDisablingTimer;
 };
 
 #endif
