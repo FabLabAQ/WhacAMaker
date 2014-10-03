@@ -64,7 +64,7 @@ Controller::Controller(QQuickView& view, QObject* parent)
 	connect(&m_joystickPointer, SIGNAL(joystickMovedRelative(qreal, qreal, bool, bool)), this, SLOT(pointerPosition(qreal, qreal, bool, bool)));
 
 	// Telling the controller to start sending joystick data. We send two times because the first one there could
-	// be garbage
+	// be garbage.
 	m_serialCom.newCommandToSend();
 	m_serialCom.appendCommandPart("S");
 	m_serialCom.sendCommand();
@@ -235,12 +235,22 @@ void Controller::gameStarted()
 {
 	m_status = Game;
 
+	// Enabling servos
+	m_serialCom.newCommandToSend();
+	m_serialCom.appendCommandPart("A");
+	m_serialCom.sendCommand();
+
 	m_gameController.startGame();
 }
 
 void Controller::gameFinished()
 {
 	m_status = Menu;
+
+	// Disabling servos
+	m_serialCom.newCommandToSend();
+	m_serialCom.appendCommandPart("D");
+	m_serialCom.sendCommand();
 
 	// Changing pointer status and movement type
 	m_joystickPointer.setStatus(JoystickPointer::Normal);

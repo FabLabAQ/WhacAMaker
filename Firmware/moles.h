@@ -30,7 +30,8 @@ public:
 	 * \brief Initializes stuffs for the moles
 	 *
 	 * We can't do this in the constructor because it is called too early in
-	 * the initialization. So we must call this function inside setup()
+	 * the initialization. So we must call this function inside setup().
+	 * This doesn't attach servos, only saves pins and limits
 	 * \param molesPins the array with pins to use for moles. The array must
 	 *                  have at least N elements
 	 * \param servoMin the minimum pulse for servos (corresponding to 0
@@ -39,6 +40,16 @@ public:
 	 *                 degrees)
 	 */
 	void begin(int molesPins[], int servoMin[], int servoMax[]);
+
+	/**
+	 * \brief Attaches servos
+	 */
+	void attach();
+
+	/**
+	 * \brief Detaches servos
+	 */
+	void detach();
 
 	/**
 	 * \brief Sets the status of moles
@@ -94,6 +105,21 @@ private:
 	Servo m_servos[N];
 
 	/**
+	 * \brief The pins of the servos controlling the moles
+	 */
+	int m_molesPins[N];
+
+	/**
+	 * \brief The minimum value for servos
+	 */
+	int m_servoMin[N];
+
+	/**
+	 * \brief The maxumum value for servos
+	 */
+	int m_servoMax[N];
+
+	/**
 	 * \brief A typedef for compile-time check that N is no more than 10
 	 */
 	typedef char NoMoreThan10MolesAllowed[(N > 10) ? -1 : 1];
@@ -105,17 +131,42 @@ template <unsigned int N>
 Moles<N>::Moles()
 	: m_status(0) // All moles down
 {
-	// Nothing to do here, pins are initialized by begin()
+	// Initializing pins and limits to null values
+	for (int i = 0; i < N; i++) {
+		m_molesPins[i] = 0;
+		m_servoMin[i] = 1000;
+		m_servoMax[i] = 1000;
+	}
 }
 
 template <unsigned int N>
 void Moles<N>::begin(int molesPins[], int servoMin[], int servoMax[])
 {
+	// Saving pins and limits
+	for (int i = 0; i < N; i++) {
+		m_molesPins[i] = molesPins[i];
+		m_servoMin[i] = servoMin[i];
+		m_servoMax[i] = servoMax[i];
+	}
+}
+
+template <unsigned int N>
+void Moles<N>::attach()
+{
 	// Attaching mole pins to servos and moving them all down
 	for (int i = 0; i < N; i++) {
-		m_servos[i].attach(molesPins[i]);
+		m_servos[i].attach(m_molesPins[i], m_servoMin[i], m_servoMax[i]);
 	}
 	setStatus(0);
+}
+
+template <unsigned int N>
+void Moles<N>::detach()
+{
+	// Attaching mole pins to servos and moving them all down
+	for (int i = 0; i < N; i++) {
+		m_servos[i].detach();
+	}
 }
 
 template <unsigned int N>
