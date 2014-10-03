@@ -14,6 +14,8 @@ namespace {
 	const int numHighscores = 7;
 	// Joystick movement in the menus
 	const JoystickPointer::MovementType joystickMovementInMenu = JoystickPointer::Absolute;
+	// How uch to wait after game end before disabling servos in milliseconds
+	const int servoDisablingDelay = 1000;
 }
 
 Controller::Controller(QQuickView& view, QObject* parent)
@@ -30,6 +32,7 @@ Controller::Controller(QQuickView& view, QObject* parent)
 	, m_joystickPrevY(0.0)
 	, m_button1PrevStatus(false)
 	, m_button2PrevStatus(false)
+	, m_servoDisablingTimer()
 {
 	// Restores settings in the configuration parameters QML object
 	restoreParameters();
@@ -48,6 +51,9 @@ Controller::Controller(QQuickView& view, QObject* parent)
 	// Initially setting the movement type of the pointer to relative
 	m_joystickPointer.setMovementType(joystickMovementInMenu);
 
+	// The timeout to disable servos is singleShot
+	m_servoDisablingTimer.setSingleShot(true);
+
 	// Connecting signals from m_view to our slot to be notified of dimension changes
 	connect(&m_view, SIGNAL(widthChanged(int)), this, SLOT(resizeJoystickMovementArea()));
 	connect(&m_view, SIGNAL(heightChanged(int)), this, SLOT(resizeJoystickMovementArea()));
@@ -63,6 +69,10 @@ Controller::Controller(QQuickView& view, QObject* parent)
 	// Connecting the joystick relative movement signal from the joystick pointer to our slot
 	connect(&m_joystickPointer, SIGNAL(joystickMovedRelative(qreal, qreal, bool, bool)), this, SLOT(pointerPosition(qreal, qreal, bool, bool)));
 
+	// Connecting signals which should trigger servos disabling
+	connect(&m_servoDisablingTimer, SIGNAL(timeout()), this, SLOT(disableServos()));
+	connect(QGuiApplication::instance(), SIGNAL(aboutToQuit()), this, SLOT(disableServos()));
+
 	// Telling the controller to start sending joystick data. We send two times because the first one there could
 	// be garbage.
 	m_serialCom.newCommandToSend();
@@ -75,7 +85,8 @@ Controller::Controller(QQuickView& view, QObject* parent)
 
 Controller::~Controller()
 {
-	// Nothing to do here
+	// Disabling servos
+	disableServos();
 }
 
 bool Controller::newHighScore(WhacAMaker::DifficultyLevel level, double score)
@@ -247,10 +258,8 @@ void Controller::gameFinished()
 {
 	m_status = Menu;
 
-	// Disabling servos
-	m_serialCom.newCommandToSend();
-	m_serialCom.appendCommandPart("D");
-	m_serialCom.sendCommand();
+	// Starting the timer to disable servos
+	m_servoDisablingTimer.start(servoDisablingDelay);
 
 	// Changing pointer status and movement type
 	m_joystickPointer.setStatus(JoystickPointer::Normal);
@@ -261,6 +270,14 @@ void Controller::gameFinished()
 void Controller::resizeJoystickMovementArea()
 {
 	m_joystickPointer.setMovementArea();
+}
+
+void Controller::disableServos()
+{
+	// Disabling servos
+	m_serialCom.newCommandToSend();
+	m_serialCom.appendCommandPart("D");
+	m_serialCom.sendCommand();
 }
 
 void Controller::restoreParameters()
