@@ -89,8 +89,10 @@ Controller::~Controller()
 	disableServos();
 }
 
-bool Controller::newHighScore(WhacAMaker::DifficultyLevel level, double score)
+bool Controller::newHighScore(WhacAMaker::GameType modality, WhacAMaker::DifficultyLevel level, double score)
 {
+	considerare modality, inoltre usare funzioni per convertire nome enum in stringhe
+
 	// First of all getting the list of highscores for the level
 	QString paramName = "";
 	if (level == WhacAMaker::Easy) {

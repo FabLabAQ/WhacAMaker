@@ -106,6 +106,10 @@ void ClassicalGame::stopGame()
 
 void ClassicalGame::pointerStatus(int moleID, bool button1Pressed, bool button2Pressed)
 {
+	if (!m_gameStarted) {
+		return;
+	}
+
 	const bool buttonPressed = button1Pressed || button2Pressed;
 	if (m_prevButtonPressed && !buttonPressed && (m_ammoLeft != 0)) {
 		// An hit attempt!

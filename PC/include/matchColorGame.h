@@ -78,9 +78,14 @@ private slots:
 
 private:
 	/**
+	 * \brief Ends the current round
+	 */
+	void endRound();
+
+	/**
 	 * \brief Updates the remaining time in the GUI
 	 */
-	void updateGUIRemainingTime();
+	void updateGUIElapsedTime();
 
 	/**
 	 * \brief Updates the current score and round in the GUI
@@ -139,7 +144,7 @@ private:
 	/**
 	 * \brief The current round in the game
 	 */
-	int m_curRound;
+	int m_currRound;
 
 	/**
 	 * \brief The vector of moles id. This is shuffled at each step, the

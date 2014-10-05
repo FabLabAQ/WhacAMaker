@@ -62,9 +62,25 @@ public:
 
 protected:
 	/**
+	 * \brief Returns true if the game is running
+	 */
+	bool gameRunning() const;
+
+	/**
 	 * \brief The game controller object
 	 */
 	GameController* const m_controller;
+
+private:
+	/**
+	 * \brief If true the game has started
+	 */
+	bool m_gameRunning;
+
+	/**
+	 * \brief GameController is friend to modify the m_gameRunning flag
+	 */
+	friend class GameController;
 };
 
 #endif

@@ -71,11 +71,12 @@ public:
 	 * \brief If score is going to be a highscore for the given level,
 	 *        returns true and uses it as the score of the next player
 	 *
+	 * \param modality the game modality
 	 * \param level the difficulty level
 	 * \param score the score
 	 * \return true if score is in the highscores
 	 */
-	bool newHighScore(WhacAMaker::DifficultyLevel level, double score);
+	bool newHighScore(WhacAMaker::GameType modality, WhacAMaker::DifficultyLevel level, double score);
 
 	/**
 	 * \brief The function called when a new command is received

@@ -27,6 +27,10 @@ void TestGame::stopGame()
 
 void TestGame::pointerStatus(int moleID, bool button1Pressed, bool button2Pressed)
 {
+	if (!m_gameStarted) {
+		return;
+	}
+
 	// Moving moles depending on joystick commands. If both buttons are pressed stopping test
 	if (button1Pressed && button2Pressed) {
 		stopGame();

@@ -57,11 +57,15 @@ void GameController::startGame()
 	gameFactory();
 
 	// Starting the game
+	m_game->m_gameRunning = true;
 	m_game->startGame(m_difficultyLevel);
 }
 
 void GameController::stopGame(bool checkHighScore)
 {
+	// Setting the flag to false
+	m_game->m_gameRunning = false;
+
 	// Bringing all moles down
 	updateArduinoMolesStatus(0);
 
@@ -123,6 +127,7 @@ void GameController::terminateGame()
 void GameController::gameFactory()
 {
 	delete m_game;
+	m_game = NULL; // To be exception safe
 
 	switch(m_gameType) {
 		case WhacAMaker::Test:
