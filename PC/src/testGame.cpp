@@ -27,7 +27,7 @@ void TestGame::stopGame()
 
 void TestGame::pointerStatus(int moleID, bool button1Pressed, bool button2Pressed)
 {
-	if (!m_gameStarted) {
+	if (!gameRunning()) {
 		return;
 	}
 

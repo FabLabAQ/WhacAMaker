@@ -9,9 +9,11 @@
 // Useful constants
 namespace {
 	// The time interval between rounds in milliseconds
-	const int easyInterRoundInterval = 3000;
-	const int mediumInterRoundInterval = 2000;
-	const int hardInterRoundInterval = 1000;
+	const int easyInterRoundInterval = 2000;
+	const int mediumInterRoundInterval = 1000;
+	const int hardInterRoundInterval = 500;
+	// The time interval to wait before the target mole is highlighted
+	const int targetMoleShownInterval = 1000;
 	// The number of rounds to do
 	const int easyNumRounds = 5;
 	const int mediumNumRounds = 7;
@@ -26,12 +28,17 @@ namespace {
 	const int maxRoundTime = 5000;
 	// The penalty when a wrong mole is hit
 	const qreal wrongHitPenalty = 0.5;
+	// The color of the spot of all moles
+	const QColor allMolesSpotColor(Qt::yellow);
+	// The colot of the spot for the target mole
+	const QColor targetMoleSpotColor(Qt::red);
 }
 
 MatchColorGame::MatchColorGame(GameController* controller)
 	: AbstractGame(controller)
 	, m_timer()
 	, m_interRoundDelayTimer()
+	, m_targetMoleShownTimer()
 	, m_roundStart()
 	, m_score(0.0)
 	, m_interRoundInterval(0)
@@ -41,12 +48,14 @@ MatchColorGame::MatchColorGame(GameController* controller)
 	, m_moles(9)
 	, m_prevButtonPressed(false)
 {
-	// The inter-round delay timer is single-shot
+	// The inter-round delay timer is single-shot as the delay before the target mole is highlighted
 	m_interRoundDelayTimer.setSingleShot(true);
+	m_targetMoleShownTimer.setSingleShot(true);
 
 	// Connecting timer signals
 	connect(&m_timer, SIGNAL(timeout()), this, SLOT(timeout()));
 	connect(&m_interRoundDelayTimer, SIGNAL(timeout()), this, SLOT(startNewRound()));
+	connect(&m_targetMoleShownTimer, SIGNAL(timeout()), this, SLOT(showTargetMole()));
 
 	// We also need to initialize the random number generator
 	qsrand(uint(QDateTime::currentMSecsSinceEpoch() / 1000));
@@ -67,11 +76,11 @@ void MatchColorGame::startGame(WhacAMaker::DifficultyLevel difficulty)
 	// Bringing all moles down
 	bringMolesDown();
 
-	// Setting fields for information to show and setting spot color to yellow. The selected mole color will be set to red
+	// Setting fields for information to show and setting spot color to default. The selected mole color will be set to red
 	// when we start
 	QStringList informationFields = QStringList() << "Manches" << "Punteggio" << "Tempo trascorso manches";
 	QQmlProperty::write(m_controller->qmlGamePanel(), "informationFields", informationFields);
-	QMetaObject::invokeMethod(m_controller->qmlGamePanel(), "changeAllMolesSpotColor", Q_ARG(QVariant, QColor(Qt::yellow)));
+	QMetaObject::invokeMethod(m_controller->qmlGamePanel(), "changeAllMolesSpotColor", Q_ARG(QVariant, QColor(allMolesSpotColor)));
 
 	// Setting al variables to their initial status depending on the difficulty level
 	m_currRound = 0;
@@ -97,12 +106,16 @@ void MatchColorGame::startGame(WhacAMaker::DifficultyLevel difficulty)
 	// Starting both timers
 	m_timer.start(timeDisplayUpdateInterval);
 	m_interRoundDelayTimer.start(m_interRoundInterval);
+
+	// Resetting button status
+	m_prevButtonPressed = false;
 }
 
 void MatchColorGame::stopGame()
 {
 	m_timer.stop();
 	m_interRoundDelayTimer.stop();
+	m_targetMoleShownTimer.stop();
 
 	// Ending game with no highscore
 	m_controller->stopGame(false);
@@ -110,7 +123,12 @@ void MatchColorGame::stopGame()
 
 void MatchColorGame::pointerStatus(int moleID, bool button1Pressed, bool button2Pressed)
 {
-	if (!m_gameStarted) {
+	if (!gameRunning()) {
+		return;
+	}
+
+	// During the interval between rounds, we ignore buttons
+	if (m_interRoundDelayTimer.isActive()) {
 		return;
 	}
 
@@ -118,12 +136,15 @@ void MatchColorGame::pointerStatus(int moleID, bool button1Pressed, bool button2
 	if (m_prevButtonPressed && !buttonPressed) {
 		// An hit attempt!
 
-		// First checking if a mole was hit
+		// First checking if a mole was hit. If the player tries to hit before the
+		// mole to hit is shown, the hit is invalid
 		bool moleHit = false;
-		for (int i = 0; i < m_numMolesPerRound; i++) {
-			if (m_moleID == m_moles[i]) {
-				moleHit = true;
-				break;
+		if (!m_targetMoleShownTimer.isActive()) {
+			for (int i = 0; i < m_numMolesPerRound; i++) {
+				if (moleID == m_moles[i]) {
+					moleHit = true;
+					break;
+				}
 			}
 		}
 
@@ -131,7 +152,7 @@ void MatchColorGame::pointerStatus(int moleID, bool button1Pressed, bool button2
 			// Checking if the target mole was hit
 			if (moleID == m_moles[0]) {
 				// Good shot, mole hit!
-				m_score += 1.0 - m_roundStart.elapsed() / maxRoundTime;
+				m_score += 1.0 - qreal(m_roundStart.elapsed()) / qreal(maxRoundTime);
 
 				// Signal QML the mole was hit
 				QMetaObject::invokeMethod(m_controller->qmlGamePanel(), "moleHit", Q_ARG(QVariant, QVariant(moleID)));
@@ -172,9 +193,29 @@ void MatchColorGame::timeout()
 
 void MatchColorGame::startNewRound()
 {
-#warning TODO!!!
+	// Randomizing the vector of moles
+	std::random_shuffle(m_moles.begin(), m_moles.end(), randomShuffleGen);
 
-	qui altro timer attaccato a bringMolesUp che attiva gli spot dopo che le talpe sono salite (altrimenti un giocatore bravo non fa salire per niente le talpe. Meglio se prima salgono tutte quelle da mostrare e poco dopo vine illuminata quella da colpire, oppure se prima salgono tutte e nove, poi scendono alcune e viene illuminata quella da colpire)ò
+	// Bringing moles up
+	bringMolesUp();
+
+	// Resetting button status
+	m_prevButtonPressed = false;
+
+	// The interval before showing which is the target mole
+	m_targetMoleShownTimer.start(targetMoleShownInterval);
+}
+
+void MatchColorGame::showTargetMole()
+{
+	// Start counting time
+	m_roundStart.start();
+
+	// Highlight the target
+	QMetaObject::invokeMethod(m_controller->qmlGamePanel(), "changeMoleSpotColor", Q_ARG(QVariant, m_moles[0]), Q_ARG(QVariant, QColor(targetMoleSpotColor)));
+
+	// Start the timer
+	m_timer.start(timeDisplayUpdateInterval);
 }
 
 void MatchColorGame::endRound()
@@ -184,6 +225,9 @@ void MatchColorGame::endRound()
 
 	// Bringing down all moles
 	bringMolesDown();
+
+	// Setting back the spot color for all moles to default
+	QMetaObject::invokeMethod(m_controller->qmlGamePanel(), "changeAllMolesSpotColor", Q_ARG(QVariant, QColor(allMolesSpotColor)));
 
 	// Incrementing the round counter and stopping game if we did all rounds
 	++m_currRound;
@@ -202,7 +246,7 @@ void MatchColorGame::endRound()
 void MatchColorGame::updateGUIElapsedTime()
 {
 	QString elapsedTimeStr;
-	if (m_interRoundDelayTimer.isActive()) {
+	if (m_interRoundDelayTimer.isActive() || m_targetMoleShownTimer.isActive()) {
 		elapsedTimeStr = "0.000";
 	} else {
 		const int elapsedTime = m_roundStart.elapsed();
@@ -222,7 +266,17 @@ void MatchColorGame::updateGUIScoreAndRound()
 
 void MatchColorGame::bringMolesUp()
 {
-#warning TODO!!!
+	// Computing status
+	int molesStatus = 0;
+	for (int i = 0; i < m_numMolesPerRound; i++) {
+		molesStatus |= 1 << m_moles[i];
+	}
+
+	// Sending command to Arduino
+	m_controller->updateArduinoMolesStatus(molesStatus);
+
+	// Updating qml game panel
+	QMetaObject::invokeMethod(m_controller->qmlGamePanel(), "changeMoleSpotStatus", Q_ARG(QVariant, molesStatus));
 }
 
 void MatchColorGame::bringMolesDown()

@@ -18,3 +18,10 @@ questi sono i bug rilevati domenica (se ci vuoi lavorare):
 - Aumentare il numero di colpi (soprattutto al livello medio).
 - Nel livello medio la terzultima sequenza è sempre di 3 fantasmi (invece di 4).
 - Ritardare la colpibilità del fantasma.
+
+Aggiustare i menù con gli highscores, ora è implementato male, usare un approccio più parametrico
+
+============ Possibilità future
+
+- dare possibilità di scrivere nuove modalità di gioco in Javascript
+- aggiungere una modalità di test per accendere/spegnere i motori ad uno ad uno e per muoverli di pochi gradi alla volta. Poi usare i valori selezionati come max e min del motore nel firmware (aggiungere nuovi comandi, senza modificare quelli attuali)

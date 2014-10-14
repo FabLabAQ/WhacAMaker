@@ -74,7 +74,7 @@ void GameController::stopGame(bool checkHighScore)
 
 	QVariant newHighScore;
 	if (checkHighScore) {
-		newHighScore = m_controller->newHighScore(m_difficultyLevel, m_game->score());
+		newHighScore = m_controller->newHighScore(m_gameType, m_difficultyLevel, m_game->score());
 	} else {
 		newHighScore = false;
 	}

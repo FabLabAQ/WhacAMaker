@@ -76,6 +76,11 @@ private slots:
 	 */
 	void startNewRound();
 
+	/**
+	 * \brief The slot called when the target mole is to be revealed
+	 */
+	void showTargetMole();
+
 private:
 	/**
 	 * \brief Ends the current round
@@ -93,8 +98,7 @@ private:
 	void updateGUIScoreAndRound();
 
 	/**
-	 * \brief Brings all moles up and changes the spot color of the target
-	 *        mole
+	 * \brief Brings moles up
 	 */
 	void bringMolesUp();
 
@@ -114,6 +118,11 @@ private:
 	 * \brief The timer for the inter-round delayr
 	 */
 	QTimer m_interRoundDelayTimer;
+
+	/**
+	 * \brief The timer for the delay before the mole to hit is highlighted
+	 */
+	QTimer m_targetMoleShownTimer;
 
 	/**
 	 * \brief When the round started
