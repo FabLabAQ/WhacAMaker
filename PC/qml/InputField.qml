@@ -1,5 +1,5 @@
 // A simple component with a text label and a text input
-import QtQuick 2.0
+import QtQuick 2.3
 
 AnimatedElement {
 	id: container

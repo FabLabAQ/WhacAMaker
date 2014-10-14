@@ -71,11 +71,12 @@ public:
 	 * \brief If score is going to be a highscore for the given level,
 	 *        returns true and uses it as the score of the next player
 	 *
+	 * \param modality the game modality
 	 * \param level the difficulty level
 	 * \param score the score
 	 * \return true if score is in the highscores
 	 */
-	bool newHighScore(WhacAMaker::DifficultyLevel level, double score);
+	bool newHighScore(WhacAMaker::GameType modality, WhacAMaker::DifficultyLevel level, double score);
 
 	/**
 	 * \brief The function called when a new command is received
@@ -156,9 +157,10 @@ private:
 	/**
 	 * \brief Restores the highscores in the panel for the given level
 	 *
+	 * \param modality the game modality whose highscores to restore
 	 * \param level the difficulty level whose highscores to restore
 	 */
-	void restoreHighScores(WhacAMaker::DifficultyLevel level);
+	void restoreHighScores(WhacAMaker::GameType modality, WhacAMaker::DifficultyLevel level);
 
 	/**
 	 * \brief Copies a value from settings to an QML item
@@ -186,12 +188,14 @@ private:
 	 * \brief Returns the highscores and players for the given level loading
 	 *        them from m_setting
 	 *
+	 * \param modality the game modality whose highscores and players to get
 	 * \param level the level whose highscores and players to get
 	 * \param highscores the vector to fill with highscores
 	 * \param players the vector to fill with players
-	 * \param levelName the vector with a string representation of level
+	 * \param modalityName the string representation of game modality
+	 * \param levelName the string representation of level
 	 */
-	void getHighScoresFromSettings(WhacAMaker::DifficultyLevel level, QList<QVariant>& highscores, QList<QVariant>& players, QString& levelName);
+	void getHighScoresFromSettings(WhacAMaker::GameType modality, WhacAMaker::DifficultyLevel level, QList<QVariant>& highscores, QList<QVariant>& players, QString& modalityName, QString& levelName);
 
 	/**
 	 * \brief Sets the serial port in the serial communication object
@@ -234,6 +238,11 @@ private:
 	 * \brief The object controlling the game
 	 */
 	GameController m_gameController;
+
+	/**
+	 * \brief The modality of the next highscore
+	 */
+	WhacAMaker::GameType m_nextScoreModality;
 
 	/**
 	 * \brief The level of the next highscore

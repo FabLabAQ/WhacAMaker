@@ -1,5 +1,5 @@
 // The panel with configuration options
-import QtQuick 2.0
+import QtQuick 2.3
 
 AnimatedElementsPanelWithItems {
 	id: container

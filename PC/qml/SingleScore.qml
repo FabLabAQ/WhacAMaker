@@ -1,5 +1,5 @@
 // A simple component showing a single score
-import QtQuick 2.0
+import QtQuick 2.3
 
 AnimatedElement {
 	id: container

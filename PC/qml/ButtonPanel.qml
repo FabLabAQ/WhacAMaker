@@ -3,7 +3,7 @@
 // item-realated properties of AnimatedElementsPanelWithItems to set dimensions.
 // This class provides a signal that is thrown when a button is pressed, with
 // the button text as argument.
-import QtQuick 2.0
+import QtQuick 2.3
 
 AnimatedElementsPanelWithItems {
 	id: container

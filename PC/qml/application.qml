@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.3
 import WhacAMaker 1.0
 
 Rectangle {
@@ -29,20 +29,36 @@ Rectangle {
 	{
 		return configuration;
 	}
-	// The function returning the easy score object
-	function easyScoreObject()
+	// The function returning the easy score object for classical modality
+	function classicaleasyScoreObject()
 	{
-		return easyHighScores;
+		return classicalEasyHighScores;
 	}
-	// The function returning the medium score object
-	function mediumScoreObject()
+	// The function returning the medium score object for classical modality
+	function classicalmediumScoreObject()
 	{
-		return mediumHighScores;
+		return classicalMediumHighScores;
 	}
-	// The function returning the hard score object
-	function hardScoreObject()
+	// The function returning the hard score object for classical modality
+	function classicalhardScoreObject()
 	{
-		return hardHighScores;
+		return classicalHardHighScores;
+	}
+	// The function returning the easy score object for match color modality
+	function matchcoloreasyScoreObject()
+	{
+		return matchColorEasyHighScores;
+	}
+	// The function returning the medium score object for match color
+	// modality
+	function matchcolormediumScoreObject()
+	{
+		return matchColorMediumHighScores;
+	}
+	// The function returning the hard score object for match colot modality
+	function matchcolorhardScoreObject()
+	{
+		return matchColorHardHighScores;
 	}
 	// The function returning the joystick calibration object
 	function joystickCalibrationObject()
@@ -81,9 +97,25 @@ Rectangle {
 		}
 
 		ButtonPanel {
-			id: gameLevelMenu
+			id: gameModalityMenu
 			visible: false
 			backItem: mainMenu
+			buttonCaptions: ["Classico", "Colore"]
+			anchors.fill: parent
+
+			onButtonClicked: {
+				if (caption == "Classico") {
+					game.gameModality = WhacAMaker.Classical;
+				} else if (caption == "Colore") {
+					game.gameModality = WhacAMaker.MatchColor;
+				}
+			}
+		}
+
+		ButtonPanel {
+			id: gameLevelMenu
+			visible: false
+			backItem: gameModalityMenu
 			buttonCaptions: ["Facile", "Medio", "Difficile"]
 			anchors.fill: parent
 
@@ -99,9 +131,25 @@ Rectangle {
 		}
 
 		ButtonPanel {
-			id: scoreLevelMenu
+			id: scoreModalityMenu
 			visible: false
 			backItem: mainMenu
+			buttonCaptions: ["Classico", "Colore"]
+			anchors.fill: parent
+
+			onButtonClicked: {
+				if (caption == "Classico") {
+					scoreLevelMenu.buttonItems = [classicalEasyHighScores, classicalMediumHighScores, classicalHardHighScores]
+				} else if (caption == "Colore") {
+					scoreLevelMenu.buttonItems = [matchColorEasyHighScores, matchColorMediumHighScores, matchColorHardHighScores]
+				}
+			}
+		}
+
+		ButtonPanel {
+			id: scoreLevelMenu
+			visible: false
+			backItem: scoreModalityMenu
 			buttonCaptions: ["Facile", "Medio", "Difficile"]
 			anchors.fill: parent
 		}
@@ -115,27 +163,48 @@ Rectangle {
 
 			onButtonClicked: {
 				if (caption == "Test") {
-					game.difficultyLevel = WhacAMaker.Test;
+					game.gameModality = WhacAMaker.Test;
 				}
 			}
 		}
 
 		HighScores {
-			id: easyHighScores
+			id: classicalEasyHighScores
 			visible: false
 			backItem: scoreLevelMenu
 			anchors.fill: parent
 		}
 
 		HighScores {
-			id: mediumHighScores
+			id: classicalMediumHighScores
 			visible: false
 			backItem: scoreLevelMenu
 			anchors.fill: parent
 		}
 
 		HighScores {
-			id: hardHighScores
+			id: classicalHardHighScores
+			visible: false
+			backItem: scoreLevelMenu
+			anchors.fill: parent
+		}
+
+		HighScores {
+			id: matchColorEasyHighScores
+			visible: false
+			backItem: scoreLevelMenu
+			anchors.fill: parent
+		}
+
+		HighScores {
+			id: matchColorMediumHighScores
+			visible: false
+			backItem: scoreLevelMenu
+			anchors.fill: parent
+		}
+
+		HighScores {
+			id: matchColorHardHighScores
 			visible: false
 			backItem: scoreLevelMenu
 			anchors.fill: parent
@@ -206,9 +275,10 @@ Rectangle {
 
 	Component.onCompleted: {
 		// Here we associate menus with buttons
-		mainMenu.buttonItems = [gameLevelMenu, scoreLevelMenu, settingsMenu]
+		mainMenu.buttonItems = [gameModalityMenu, scoreLevelMenu, settingsMenu]
+		gameModalityMenu.buttonItems = [gameLevelMenu, gameLevelMenu]
 		gameLevelMenu.buttonItems = [game, game, game]
-		scoreLevelMenu.buttonItems = [easyHighScores, mediumHighScores, hardHighScores]
+		scoreModalityMenu.buttonItems = [scoreLevelMenu, scoreLevelMenu]
 		settingsMenu.buttonItems = [game, joystickCalibration, configuration]
 	}
 }

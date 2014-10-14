@@ -15,5 +15,13 @@
  */
 QObject* getQmlObject(QQuickView& view, const char* function);
 
+/**
+ * \brief The randomness generator to use with random_shuffle
+ *
+ * \param i the upper limit of returned random number (exclusive)
+ * \return a ranom number between 0 and (i - 1)
+ */
+int randomShuffleGen(int i);
+
 #endif
 

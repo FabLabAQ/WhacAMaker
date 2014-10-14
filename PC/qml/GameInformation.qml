@@ -1,119 +1,69 @@
 // The item with information about the game (level, score, time left...)
-import QtQuick 2.0
+import QtQuick 2.3
+import QtQuick.Layouts 1.1
 
 AnimatedElement {
 	id: container
 
-	// The text with the current level
-	property alias level: levelText.text
-	// The current score
-	property alias score: scoreText.text
-	// The remaining ammunitions
-	property alias ammo: ammoText.text
-	// The remaining time
-	property alias time: timeText.text
+	// The list of fields with information to show. This is a list of
+	// strings, which are used as captions (if captions are shown)
+	property var fields: []
+	// If true field captions are shown, otherwise they are hidden
+	property bool showCaptions: true
 	// The font size
-	property real fontPointSize: 72 // 24
+	property real fontPointSize: 32 // 72 // 24
 	// The font type
 	property string fontFamily: "Digital-7 Mono"
 	// The text color
 	property color textColor: "green"
 
-	Text {
-		id: levelLabel
-		//text: "Livello"
-		x: internalVars.textXPos
-		y: internalVars.firstLineYPosInArea
-		width: container.width
-		height: internalVars.textHeight
-		font { pointSize: container.fontPointSize; family: container.fontFamily }
-		color: container.textColor
+	// The function to set the value to display for the i-th field. The
+	// field with id 0 is always the game modality and level, other start
+	// from 1
+	function setFieldValue(i, value)
+	{
+		// Ignoring invalid indexes
+		if ((i < 0) || (i >= information.count)) {
+			return;
+		}
+
+		information.itemAt(i).value = value;
 	}
 
-	Text {
-		id: levelText
-		x: internalVars.textXPos
-		y: levelLabel.y + levelLabel.height
-		width: container.width
-		height: internalVars.textHeight
-		font { pointSize: container.fontPointSize; family: container.fontFamily }
-		color: container.textColor
-	}
+	// The layout with all information
+	ColumnLayout {
+		spacing: 0
+		anchors.fill: parent
+		anchors.margins: container.width / 10.0
 
-	Text {
-		id: scoreLabel
-		//text: "Punteggio"
-		x: internalVars.textXPos
-		y: internalVars.textAreaHeight + internalVars.firstLineYPosInArea
-		width: container.width
-		height: internalVars.textHeight
-		font { pointSize: container.fontPointSize; family: container.fontFamily }
-		color: container.textColor
-	}
+		// The repeater creates all labels and values
+		Repeater {
+			id: information
+			model: ["Modalità"].concat(container.fields)
 
-	Text {
-		id: scoreText
-		x: internalVars.textXPos
-		y: scoreLabel.y + scoreLabel.height
-		width: container.width
-		height: internalVars.textHeight
-		font { pointSize: container.fontPointSize; family: container.fontFamily }
-		color: container.textColor
-	}
+			// Inside this column positioner we put the text with
+			// the caption and the value
+			Column {
+				// An alias for the value to show
+				property alias value: valueText.text
 
-	Text {
-		id: ammoLabel
-		//text: "Colpi rimasti"
-		x: internalVars.textXPos
-		y: 2 * internalVars.textAreaHeight + internalVars.firstLineYPosInArea
-		width: container.width
-		height: internalVars.textHeight
-		font { pointSize: container.fontPointSize; family: container.fontFamily }
-		color: container.textColor
-	}
+				// Caption
+				Text {
+					id: captionText
 
-	Text {
-		id: ammoText
-		x: internalVars.textXPos
-		y: ammoLabel.y + ammoLabel.height
-		width: container.width
-		height: internalVars.textHeight
-		font { pointSize: container.fontPointSize; family: container.fontFamily }
-		color: container.textColor
-	}
+					text: modelData
+					font { pointSize: container.fontPointSize; family: container.fontFamily }
+					color: container.textColor
+					visible: container.showCaptions
+				}
+				// Value
+				Text {
+					id: valueText
 
-	Text {
-		id: timeLabel
-		//text: "Tempo rimasto"
-		x: internalVars.textXPos
-		y: 3 * internalVars.textAreaHeight + internalVars.firstLineYPosInArea
-		width: container.width
-		height: internalVars.textHeight
-		font { pointSize: container.fontPointSize; family: container.fontFamily }
-		color: container.textColor
-	}
-
-	Text {
-		id: timeText
-		x: internalVars.textXPos
-		y: timeLabel.y + timeLabel.height
-		width: container.width
-		height: internalVars.textHeight
-		font { pointSize: container.fontPointSize; family: container.fontFamily }
-		color: container.textColor
-	}
-
-	// An object with internal variables
-	QtObject {
-		id: internalVars
-
-		// The height of each text area
-		property real textAreaHeight: container.height / 4.0;
-		// The x position of text
-		property real textXPos: container.width / 10.0;
-		// The y position of the first line of text in the text area
-		property real firstLineYPosInArea: textAreaHeight / 6.0;
-		// The height of text
-		property real textHeight: textAreaHeight / 3.0;
+					font { pointSize: container.fontPointSize; family: container.fontFamily }
+					color: container.textColor
+				}
+			}
+		}
 	}
 }

@@ -1,5 +1,6 @@
 #include "helpers.h"
 #include <QQuickItem>
+#include <QtGlobal>
 #include "myRuntimeException.h"
 
 QObject* getQmlObject(QQuickView& view, const char* function)
@@ -14,4 +15,9 @@ QObject* getQmlObject(QQuickView& view, const char* function)
 	}
 
 	return object;
+}
+
+int randomShuffleGen(int i)
+{
+	return qrand() % i;
 }

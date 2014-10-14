@@ -9,6 +9,7 @@
 #include "myRuntimeException.h"
 #include "whacAMaker.h"
 #include "mainWindowEventFilter.h"
+#include "moleSpot.h"
 
 int main(int argc, char *argv[])
 {
@@ -23,6 +24,7 @@ int main(int argc, char *argv[])
 
 		// Registering the new QML types
 		qmlRegisterType<WhacAMaker>("WhacAMaker", 1, 0, "WhacAMaker");
+		qmlRegisterType<MoleSpot>("WhacAMaker", 1, 0, "MoleSpot");
 
 		// Creating the view
 		QQuickView view;

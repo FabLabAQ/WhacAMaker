@@ -3,3 +3,25 @@ Fai alzare più talpe ma dagli colori diversi (tramite proiettore) c’è da col
 Sbagliare talpa da un malus, quella giusta un bonus.
 Al solito il tempo “la fa da padrone” quindi si potrebbe tenere su le talpe fino allo sparo e riabbassarle solo allora: il tempo impiegato a colpire la talpa del giusto colore è inversamente proporzionale al punteggio.
 Una partita potrebbe articolarsi in 3 o 5 manches  (ciclo fuori/sparo/dentro delle talpe).
+
+
+
+============ DA CORREGGERE!!!
+
+Il gioco lo ha orsini.
+questi sono i bug rilevati domenica (se ci vuoi lavorare):
+- Aggiungere targhette voci dell’HUD (score/time/ammo).
+- Se si abbattono tutti i fantasmi deve partire una nuova sequenza (ora resta in attesa).
+- Se si abbattono tutti i fantasmi far comparire per 1sec la scritta PERFECT!.
+-  Aggiungere la scritta GAME OVER (cliccabile per continuare) congelando HUD.
+-  Regolare alzata servi (hardware o software?).
+- Aumentare il numero di colpi (soprattutto al livello medio).
+- Nel livello medio la terzultima sequenza è sempre di 3 fantasmi (invece di 4).
+- Ritardare la colpibilità del fantasma.
+
+Aggiustare i menù con gli highscores, ora è implementato male, usare un approccio più parametrico
+
+============ Possibilità future
+
+- dare possibilità di scrivere nuove modalità di gioco in Javascript
+- aggiungere una modalità di test per accendere/spegnere i motori ad uno ad uno e per muoverli di pochi gradi alla volta. Poi usare i valori selezionati come max e min del motore nel firmware (aggiungere nuovi comandi, senza modificare quelli attuali)
