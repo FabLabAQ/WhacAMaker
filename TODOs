@@ -21,6 +21,8 @@ questi sono i bug rilevati domenica (se ci vuoi lavorare):
 
 Aggiustare i menù con gli highscores, ora è implementato male, usare un approccio più parametrico
 
+vedere come disabilitare lo screensaver da qt
+
 ============ Possibilità future
 
 - dare possibilità di scrivere nuove modalità di gioco in Javascript

@@ -142,6 +142,7 @@ AnimatedElementsPanel {
 			cell.size = Qt.binding(function() { return internalVars.moleCellSize });
 			cell.x = Qt.binding(function() { return internalVars.moleCellSize * (this.index % 3) });
 			cell.yWhenVisible = Qt.binding(function() { return internalVars.moleCellSize * Math.floor(this.index / 3) });
+			// cell.spotAngle = (360.0 / 9.0) * i;
 			tmpList.push(cell);
 		}
 

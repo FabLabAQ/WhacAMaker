@@ -1,6 +1,7 @@
 // A single cell containing the mole. The cell is square, has a uniform color
 // and a border. This has two states: default and "spotOn"
 import QtQuick 2.3
+import WhacAMaker 1.0
 
 AnimatedElement {
 	id: container
@@ -20,7 +21,9 @@ AnimatedElement {
 	// cell
 	property real spotSize: 1.0 // 0.6
 	// The color of the spot
-	property alias spotColor: spot.spotColor
+	property alias spotColor: spot.color
+	// The starting angle of the spot
+	property alias spotAngle: spot.angle
 	// The size of the circle (its diameter) as a portion of the size of the
 	// cell
 	property real circleSize: 0.45
@@ -72,59 +75,29 @@ AnimatedElement {
 	}
 
 	// The spot "illuminating" the mole. This is on when spotOn is true
-	Canvas {
+	MoleSpot {
 		id: spot
 
 		anchors.fill: parent
-		contextType: "2d"
-		renderStrategy: Canvas.Threaded
-		renderTarget: Canvas.Image
-		antialiasing: true
-		smooth: true
-		visible: container.spotOn
 		z: 20
-		// The current angle of the rotating circle
-		property real angle: 0
-		// The width of the rotating circle line
-		property real lineWidth: 12
-		// The color of the line of the rotating line
-		property color spotColor: "yellow"
+		angle: 0
+		color: "yellow"
+		visible: container.spotOn
+		spotSize: container.circleSize
 
-		// The animation on the angle property to have a rotating circle
-		NumberAnimation on angle {
+		// The animation rotating the spot. The property being animated is Item.rotation,
+		// angle can be used to set the starting angle
+		RotationAnimator {
 			id: animation
 
 			from: 0
-			to: 2 * Math.PI
+			to: 360
 			duration: 1000
 			loops: Animation.Infinite
 			paused: !container.visible
+			target: spot
+			running: true
 		}
-
-		// The code to paint
-		onPaint: {
-			if (context) {
-				context.clearRect(0, 0, width, height);
-
-				// Creating the arc path
-				context.beginPath();
-				context.moveTo(x + width / 2.0, y + height / 2.0);
-				context.arc(x + width / 2.0, y + height / 2.0, (container.size * container.circleSize) / 2.0, angle, angle + 1.5 * Math.PI);
-				context.lineTo(x + width / 2.0, y + height / 2.0);
-
-				// Filling it
-				context.fillStyle = spotColor;
-				context.fill();
-
-				// Stroking it
-				context.lineWidth = lineWidth;
-				context.strokeStyle = spotColor;
-				context.lineCap = "round";
-				context.stroke();
-			}
-		}
-
-		onAngleChanged: requestPaint()
 	}
 
 	// The joystick pointer. This is visible only when the joystick pointer

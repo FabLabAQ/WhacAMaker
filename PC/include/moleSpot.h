@@ -38,17 +38,17 @@ public:
 	virtual void paint(QPainter *painter);
 
 	/**
-	 * \brief Sets the angle
+	 * \brief Sets the angle in degrees
 	 *
 	 * This triggers a repaint
-	 * \param angle the new angle
+	 * \param angle the new angle in degrees
 	 */
 	void setAngle(qreal angle);
 
 	/**
-	 * \brief Returns the current angle
+	 * \brief Returns the current angle in degrees
 	 *
-	 * \return the current angle
+	 * \return the current angle in degrees
 	 */
 	qreal angle() const
 	{
@@ -110,7 +110,7 @@ signals:
 
 private:
 	/**
-	 * \brief The current angle
+	 * \brief The current angle in degrees
 	 */
 	qreal m_angle;
 
