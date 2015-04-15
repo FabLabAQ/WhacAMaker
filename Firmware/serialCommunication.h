@@ -22,7 +22,7 @@ public:
 	/**
 	 * \brief The maximum length of a command
 	 */
-	static const int maxCommandLength = 32;
+	static const int maxCommandLength = 64;
 
 public:
 	/**

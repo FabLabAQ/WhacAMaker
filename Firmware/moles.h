@@ -8,8 +8,8 @@
  * \brief The class to manage moles
  *
  * The template parameter N is the number of moles. The pins for the pwm are
- * fixed, the first mole uses pin 2 and then the subsequent ones up to 11. There
- * can be at most 10 moles
+ * passed to the begin function, along with the limits. There can be at most 10
+ * moles
  */
 template <unsigned int N>
 class Moles
@@ -84,6 +84,16 @@ public:
 	 * \return the status of the mole
 	 */
 	Status getMoleStatus(unsigned int i) const;
+
+	/**
+	 * \brief Sets the mole to the given postion, using
+	 *        Servo::writeMicroseconds
+	 *
+	 * Use this function only during a calibration procedure
+	 * \param i the servo to move (must be between 0 and N-1)
+	 * \param v the value to use when calling Servo::writeMicroseconds()
+	 */
+	void setServoPositionRaw(int i, int v);
 
 private:
 	/**
@@ -198,6 +208,16 @@ template <unsigned int N>
 typename Moles<N>::Status Moles<N>::getMoleStatus(unsigned int i) const
 {
 	return static_cast<Status>((m_status >> i) & 1);
+}
+
+template <unsigned int N>
+void Moles<N>::setServoPositionRaw(int i, int v)
+{
+	if ((i < 0) || (i >= N)) {
+		return;
+	}
+
+	m_servos[i].writeMicroseconds(v);
 }
 
 template <unsigned int N>

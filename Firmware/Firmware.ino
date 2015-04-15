@@ -2,6 +2,7 @@
 #include "joystick.h"
 #include "moles.h"
 #include "microsmooth.h"
+#include "servoCalibration.h"
 
 // We need this here otherwise moles.h doesn't compile (the compiler can't find
 // Servo.h)
@@ -22,22 +23,26 @@ SerialCommunication serialCommunication;
 // The object taking care of reading joystick status
 Joystick joystick;
 
+// The number of moles in the game
+const int numMoles = 9;
+
 // The object managing the moles and the moles pins (we can use any digital
 // output, the Servo library uses a timer interrupt to generate the PWM, not the
 // hardware PWM)
-// int molesPins[9] = {   8,    5,    2,    9,    6,    3,    10,    7,   4};
-int molesPins[9] = {   4,    7,    10,   3,    6,    9,     2,    5,   8};
-// int servoMin[10]  = { 544,  544,  544,  544,  544,  544,  544,  544,  544};
-// int servoMax[10]  = {2400, 2400, 2400, 2400, 2400, 2400, 2400, 2400, 2400};
+// int molesPins[numMoles] = {   8,    5,    2,    9,    6,    3,    10,    7,   4};
+int molesPins[numMoles] = {   4,    7,    10,   3,    6,    9,     2,    5,   8};
+// int servoMin[numMoles]  = { 544,  544,  544,  544,  544,  544,  544,  544,  544};
+// int servoMax[numMoles]  = {2400, 2400, 2400, 2400, 2400, 2400, 2400, 2400, 2400};
+// int servoMin[numMoles]  = { 600,  600,  600,  600,  600,  600,  600,  600,  600};
+// int servoMax[numMoles]  = {2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000};
+int servoMin[numMoles]  = { 900,  900,  900,  900,  900,  900,  900,  900,  900};
+int servoMax[numMoles]  = {1700, 1700, 1700, 1700, 1700, 1700, 1700, 1700, 1700};
 
-// int servoMin[9]  = { 600,  600,  600,  600,  600,  600,  600,  600,  600};
-// int servoMax[9]  = {2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000};
-
-int servoMin[9]  = { 900,  900,  900,  900,  900,  900,  900,  900,  900};
-int servoMax[9]  = {1700, 1700, 1700, 1700, 1700, 1700, 1700, 1700, 1700};
-
-typedef Moles<9> GameMoles;
+typedef Moles<numMoles> GameMoles;
 GameMoles moles;
+
+// The object to perform servo servo calibration
+ServoCalibration<numMoles> servoCalibration;
 
 // Whether to send joystick positions or not
 bool sendJoystick = false;
@@ -73,6 +78,9 @@ void loop() {
 		} else if ((serialCommunication.receivedCommandPart(0)[0] == 'M') && (serialCommunication.receivedCommandNumParts() >= 2)) {
 			// Move servo to bring up or down the moles
 			moles.setStatus(serialCommunication.receivedCommandPartAsInt(1));
+		} else if (serialCommunication.receivedCommandPart(0)[0] == 'C') {
+			// Starting servo calibration. The funtion returns when the calibration procedure ends
+			servoCalibration.enterLoop(moles, serialCommunication);
 		}
 	}
 
