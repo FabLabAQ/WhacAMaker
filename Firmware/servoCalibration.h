@@ -13,8 +13,10 @@
  * calibration loop, no other action can be executed. Commands available during
  * calibration are the following:
  * 	- M \<S\> \<V\> moves the servo S to value V
- * 	- L \<S\> \<V\> sets the lower value for servo S to value V
- * 	- H \<S\> \<V\> sets the upper value for servo S to value V
+ * 	- L \<S\> \<V\> sets the lower value for servo S to value V and moves
+ * 	  the servo
+ * 	- H \<S\> \<V\> sets the upper value for servo S to value V and moves
+ * 	  the servo
  * 	- P prints the current low and up limit for all servos (one line with
  * 	  the low limits separated by spaces and one line for the high limits
  * 	  separated by spaces)
@@ -96,6 +98,9 @@ ServoCalibration<N>::ServoCalibration()
 template <unsigned int N>
 void ServoCalibration<N>::enterLoop(Moles<N>& moles, SerialCommunication& serialCommunication)
 {
+	// Attaching servos
+	moles.attach();
+
 	// Moving all servos to a midpoint
 	for (int i = 0; i < N; ++i) {
 		moles.setServoPositionRaw(i, 1500);
@@ -114,6 +119,9 @@ void ServoCalibration<N>::enterLoop(Moles<N>& moles, SerialCommunication& serial
 				if ((servoNum >= 0) && (servoNum < N)) {
 					m_servoMin[servoNum] = serialCommunication.receivedCommandPartAsInt(2);
 				}
+
+				// Moving the servo
+				moles.setServoPositionRaw(servoNum, m_servoMin[servoNum]);
 			} else if ((serialCommunication.receivedCommandPart(0)[0] == 'H')  && (serialCommunication.receivedCommandNumParts() >= 3)) {
 				// Checking the servo is valid and saving the high limit
 				const int servoNum = serialCommunication.receivedCommandPartAsInt(1);
@@ -121,6 +129,9 @@ void ServoCalibration<N>::enterLoop(Moles<N>& moles, SerialCommunication& serial
 				if ((servoNum >= 0) && (servoNum < N)) {
 					m_servoMax[servoNum] = serialCommunication.receivedCommandPartAsInt(2);
 				}
+
+				// Moving the servo
+				moles.setServoPositionRaw(servoNum, m_servoMax[servoNum]);
 			} else if (serialCommunication.receivedCommandPart(0)[0] == 'P') {
 				// First sending the low limits
 				serialCommunication.newCommandToSend();
@@ -141,6 +152,9 @@ void ServoCalibration<N>::enterLoop(Moles<N>& moles, SerialCommunication& serial
 			}
 		}
 	}
+
+	// Detaching servos
+	moles.detach();
 }
 
 #endif

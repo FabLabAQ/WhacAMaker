@@ -31,12 +31,14 @@ const int numMoles = 9;
 // hardware PWM)
 // int molesPins[numMoles] = {   8,    5,    2,    9,    6,    3,    10,    7,   4};
 int molesPins[numMoles] = {   4,    7,    10,   3,    6,    9,     2,    5,   8};
-// int servoMin[numMoles]  = { 544,  544,  544,  544,  544,  544,  544,  544,  544};
-// int servoMax[numMoles]  = {2400, 2400, 2400, 2400, 2400, 2400, 2400, 2400, 2400};
-// int servoMin[numMoles]  = { 600,  600,  600,  600,  600,  600,  600,  600,  600};
-// int servoMax[numMoles]  = {2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000};
-int servoMin[numMoles]  = { 900,  900,  900,  900,  900,  900,  900,  900,  900};
-int servoMax[numMoles]  = {1700, 1700, 1700, 1700, 1700, 1700, 1700, 1700, 1700};
+// int servoMin[numMoles] = { 544,  544,  544,  544,  544,  544,  544,  544,  544};
+// int servoMax[numMoles] = {2400, 2400, 2400, 2400, 2400, 2400, 2400, 2400, 2400};
+// int servoMin[numMoles] = { 600,  600,  600,  600,  600,  600,  600,  600,  600};
+// int servoMax[numMoles] = {2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000};
+//int servoMin[numMoles] = { 900,  900,  900,  900,  900,  900,  900,  900,  900};
+//int servoMax[numMoles] = {1700, 1700, 1700, 1700, 1700, 1700, 1700, 1700, 1700};
+int servoMin[numMoles] = {1000, 1000, 1050, 1000,  900,  900,  900,  900,  900};
+int servoMax[numMoles] = {1900, 1700, 1900, 1900, 1600, 1650, 1650, 1600, 1750};
 
 typedef Moles<numMoles> GameMoles;
 GameMoles moles;

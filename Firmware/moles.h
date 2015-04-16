@@ -224,9 +224,9 @@ template <unsigned int N>
 void Moles<N>::moveMole(unsigned int i, Status status)
 {
 	if (status == DOWN) {
-		m_servos[i].write(0);
+		m_servos[i].writeMicroseconds(m_servoMin[i]);
 	} else {
-		m_servos[i].write(180);
+		m_servos[i].writeMicroseconds(m_servoMax[i]);
 	}
 }
 
