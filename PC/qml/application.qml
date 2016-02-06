@@ -115,7 +115,7 @@ Rectangle {
 		ButtonPanel {
 			id: gameLevelMenu
 			visible: false
-			backItem: gameModalityMenu
+			backItem: mainMenu
 			buttonCaptions: ["Facile", "Medio", "Difficile"]
 			anchors.fill: parent
 
@@ -149,7 +149,7 @@ Rectangle {
 		ButtonPanel {
 			id: scoreLevelMenu
 			visible: false
-			backItem: scoreModalityMenu
+			backItem: mainMenu
 			buttonCaptions: ["Facile", "Medio", "Difficile"]
 			anchors.fill: parent
 		}
@@ -274,11 +274,14 @@ Rectangle {
 	}
 
 	Component.onCompleted: {
+		game.gameModality = WhacAMaker.Classical;
+
 		// Here we associate menus with buttons
-		mainMenu.buttonItems = [gameModalityMenu, scoreLevelMenu, settingsMenu]
+		mainMenu.buttonItems = [gameLevelMenu, scoreLevelMenu, settingsMenu]
 		gameModalityMenu.buttonItems = [gameLevelMenu, gameLevelMenu]
 		gameLevelMenu.buttonItems = [game, game, game]
 		scoreModalityMenu.buttonItems = [scoreLevelMenu, scoreLevelMenu]
+		scoreLevelMenu.buttonItems = [classicalEasyHighScores, classicalMediumHighScores, classicalHardHighScores]
 		settingsMenu.buttonItems = [game, joystickCalibration, configuration]
 	}
 }
