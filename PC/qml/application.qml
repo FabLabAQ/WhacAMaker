@@ -10,6 +10,14 @@ Rectangle {
 	// The volume of sound effects
 	property real volume: 1
 
+	// The game area dimesions and position. These are the size and position
+	// of the internalItems item, and are properties to be able to change
+	// them by calibration
+	property real gameAreaWidth: 320
+	property real gameAreaHeight: 240
+	property real gameAreaX: 0
+	property real gameAreaY: 0
+
 	// The signal emitted when configuration parameters are saved
 	signal configurationParametersSaved()
 	// The signal emitted when a name is entered (to record an highscore)
@@ -79,12 +87,11 @@ Rectangle {
 	Item {
 		id: internalItems
 
-		anchors.fill:parent
-// 		rotation: 90
-// 		width: application.height
-// 		height: application.width
-// 		x: (height - width) / 2.0
-// 		y: (width - height) / 2.0
+//		anchors.fill:parent
+		width: gameAreaWidth
+		height: gameAreaHeight
+		x: gameAreaX
+		y: gameAreaY
 
 		ButtonPanel {
 			id: mainMenu

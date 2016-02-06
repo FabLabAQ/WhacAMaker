@@ -209,6 +209,13 @@ private:
 	void setAudioVolume();
 
 	/**
+	 * \brief Sets the game area size and position
+	 *
+	 * Values are only set if they are present in m_settings
+	 */
+	void setGameAreaSizeAndPosition();
+
+	/**
 	 * \brief The current status
 	 */
 	Status m_status;

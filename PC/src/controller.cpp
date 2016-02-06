@@ -226,11 +226,12 @@ void Controller::pointerPosition(qreal x, qreal y, bool button1Pressed, bool but
 		return;
 	}
 
-	// Simulating a mouse click. We use the Qt Test framework (perhaps it was not thought for this but it workd)
+	// Simulating a mouse click. We use the Qt Test framework (perhaps it was not thought for this but it works)
 	if (m_button1PrevStatus || m_button2PrevStatus) {
 		if (!button1Pressed && !button2Pressed) {
 			// Send mouse click released
-			QTest::mouseClick(&m_view, Qt::LeftButton, Qt::NoModifier, QPoint(x, y));
+#warning DIRTY WORKAROUD!!!
+			QTest::mouseClick(&m_view, Qt::LeftButton, Qt::NoModifier, QPoint(x + m_joystickPointer.movementArea().x(), y + m_joystickPointer.movementArea().y()));
 		}
 	}
 
@@ -268,7 +269,12 @@ void Controller::gameFinished()
 
 void Controller::resizeJoystickMovementArea()
 {
-	m_joystickPointer.setMovementArea();
+	QRect joystickMovementArea;
+	joystickMovementArea.setX(QQmlProperty::read(m_view.rootObject(), "gameAreaX").toInt());
+	joystickMovementArea.setY(QQmlProperty::read(m_view.rootObject(), "gameAreaY").toInt());
+	joystickMovementArea.setWidth(QQmlProperty::read(m_view.rootObject(), "gameAreaWidth").toInt());
+	joystickMovementArea.setHeight(QQmlProperty::read(m_view.rootObject(), "gameAreaHeight").toInt());
+	m_joystickPointer.setMovementArea(joystickMovementArea);
 }
 
 void Controller::disableServos()
@@ -287,6 +293,9 @@ void Controller::restoreParameters()
 	// Storing settings inside the configurationItem
 	copyPropertyToItem(configurationItem, "serialPort");
 	copyPropertyToItem(configurationItem, "volume");
+
+	// Setting game area size and position
+	setGameAreaSizeAndPosition();
 }
 
 void Controller::restoreHighScores(WhacAMaker::GameType modality, WhacAMaker::DifficultyLevel level)
@@ -347,4 +356,18 @@ void Controller::setSerialPort()
 void Controller::setAudioVolume()
 {
 	QQmlProperty::write(m_view.rootObject(), "volume", m_settings.value("configuration/volume"));
+}
+
+void Controller::setGameAreaSizeAndPosition()
+{
+	const QStringList props = QStringList() << "gameAreaWidth" << "gameAreaHeight" << "gameAreaX" << "gameAreaY";
+
+	foreach (QString p, props) {
+		const QString propName = "configuration/" + p;
+		if (m_settings.contains(propName)) {
+			QQmlProperty::write(m_view.rootObject(), p, m_settings.value(propName));
+		}
+	}
+
+	resizeJoystickMovementArea();
 }
